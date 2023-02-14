@@ -4,3 +4,5 @@ To create the MySQL docker container
 
 When SQL server is running create a schema called DAESD
 
+OR if running in Docker
+run "docker compose up"
