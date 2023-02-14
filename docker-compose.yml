@@ -1,0 +1,19 @@
+services:
+  django-web-app:
+    build: .
+    entrypoint: ["./django-web-app-entrypoint.sh"]
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    depends_on:
+      - mysql-db
+
+  mysql-db:
+    image: mysql
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: 'DAESD'
+      MYSQL_PASSWORD: 'root'
+    restart: unless-stopped
