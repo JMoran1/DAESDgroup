@@ -4,3 +4,4 @@ env/
 venv/
 ENV/
 __pycache__
+.pyc
