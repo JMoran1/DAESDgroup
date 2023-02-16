@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'DAESD',  
         'USER': 'root',  
         'PASSWORD': 'root',  
-        'HOST': 'mysql-db',  
+        'HOST': '127.0.0.1',  
         'PORT': '3306',  
     }
 }
