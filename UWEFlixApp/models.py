@@ -3,8 +3,6 @@ from django.conf import settings
 from datetime import datetime
 # Create your models here.
 
-
-
 class Movie(models.Model):
     movieID = models.AutoField(primary_key=True)
     movieName = models.CharField(max_length=50)
@@ -50,8 +48,8 @@ class Booking(models.Model):
 class Club(models.Model):
     clubID = models.AutoField(primary_key=True)
     clubName =  models.CharField(max_length=25)
-    cardNum = models.IntegerField(max_length=25)
-    expDate = models.IntegerField(max_length=8)
+    cardNum = models.IntegerField()
+    expDate = models.DateField()
     discountRate = models.FloatField()
     clubAddress = models.CharField(max_length=500)
     # clubContact = 
