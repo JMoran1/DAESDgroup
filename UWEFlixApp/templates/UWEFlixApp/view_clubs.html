@@ -1,0 +1,36 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+<h2>Clubs</h2>
+
+{% if club_list %}
+<div class="grid h-screen place-items-center">
+    <table >
+        <thead>
+            <tr>
+                <th>Club ID</th>
+                <th>Name</th>
+                <th>Card Num</th>
+                <th>Exp date</th>
+                <th>Discount rate</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for club in club_list %}
+            <tr>
+                <td> {{ club.clubID }}</td>
+                <td> {{ club.clubName }}</td>
+                <td> {{ club.cardNum }}</td>
+                <td> {{ club.expDate }}</td>
+                <td> {{ club.discountRate }}</td>
+                <td> {{ club.clubAddress }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>No clubs have been created. </p>
+{% endif %}
+{% endblock %}
