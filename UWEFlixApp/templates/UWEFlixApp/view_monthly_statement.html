@@ -1,0 +1,32 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+<h2>Monthly Statements</h2>
+
+{% if monthly_statement_list %}
+<div class="grid h-screen place-items-center">
+    <table >
+        <thead>
+            <tr>
+                <th>Statement ID</th>
+                <th>Club ID</th>
+                <th>Date</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for statement in monthly_statement_list %}
+            <tr>
+                <td> {{ statement.statementID }}</td>
+                <td> {{ statement.clubID }}</td>
+                <td> {{ statement.statementDate }}</td>
+                <td> {{ statement.statementAmount }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p>No monthly statements have been created. </p>
+{% endif %}
+{% endblock %}

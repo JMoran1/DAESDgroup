@@ -1,7 +1,14 @@
 from django.urls import path
 from UWEFlixApp import views
+from .models import MonthlyStatement
+
+home_list_view = views.ViewMonthlyStatement.as_view(
+    queryset=MonthlyStatement.objects.order_by("clubID")[:5],  
+    context_object_name="monthly_statement_list",
+    template_name="UWEFlixApp/view_monthly_statement.html",
+)
 
 urlpatterns = [
     path("", views.home, name="home"),
-    path("test", views.test, name="test"),
+    path("view_monthly_statement/", home_list_view, name="view_monthly_statement"),
 ]
