@@ -2,10 +2,9 @@ from django.db import models
 
 
 class MonthlyStatement(models.Model):
-    statementID = models.AutoField(primary_key=True)
-    clubID = models.ForeignKey('Club', on_delete=models.CASCADE)
-    statementDate = models.DateField()
-    statementAmount = models.FloatField()
+    club = models.ForeignKey('Club', on_delete=models.CASCADE)
+    date = models.DateField()
+    amount = models.DecimalField()
 
     def __str__(self):
-        return str(self.statementID)
+        return str(self.id)

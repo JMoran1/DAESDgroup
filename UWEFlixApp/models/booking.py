@@ -2,11 +2,11 @@ from django.db import models
 
 
 class Booking(models.Model):
-    bookingID = models.AutoField(primary_key=True)
     # to be added once authentication is completed
-    #userID = models.ForeignKey(Showing, on_delete=models.CASCADE)
-    screeningID = models.ForeignKey('Screening', on_delete=models.CASCADE)
-    numTickets = models.IntegerField()
-    numTotal = models.IntegerField()
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    screening = models.ForeignKey('Screening', on_delete=models.CASCADE)
+    number_of_tickets = models.IntegerField()
+    num_total = models.IntegerField()  # TODO: what is this?
+
     def __str__(self):
-        return str(self.bookingID)
+        return str(self.id)
