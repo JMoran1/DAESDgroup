@@ -14,7 +14,23 @@ def create_club(request):
         if form.is_valid():
             form.save()
             return redirect('home')
-    return render(request, "UWEFlixApp/create_club_form.html", {"form": form})
+    return render(request, "UWEFlixApp/create_club_form.html", {"form": form, "button_text": "Create Club"})
+
+def update_club(request, pk):
+    club = Club.objects.get(pk=pk)
+    form = ClubForm(request.POST or None, instance=club)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('view_clubs')
+    return render(request, "UWEFlixApp/create_club_form.html", {"form": form, "button_text": "Update Club"})
+
+def delete_club(request, pk):
+    club = Club.objects.get(pk=pk)
+    club.delete()
+    return redirect("view_clubs")
+
 
 class ViewClubs(ListView):
     model = Club
