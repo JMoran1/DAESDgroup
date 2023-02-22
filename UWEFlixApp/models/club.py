@@ -9,7 +9,7 @@ class Club(models.Model):
     '''
     card_number = models.CharField(max_length=16)  # most are 16, Amex is 15
     card_expiry = models.DateField()
-    discount_rate = models.DecimalField()
+    discount_rate = models.DecimalField(decimal_places=2, max_digits=4)
     address = models.CharField(max_length=500)
     # clubContact = 
     def __str__(self):
