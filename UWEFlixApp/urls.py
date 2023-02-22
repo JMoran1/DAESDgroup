@@ -4,13 +4,13 @@ from .models import MonthlyStatement, Club
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
-    queryset=MonthlyStatement.objects.order_by("club_id")[:5],  
+    queryset=MonthlyStatement.objects.order_by("id")[:5],  
     context_object_name="monthly_statement_list",
     template_name="UWEFlixApp/view_monthly_statement.html",
 )
 
 club_list_view = views.ViewClubs.as_view(
-    queryset=Club.objects.order_by("clubID")[:5],
+    queryset=Club.objects.order_by("id")[:5],
     context_object_name="club_list",
     template_name="UWEFlixApp/view_clubs.html",
 )

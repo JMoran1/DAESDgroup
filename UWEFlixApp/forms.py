@@ -4,4 +4,4 @@ from .models import Club
 class ClubForm(forms.ModelForm):
     class Meta:
         model = Club
-        fields = ('clubName', 'cardNum', 'expDate', 'discountRate', 'clubAddress')
+        fields = ('name', 'card_number', 'card_expiry', 'discount_rate', 'address')

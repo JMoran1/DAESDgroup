@@ -21,14 +21,14 @@
         <tbody>
             {% for club in club_list %}
             <tr>
-                <td> {{ club.clubID }}</td>
-                <td> {{ club.clubName }}</td>
-                <td> {{ club.cardNum }}</td>
-                <td> {{ club.expDate }}</td>
-                <td> {{ club.discountRate }}</td>
-                <td> {{ club.clubAddress }}</td>
-                <td><a href="{% url 'update_club' club.clubID %}">Update</a></td>
-                <td><a href="{% url 'delete_club' club.clubID %}">Delete</a></td>
+                <td> {{ club.id }}</td>
+                <td> {{ club.name }}</td>
+                <td> {{ club.card_number }}</td>
+                <td> {{ club.card_expiry }}</td>
+                <td> {{ club.discount_rate }}</td>
+                <td> {{ club.address }}</td>
+                <td><a href="{% url 'update_club' club.id %}">Update</a></td>
+                <td><a href="{% url 'delete_club' club.id %}">Delete</a></td>
 
             </tr>
             {% endfor %}
