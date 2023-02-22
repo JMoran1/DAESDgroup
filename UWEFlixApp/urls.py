@@ -2,8 +2,9 @@ from django.urls import path
 from UWEFlixApp import views
 from .models import MonthlyStatement, Club
 
+
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
-    queryset=MonthlyStatement.objects.order_by("clubID")[:5],  
+    queryset=MonthlyStatement.objects.order_by("club_id")[:5],  
     context_object_name="monthly_statement_list",
     template_name="UWEFlixApp/view_monthly_statement.html",
 )
