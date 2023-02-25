@@ -1,21 +1,27 @@
 {% extends "UWEFlixApp/base.html" %}
 
 {% block content %}
-<div class="m-auto border-4 w-4/5" >
-        
+<div class="m-auto border-4 w-4/5" >    
     <h1 class="text-2xl text-center">Cinema Manager View</h1>
-
-
-    {% for Movie in movie_list %}
-    <tr>
-
-      <td>     <p class="m-auto"><b>Movie name :</b> {{ Movie.name }}</p></td>
-      <td>     <p class="m-auto"><b>Movie Desc:</b> {{ Movie.description }}</p> </td>
-      <td>    <p class="m-auto"><b>Movie Rating:</b> {{ Movie.rating }}</p></td>
-      <td>     <p class="m-auto"><b>Movie Duration:</b> {{ Movie.duration }} mins</p></td>
-      <br>
-    </tr>
-    {% endfor %}
+    <table class="table-auto m-auto">
+        <thead>
+            <tr>
+              <th> Movie name : </th>
+              <th> Movie Rating:</th>
+              <th> Movie Duration: </th>
+              <br>
+            </tr>
+        </thead>
+        <tbody>
+            {% for Movie in movie_list %}
+            <tr>
+                <td> {{ Movie.name }} </td>
+                <td> {{ Movie.rating }} </td>
+                <td> {{ Movie.duration }} </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
 </div>
 
 {% endblock %}
