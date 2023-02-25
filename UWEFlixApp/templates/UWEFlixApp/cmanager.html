@@ -1,0 +1,13 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+<div class="m-auto border-4 w-4/5" >
+        
+    <h1 class="text-2xl text-center">Cinema Manager View</h1>
+
+
+    <a href="{% url 'list-movies'%}" class="text-lg m-1.5 justify-left">View/Edit Movie Data</a> <br/>
+    <a href='#' class="text-lg m-1.5 justify-right">View/Edit Screen Data</a>
+    
+</div>
+{% endblock %}

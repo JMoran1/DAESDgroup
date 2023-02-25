@@ -17,6 +17,8 @@ club_list_view = views.ViewClubs.as_view(
 
 urlpatterns = [
     path("", views.home, name="home"),
+    path("cinema_manager_view", views.cinema_manager_view, name="cinema_manager_view"),
+    path('list-movies/', views.list_movies, name="list-movies"),
     path("view_monthly_statement/", monthly_statement_list_view, name="view_monthly_statement"),
     path("create_club/", views.create_club, name="create_club"),
     path("view_clubs/", club_list_view, name="view_clubs"),

@@ -1,12 +1,19 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import MonthlyStatement, Club
+from .models import MonthlyStatement, Club, Movie
 from .forms import ClubForm
 
 def home(request):
     return render(request, "UWEFlixApp/test.html")
 
+def cinema_manager_view(request):
+    return render(request, "UWEFlixApp/cmanager.html")
+
+def list_movies(request):
+    movie_list = Movie.objects.all()
+    return render(request, 'UWEFlixApp/view_movies.html', {'movie_list':movie_list})
+    
 def create_club(request):
     form = ClubForm(request.POST or None)
 
@@ -38,7 +45,7 @@ class ViewClubs(ListView):
     def get_context_data(self, **kwargs):
         context = super(ViewClubs, self).get_context_data(**kwargs)
         return context
-
+        
 class ViewMonthlyStatement(ListView):
     model = MonthlyStatement
 
