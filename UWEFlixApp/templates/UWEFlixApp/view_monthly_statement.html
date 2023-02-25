@@ -17,10 +17,10 @@
         <tbody>
             {% for statement in monthly_statement_list %}
             <tr>
-                <td> {{ statement.statementID }}</td>
-                <td> {{ statement.clubID }}</td>
-                <td> {{ statement.statementDate }}</td>
-                <td> {{ statement.statementAmount }}</td>
+                <td> {{ statement.id }}</td>
+                <td> {{ statement.club }}</td>
+                <td> {{ statement.date }}</td>
+                <td> {{ statement.amount }}</td>
             </tr>
             {% endfor %}
         </tbody>
