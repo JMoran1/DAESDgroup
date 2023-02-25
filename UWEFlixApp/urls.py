@@ -11,6 +11,6 @@ home_list_view = views.ViewMonthlyStatement.as_view(
 urlpatterns = [
     path("", views.home, name="home"),
     path("view_monthly_statement/", home_list_view, name="view_monthly_statement"),
-    path("cman", views.c_man, name="c_man"),
+    path("cinema_manager_view", views.cinema_manager_view, name="cinema_manager_view"),
     path('list-movies/', views.list_movies, name="list-movies"),
 ]

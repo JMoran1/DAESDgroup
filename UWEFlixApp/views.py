@@ -6,7 +6,7 @@ from .models import MonthlyStatement, Movie
 def home(request):
     return render(request, "UWEFlixApp/test.html")
 
-def c_man(request):
+def cinema_manager_view(request):
     return render(request, "UWEFlixApp/cmanager.html")
 
 def list_movies(request):
