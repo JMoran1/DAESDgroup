@@ -10,16 +10,17 @@ def home(request):
 def cinema_manager_view(request):
     return render(request, "UWEFlixApp/cmanager.html")
 
-#def list_movies(request):
-    #movie_list = Movie.objects.all()
-    #return render(request, 'UWEFlixApp/view_movies.html', {'movie_list':movie_list})
-
 class ViewMovie(ListView):
     model = Movie
 
     def get_context_data(self, **kwargs):
         context = super(ViewMovie, self).get_context_data(**kwargs)
         return context
+    
+def delete_movie(request, pk):
+    movie = Movie.objects.get(pk=pk)
+    movie.delete()
+    return redirect("list-movies")
     
 def update_movie(request, pk):
     club = Movie.objects.get(pk=pk)
