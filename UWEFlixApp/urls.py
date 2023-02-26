@@ -1,6 +1,6 @@
 from django.urls import path
 from UWEFlixApp import views
-from .models import MonthlyStatement, Club
+from .models import MonthlyStatement, Club, Movie
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
@@ -15,11 +15,19 @@ club_list_view = views.ViewClubs.as_view(
     template_name="UWEFlixApp/view_clubs.html",
 )
 
+
+movie_list_view = views.ViewMovie.as_view(
+    queryset=Movie.objects.order_by("id")[:5],
+    context_object_name="movie_list",
+    template_name="UWEFlixApp/view_movies.html",
+)
+
+
 urlpatterns = [
     path("", views.home, name="home"),
-    path("view_monthly_statement/", home_list_view, name="view_monthly_statement"),
     path("cinema_manager_view", views.cinema_manager_view, name="cinema_manager_view"),
-    path('list-movies/', views.list_movies, name="list-movies"),
+    path('list-movies/', movie_list_view, name="list-movies"),
+    path('update_movie/<int:pk>/', views.update_movie, name="update_movie"),
     path("view_monthly_statement/", monthly_statement_list_view, name="view_monthly_statement"),
     path("create_club/", views.create_club, name="create_club"),
     path("view_clubs/", club_list_view, name="view_clubs"),
