@@ -1,9 +1,12 @@
 {% extends "UWEFlixApp/base.html" %}
 
 {% block content %}
+<div class="m-auto w-4/5 text-center" >  
     <form method="POST" class="log-form">
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit" class="save btn btn-default">{{ button_text }}</button>
     </form>
+</div>
 {% endblock %}
+

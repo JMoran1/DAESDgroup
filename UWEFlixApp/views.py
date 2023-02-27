@@ -1,8 +1,8 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import MonthlyStatement, Club, Movie
-from .forms import ClubForm, MovieForm
+from .models import MonthlyStatement, Club, Movie, Screen
+from .forms import ClubForm, MovieForm, ScreenForm
 
 def home(request):
     return render(request, "UWEFlixApp/test.html")
@@ -83,6 +83,12 @@ class ViewMovie(ListView):
         context = super(ViewMovie, self).get_context_data(**kwargs)
         return context
     
+class ViewScreen(ListView):
+    model = Screen
+
+    def get_context_data(self, **kwargs):
+        context = super(ViewScreen, self).get_context_data(**kwargs)
+        return context
     
 def edit_movie(request, Movie_id):
     movie = Movie.objects.get(pk=Movie_id)
@@ -91,3 +97,44 @@ def edit_movie(request, Movie_id):
         form.save()
         return redirect('home')
     return render(request, 'hello/edit_movie.html', {'movie':movie, 'form':form})
+
+def create_screen(request):
+    if request.method == 'POST':
+        form = ScreenForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('list-screen')
+    else:
+        form = ScreenForm()
+   
+    return render(request, 'UWEFlixApp/create_screen.html', {'form': form})
+
+def create_movie(request):
+    form = MovieForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('list-movies')
+    return render(request, "UWEFlixApp/create_movie_form.html", {"form": form, "button_text": "Create Movie"})
+
+
+# In progress
+def createshowings(request):
+    
+    return render(request,"UWEFlixApp/test.html")
+
+def delete_screen(request, pk):
+    screen = Screen.objects.get(pk=pk)
+    screen.delete()
+    return redirect("list-screen")
+    
+def update_screen(request, pk):
+    club = Screen.objects.get(pk=pk)
+    form = ScreenForm(request.POST or None, instance=club)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    return render(request, "UWEFlixApp/edit_screen.html", {"form": form, "button_text": "Update Screen"})
