@@ -10,6 +10,9 @@ def home(request):
 def cinema_manager_view(request):
     return render(request, "UWEFlixApp/cmanager.html")
 
+def booking_start(request):
+    return render(request, "UWEFlixApp/booking.html")
+
 def delete_movie(request, pk):
     movie = Movie.objects.get(pk=pk)
     movie.delete()
@@ -83,7 +86,7 @@ class ViewMovie(ListView):
         context = super(ViewMovie, self).get_context_data(**kwargs)
         return context
     
-    
+
 def edit_movie(request, Movie_id):
     movie = Movie.objects.get(pk=Movie_id)
     form = MovieForm(request.POST or None, instance=movie)

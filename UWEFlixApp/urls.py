@@ -35,4 +35,5 @@ urlpatterns = [
     path("view_clubs/", club_list_view, name="view_clubs"),
     path("update_club/<int:pk>/", views.update_club, name="update_club"),
     path("delete_club/<int:pk>/", views.delete_club, name="delete_club"),
+    path("booking_start/", views.booking_start, name="booking_start"),
 ]
