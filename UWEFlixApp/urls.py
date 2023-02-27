@@ -29,6 +29,7 @@ urlpatterns = [
     path('list-movies/', movie_list_view, name="list-movies"),
     path('update_movie/<int:pk>/    ', views.update_movie, name="update_movie"),
     path('delete_movie/<int:pk>/', views.delete_movie, name="delete_movie"),
+    path("create_movie/", views.create_movie, name="create_movie"),
     path("view_monthly_statement/", monthly_statement_list_view, name="view_monthly_statement"),
     path("create_club/", views.create_club, name="create_club"),
     path("view_clubs/", club_list_view, name="view_clubs"),

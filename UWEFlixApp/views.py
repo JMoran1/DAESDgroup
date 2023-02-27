@@ -10,13 +10,6 @@ def home(request):
 def cinema_manager_view(request):
     return render(request, "UWEFlixApp/cmanager.html")
 
-class ViewMovie(ListView):
-    model = Movie
-
-    def get_context_data(self, **kwargs):
-        context = super(ViewMovie, self).get_context_data(**kwargs)
-        return context
-    
 def delete_movie(request, pk):
     movie = Movie.objects.get(pk=pk)
     movie.delete()
@@ -40,6 +33,16 @@ def create_club(request):
             form.save()
             return redirect('home')
     return render(request, "UWEFlixApp/create_club_form.html", {"form": form, "button_text": "Create Club"})
+
+
+def create_movie(request):
+    form = MovieForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    return render(request, "UWEFlixApp/create_movie_form.html", {"form": form, "button_text": "Create Movie"})
 
 def update_club(request, pk):
     club = Club.objects.get(pk=pk)
@@ -70,6 +73,16 @@ class ViewMonthlyStatement(ListView):
     def get_context_data(self, **kwargs):
         context = super(ViewMonthlyStatement, self).get_context_data(**kwargs)
         return context
+    
+
+
+class ViewMovie(ListView):
+    model = Movie
+
+    def get_context_data(self, **kwargs):
+        context = super(ViewMovie, self).get_context_data(**kwargs)
+        return context
+    
     
 def edit_movie(request, Movie_id):
     movie = Movie.objects.get(pk=Movie_id)
