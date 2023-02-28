@@ -1,14 +1,27 @@
 {% extends "UWEFlixApp/base.html" %}
 
 {% block content %}
-<div class="m-auto border-4 w-4/5" >    
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+
+<h2>Screens</h2>
+
+<div class="w-75 m-auto" >    
     <h1 class="text-2xl text-center">View All Screens</h1>
-    <table class="table-auto m-auto">
+    <table class="table table-hover">
         <thead>
             <tr>
               <th> Screen name  </th>
               <th> Screen Description</th>
               <th> Screen Capacity </th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th></th>
               <br>
             </tr>
         </thead>
@@ -18,8 +31,8 @@
                 <td> {{ Screen.name }} </td> 
                 <td> {{ Screen.description }} </td>
                 <td> {{ Screen.capacity }} </td>
-                <td><a href="{% url 'update_screen' Screen.id %}"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"> Edit </button></a> <td>
-                <td><a href="{% url 'delete_screen' Screen.id %}"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Delete</button></a>  </td>
+                <td><a href="{% url 'update_screen' Screen.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
+                <td><a href="{% url 'delete_screen' Screen.id %}"><button class="btn btn-danger">Delete</button></a>  </td>
             </tr>
             {% endfor %}
         </tbody>
