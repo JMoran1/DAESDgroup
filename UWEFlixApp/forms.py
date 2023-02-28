@@ -21,7 +21,20 @@ class MovieForm(forms.ModelForm):
         model = Movie
         fields = ('name', 'duration', 'rating')
 
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'duration': forms.TextInput(attrs={'class': 'form-control'}),
+            'rating': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
 class ScreenForm(forms.ModelForm):
     class Meta:
         model = Screen
-        fields = ('name','description', 'capacity')
+        fields = ('name', 'description', 'capacity')
+
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'description': forms.TextInput(attrs={'class': 'form-control'}),
+            'capacity': forms.TextInput(attrs={'class': 'form-control'}),
+        }
