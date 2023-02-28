@@ -12,8 +12,6 @@ class MovieForm(forms.ModelForm):
         model = Movie
         fields = ('name', 'duration', 'rating')
 
-
-
 class ScreenForm(forms.ModelForm):
     class Meta:
         model = Screen
