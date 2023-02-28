@@ -5,7 +5,7 @@ from .models import MonthlyStatement, Club, Movie, Screen
 from .forms import ClubForm, MovieForm, ScreenForm
 
 def home(request):
-    return render(request, "UWEFlixApp/base.html")
+    return render(request, "UWEFlixApp/test.html")
 
 def cinema_manager_view(request):
     return render(request, "UWEFlixApp/cmanager.html")

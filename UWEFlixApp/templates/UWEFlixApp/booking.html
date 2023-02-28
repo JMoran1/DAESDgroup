@@ -1,11 +1,45 @@
 {% extends "UWEFlixApp/base.html" %}
 
 {% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+
 <div class="m-auto border-4 w-4/5" >
         
     <h1 class="text-2xl text-center">UWEFlix Booking</h1>
     <p class="text-center">Please select a film from below to see screenings</p>
 
-    
+
+    <div class="w-75 m-auto">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>Movie name</th>
+                    <th>Rating</th>
+                    <th>Duration</th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for Movie in movie_list %}
+                <tr>
+                    <td> {{ Movie.name }} </td> 
+                    <td> {{ Movie.rating }} </td>
+                    <td> {{ Movie.duration }} </td>
+                    <!-- Will need to update this button to the correct function once built. -->
+                    <td><a href="{% url 'update_movie' Movie.id %}"><button class="btn btn-success"> View Screenings </button></a> <td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+        
 </div>
 {% endblock %}
