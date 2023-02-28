@@ -6,6 +6,15 @@ class ClubForm(forms.ModelForm):
         model = Club
         fields = ('name', 'card_number', 'card_expiry', 'discount_rate', 'address')
 
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'card_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'card_expiry': forms.TextInput(attrs={'class': 'form-control'}),
+            'discount_rate': forms.TextInput(attrs={'class': 'form-control'}),
+            'address': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+
+
         
 class MovieForm(forms.ModelForm):
     class Meta:
