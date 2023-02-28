@@ -27,7 +27,7 @@
             <tr>
                 <td> {{ Movie.name }} </td> 
                 <td> {{ Movie.rating }} </td>
-                <td> {{ Movie.duration }} </td>
+                <td> {{ Movie.duration }} mins </td>
                 <td><a href="{% url 'update_movie' Movie.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
                 <td><a href="{% url 'delete_movie' Movie.id %}"><button class="btn btn-danger">Delete</button></a>
             </tr>
