@@ -6,22 +6,26 @@
     <table class="table-auto m-auto">
         <thead>
             <tr>
-              <th> Movie name : </th>
-              <th> Movie Rating:</th>
-              <th> Movie Duration: </th>
+              <th> Movie name  </th>
+              <th> Movie Rating</th>
+              <th> Movie Duration </th>
               <br>
             </tr>
         </thead>
         <tbody>
             {% for Movie in movie_list %}
             <tr>
-                <td> {{ Movie.name }} </td>
+                <td> {{ Movie.name }} </td> 
                 <td> {{ Movie.rating }} </td>
                 <td> {{ Movie.duration }} </td>
+                <td><a href="{% url 'update_movie' Movie.id %}"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"> Edit </button></a> <td>
+                <td><a href="{% url 'delete_movie' Movie.id %}"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Delete</button></a>
             </tr>
             {% endfor %}
         </tbody>
         </table>
 </div>
+<a href="{% url 'create_movie' %}" class="float-right mr-64"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Create new movie</button></a>
+        
 
 {% endblock %}
