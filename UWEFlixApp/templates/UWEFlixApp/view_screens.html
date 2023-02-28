@@ -1,0 +1,31 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+<div class="m-auto border-4 w-4/5" >    
+    <h1 class="text-2xl text-center">View All Screens</h1>
+    <table class="table-auto m-auto">
+        <thead>
+            <tr>
+              <th> Screen name  </th>
+              <th> Screen Description</th>
+              <th> Screen Capacity </th>
+              <br>
+            </tr>
+        </thead>
+        <tbody>
+            {% for Screen in screen_list %}
+            <tr>
+                <td> {{ Screen.name }} </td> 
+                <td> {{ Screen.description }} </td>
+                <td> {{ Screen.capacity }} </td>
+                <td><a href="{% url 'update_screen' Screen.id %}"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"> Edit </button></a> <td>
+                <td><a href="{% url 'delete_screen' Screen.id %}"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Delete</button></a>  </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+</div>
+<a href="{% url 'create_screen' %}" class="float-right mr-64"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Create new screen</button></a>
+        
+
+{% endblock %}

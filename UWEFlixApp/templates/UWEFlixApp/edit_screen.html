@@ -1,0 +1,36 @@
+{% extends "UWEFlixApp/base.html" %}
+{% block title %}
+Home
+{% endblock %}
+{% block content %}
+<div class="m-auto border-4 w-4/5" >    
+    <h1 class="text-2xl text-center">Cinema Manager View</h1>
+        <table class="table-auto m-auto">
+            <thead>
+                <tr>
+                <th> Screen name  </th>
+                <th> Screen Rating</th>
+                <th> Screen Duration </th>
+                <br>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td> {{ Screen.name }} </td> 
+                    <td> {{ Screen.rating }} </td>
+                    <td> {{ Screen.duration }} </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="m-auto w-4/5 text-center" >    
+            <form class="w-full max-w-lg"  method="POST" action="">
+                {% csrf_token %}
+                {{form.as_p}}
+                <input type="submit" value="Submit" />
+            </form>
+        </div>
+            
+</div>
+
+
+{% endblock %}
