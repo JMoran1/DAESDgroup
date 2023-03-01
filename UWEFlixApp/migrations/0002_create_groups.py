@@ -9,7 +9,7 @@ def create_groups(apps, schema_editor):
     Group.objects.bulk_create(
         (
             Group(name='Cinema Manager'),
-            Group(name='Accounts Manager'),
+            Group(name='Account Manager'),
             Group(name='Club Representative'),
             Group(name='Customer')
         )
