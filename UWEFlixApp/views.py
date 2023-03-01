@@ -110,7 +110,7 @@ def create_screen(request):
     else:
         form = ScreenForm()
    
-    return render(request, 'UWEFlixApp/create_screen.html', {'form': form})
+    return render(request, 'UWEFlixApp/create_screen.html', {'form': form, "button_text": "Create Screen"})
 
 def create_movie(request):
     form = MovieForm(request.POST or None)

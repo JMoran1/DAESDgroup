@@ -23,11 +23,20 @@ movie_list_view = views.ViewMovie.as_view(
 )
 
 
+movie_list_booking = views.ViewMovie.as_view(
+    queryset=Movie.objects.order_by("id")[:5],
+    context_object_name="movie_list",
+    template_name="UWEFlixApp/booking.html",
+)
+
+
 screen_list_view = views.ViewMovie.as_view(
     queryset=Screen.objects.order_by("id")[:5],
     context_object_name="screen_list",
     template_name="UWEFlixApp/view_screens.html",
 )
+
+
 
 
 urlpatterns = [
@@ -44,7 +53,7 @@ urlpatterns = [
     path('create_screen/', views.create_screen, name='create_screen'),
     path("update_club/<int:pk>/", views.update_club, name="update_club"),
     path("delete_club/<int:pk>/", views.delete_club, name="delete_club"),
-    path("booking_start/", views.booking_start, name="booking_start"),
+    path("booking_start/", movie_list_booking, name="booking_start"),
     path('update_screen/<int:pk>/    ', views.update_screen, name="update_screen"),
     path('delete_screen/<int:pk>/', views.delete_screen, name="delete_screen"),
 ]
