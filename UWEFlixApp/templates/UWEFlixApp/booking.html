@@ -32,7 +32,7 @@
                 <tr>
                     <td> {{ Movie.name }} </td> 
                     <td> {{ Movie.rating }} </td>
-                    <td> {{ Movie.duration }} mins </td>
+                    <td> {{ Movie.minutes_long }} mins </td>
                     <!-- Will need to update this button to the correct function once built. -->
                     <td><a href="{% url 'update_movie' Movie.id %}"><button class="btn btn-success"> View Screenings </button></a> <td>
                 </tr>
