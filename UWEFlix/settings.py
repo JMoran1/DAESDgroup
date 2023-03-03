@@ -85,11 +85,10 @@ WSGI_APPLICATION = 'UWEFlix.wsgi.application'
 #         'PORT': '3306',  
 #     }
 # }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': 'daesd.sqlite3',
     }
 }
 
@@ -133,3 +132,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# we are using a custom User model so we can add extra fields to Django's one
+# https://docs.djangoproject.com/en/4.1/topics/auth/customizing/#auth-custom-user
+AUTH_USER_MODEL = 'UWEFlixApp.User'
