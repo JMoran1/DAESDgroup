@@ -337,4 +337,4 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/python,django,linux,macos,windows
 
 # XXX: just because Josh is currently using sqlite3 right now and doesn't want to commit his DB file
-*.sqlite3
+*.sqlite3*
