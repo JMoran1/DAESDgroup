@@ -22,19 +22,29 @@ class User(AbstractUser):
         """
         return Group.objects.filter(name__in=(r.label for r in cls.Role))
 
+    @classmethod
+    def sanitise_groups(cls, group_qs, role):
+        """
+        Sanitises a given Group Many-to-Many manager queryset to make sure it
+        only contains Role-Groups for the given role
+        """
+        # query current group because we'll reuse it a few times
+        current_group = Group.objects.get(name=role.label)
+        # drop any inadvertently-added invalid Role-Groups
+        groups_excluding_invalid_roles = group_qs.exclude(
+            id__in=User.get_role_groups().exclude(id=current_group.id)
+        )
+        # force the inclusion of the valid Role-Group in case it was removed
+        groups_excluding_invalid_roles |= Group.objects.filter(id=current_group.id)
+        return groups_excluding_invalid_roles
+
     def set_correct_groups_for_role(self):
         """
         the easiest way is to just go through the list of Groups for this User
         that are Role Groups and make sure that it only consists of one Group,
         the one for the current Role
         """
-        # query current group because we'll reuse it a few times
-        current_group = Group.objects.get(name=self.role.label)
-        # drop any Groups which are User Role Groups not for our User Role
-        self.groups.remove(*Group.objects.exclude(id=current_group.id).union(User.get_role_groups()))
-        # make sure our groups include the Group for this User Role
-        if not self.groups.contains(current_group):
-            self.groups.add(current_group)
+        self.groups.set(User.sanitise_groups(self.groups, User.Role(self.role)))
 
     def save(self, *args, **kwargs):
         """
