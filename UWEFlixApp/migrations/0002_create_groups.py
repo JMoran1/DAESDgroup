@@ -4,23 +4,24 @@
 from django.db import migrations
 
 
+# tuple of "special" Group names to be used for Roles
+ROLE_GROUPS = (
+    'Cinema Manager',
+    'Account Manager',
+    'Club Representative',
+    'Customer',
+)
+
 def create_groups(apps, schema_editor):
     Group = apps.get_model('auth', 'Group')  # django.contrib.auth.models.Group
-    Group.objects.bulk_create(
-        (
-            Group(name='Cinema Manager'),
-            Group(name='Account Manager'),
-            Group(name='Club Representative'),
-            Group(name='Customer')
-        )
-    )
+    Group.objects.bulk_create(Group(name=n) for n in ROLE_GROUPS)
 
 def delete_groups(apps, schema_editor):
     """
     Reverse migration in case anyone ever needs to undo this one for some reason
     """
     Group = apps.get_model('auth', 'Group')  # django.contrib.auth.models.Group
-    Group.objects.all().delete()
+    Group.objects.filter(name__in=ROLE_GROUPS).delete()
 
 class Migration(migrations.Migration):
 
