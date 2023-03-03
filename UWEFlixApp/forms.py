@@ -11,7 +11,7 @@ class ClubForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'card_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'card_expiry': forms.TextInput(attrs={'class': 'form-control'}),
+            'card_expiry': forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}),
             'discount_rate': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
         }
