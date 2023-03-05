@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib import admin
 from UWEFlixApp.models import Club, Movie, Screen, User
-
+from .check_luhn import check_luhn
+from datetime import datetime
 
 class ClubForm(forms.ModelForm):
     class Meta:
@@ -15,6 +16,20 @@ class ClubForm(forms.ModelForm):
             'discount_rate': forms.TextInput(attrs={'class': 'form-control'}),
             'address': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    
+    error_css_class = 'text-danger'
+
+    def clean_card_number(self):
+        card_number = self.cleaned_data['card_number']
+        if not check_luhn(card_number):
+            raise forms.ValidationError("Card number is not valid")
+        return card_number
+    
+    def clean_card_expiry(self):
+        expiry = self.cleaned_data['card_expiry']
+        if expiry < datetime.datetime.now():
+            raise forms.ValidationError("Card has expired")
+        return expiry
 
 
 class MovieForm(forms.ModelForm):
@@ -39,6 +54,17 @@ class ScreenForm(forms.ModelForm):
             'description': forms.TextInput(attrs={'class': 'form-control'}),
             'capacity': forms.TextInput(attrs={'class': 'form-control'}),
         }
+    def clean_name(self):
+            name = self.cleaned_data['name']
+            if len(name) < 1:
+                raise forms.ValidationError("Screen name must be at greater than 0 characters long")
+            return name
+
+    def clean_capacity(self):
+        capacity = self.cleaned_data['capacity']
+        if capacity < 1:
+            raise forms.ValidationError("Capacity must be greater than 0")
+        return capacity
 
 
 class UserForm(forms.ModelForm):
