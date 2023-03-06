@@ -56,3 +56,7 @@ class UserForm(forms.ModelForm):
 
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
