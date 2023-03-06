@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from .models import MonthlyStatement, Club
+from UWEFlixApp.models import MonthlyStatement, Club
 
 class HomePageTests(TestCase):
     def test_home_page_status_code(self):
