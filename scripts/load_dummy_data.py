@@ -61,7 +61,7 @@ def create_random_screening(movie, screen):
 def create_random_booking(screening):
     screening = screening 
     number_of_tickets = randint(0, 10)
-    booking = Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, num_total = number_of_tickets)
+    booking = Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets)
     return booking
 
 def run():
