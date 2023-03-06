@@ -1,0 +1,10 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+
+{% for showing in showing_list %}
+<p>{{showing.showing_at}}</p>
+<p></p>
+{% endfor %}
+
+{% endblock %}

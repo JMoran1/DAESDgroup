@@ -13,4 +13,4 @@ class Screening(models.Model):
     seats_remaining = models.IntegerField()
 
     def __str__(self):
-        return str(self.screeningID) 
+        return str(self.id)

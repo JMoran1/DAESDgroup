@@ -79,8 +79,9 @@ def run():
         screen = create_random_screen()
         screen.save()
         # Create a Screening
-        screening = create_random_screening(movie, screen)
-        screening.save()
+        for _ in range(10):
+            screening = create_random_screening(movie, screen)
+            screening.save()
         # Create a Booking
         booking = create_random_booking(screening)
         booking.save()

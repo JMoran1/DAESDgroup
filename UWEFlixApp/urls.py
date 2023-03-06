@@ -26,8 +26,8 @@ movie_list_view = views.ViewMovie.as_view(
 movie_list_booking = views.ViewMovie.as_view(
     queryset=Movie.objects.order_by("id")[:5],
     context_object_name="movie_list",
-    template_name="UWEFlixApp/booking.html",
-)
+    template_name="UWEFlixApp/cust_pick_film.html",
+) # This was linking to booking.html
 
 
 screen_list_view = views.ViewMovie.as_view(
@@ -56,4 +56,5 @@ urlpatterns = [
     path("booking_start/", movie_list_booking, name="booking_start"),
     path('update_screen/<int:pk>/    ', views.update_screen, name="update_screen"),
     path('delete_screen/<int:pk>/', views.delete_screen, name="delete_screen"),
+    path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
 ]

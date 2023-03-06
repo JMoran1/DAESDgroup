@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import MonthlyStatement, Club, Movie, Screen
+from .models import MonthlyStatement, Club, Movie, Screen, Screening
 from .forms import ClubForm, MovieForm, ScreenForm
 
 def home(request):
@@ -141,3 +141,9 @@ def update_screen(request, pk):
             form.save()
             return redirect('home')
     return render(request, "UWEFlixApp/edit_screen.html", {"form": form, "button_text": "Update Screen"})
+
+def show_screening(request, pk):
+    """Takes the pk of a movie and returns a list of screenings for that movie"""
+    movie = Movie.objects.get(pk=pk)
+    screening = Screening.objects.filter(movie=movie)
+    return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening})
