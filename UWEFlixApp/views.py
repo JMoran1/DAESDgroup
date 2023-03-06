@@ -150,5 +150,7 @@ def show_screening(request, pk):
     screenings = []
     for s in screening:
         screenings.append(s.showing_at)
-
+    
+    # Sort the list of screenings by date
+    screenings.sort()
     return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screenings})
