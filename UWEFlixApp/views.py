@@ -147,10 +147,4 @@ def show_screening(request, pk):
     movie = Movie.objects.get(pk=pk)
     # get screening object from movie
     screening = Screening.objects.filter(movie=movie)
-    # screenings = []
-    # for s in screening:
-    #     screenings.append(s.showing_at)
-    
-    # # Sort the list of screenings by date
-    # screenings.sort()
     return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening})
