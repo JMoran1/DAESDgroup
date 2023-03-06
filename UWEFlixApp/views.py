@@ -143,8 +143,7 @@ def update_screen(request, pk):
     return render(request, "UWEFlixApp/edit_screen.html", {"form": form, "button_text": "Update Screen"})
 
 def show_screening(request, pk):
-    # get movie object from pk
+    """Takes the pk of a movie and returns a list of screenings for that movie"""
     movie = Movie.objects.get(pk=pk)
-    # get screening object from movie
     screening = Screening.objects.filter(movie=movie)
     return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening})
