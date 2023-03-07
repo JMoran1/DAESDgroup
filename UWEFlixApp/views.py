@@ -146,4 +146,4 @@ def show_screening(request, pk):
     """Takes the pk of a movie and returns a list of screenings for that movie"""
     movie = Movie.objects.get(pk=pk)
     screening = Screening.objects.filter(movie=movie)
-    return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening})
+    return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening, "movie": movie})
