@@ -147,3 +147,12 @@ def show_screening(request, pk):
     movie = Movie.objects.get(pk=pk)
     screening = Screening.objects.filter(movie=movie)
     return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening, "movie": movie})
+
+def show_all_screening(request):
+    all_screening = Screening.objects.all()
+    return render(request, "UWEFlixApp/view_screenings.html", {"all_showings": all_screening})
+
+def delete_screening(request, pk):
+    screening = Screening.objects.get(pk=pk)
+    screening.delete()
+    return redirect("show_all_screening")

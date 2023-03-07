@@ -1,6 +1,6 @@
 from django.urls import path
 from UWEFlixApp import views
-from .models import MonthlyStatement, Club, Movie, Screen
+from .models import MonthlyStatement, Club, Movie, Screen, Screening
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
@@ -57,4 +57,6 @@ urlpatterns = [
     path('update_screen/<int:pk>/    ', views.update_screen, name="update_screen"),
     path('delete_screen/<int:pk>/', views.delete_screen, name="delete_screen"),
     path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
+    path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
+    path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
 ]
