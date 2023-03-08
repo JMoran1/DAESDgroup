@@ -169,5 +169,5 @@ def create_monthly_statements(request):
         ms = MonthlyStatement.objects.create(club=club, amount=amount, date = datetime.now())
         ms.save()
 
-    return HttpResponse("Monthly statements created")
+    return redirect("view_monthly_statement")
 
