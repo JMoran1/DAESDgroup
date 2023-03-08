@@ -1,8 +1,9 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import MonthlyStatement, Club, Movie, Screen, Screening
+from .models import MonthlyStatement, Club, Movie, Screen, Screening, Booking
 from .forms import ClubForm, MovieForm, ScreenForm
+from datetime import datetime
 
 def home(request):
     return render(request, "UWEFlixApp/base.html")
@@ -156,3 +157,17 @@ def delete_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
     screening.delete()
     return redirect("show_all_screening")
+
+def create_monthly_statements(request):
+    """Creates a monthly statement for each club in the database"""
+    clubs = Club.objects.all()
+    for club in clubs:
+        bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
+        amount = 0
+        for booking in bookings:
+            amount += booking.total_price
+        ms = MonthlyStatement.objects.create(club=club, amount=amount, date = datetime.now())
+        ms.save()
+
+    return HttpResponse("Monthly statements created")
+
