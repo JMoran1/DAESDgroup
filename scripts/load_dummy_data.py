@@ -58,10 +58,13 @@ def create_random_screening(movie, screen):
     screening = Screening.objects.create(movie=movie, screen=screen, showing_at=showing_at, seats_remaining=seats_available)
     return screening
 
-def create_random_booking(screening):
+def create_random_booking(screening, club):
     screening = screening 
     number_of_tickets = randint(0, 10)
-    booking = Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets)
+    total_price = number_of_tickets * 4.99
+    club = club
+    date = datetime.now().date()
+    booking = Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price, club=club, date=date)
     return booking
 
 def run():
@@ -83,5 +86,6 @@ def run():
             screening = create_random_screening(movie, screen)
             screening.save()
         # Create a Booking
-        booking = create_random_booking(screening)
-        booking.save()
+        for _ in range(3):
+            booking = create_random_booking(screening, club)
+            booking.save()
