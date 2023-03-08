@@ -4,7 +4,7 @@ from .models import MonthlyStatement, Club, Movie, Screen, Screening
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
-    queryset=MonthlyStatement.objects.order_by("id")[:5],  
+    queryset=MonthlyStatement.objects.order_by("id"),  
     context_object_name="monthly_statement_list",
     template_name="UWEFlixApp/view_monthly_statement.html",
 )
