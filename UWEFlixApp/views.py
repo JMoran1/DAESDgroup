@@ -171,3 +171,5 @@ def create_monthly_statements(request):
 
     return redirect("view_monthly_statement")
 
+def account_manager_view(request):
+    return render(request, "UWEFlixApp/account_manager_page.html")
