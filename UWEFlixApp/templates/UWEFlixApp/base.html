@@ -20,16 +20,22 @@
             </a>
           </div>
           <nav class="flex">
+            {% if user.is_authenticated %}
+                <p>Welcome, User {{ user.get_username }}.</p>
+            {% else %}
+                <p>Welcome, Stranger. Please log in!</p>
+            {% endif %}
             <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'home' %}">Home</a>
             <a class="px-12 py-2 text-gray-500 hover:text-black" href="#">Films</a>
             <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'booking_start' %}">Book</a>
             <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'cinema_manager_view' %} ">C-Manager View</a>
-            <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'home' %}">Login</a>
+            <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'login' %}">Login</a>
+            <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'logout' %}">Logout</a>
           </nav>
         </div>
       </header>
       {% block content %}
-    {% endblock %}
+      {% endblock %}
 </body>
 
 </html>

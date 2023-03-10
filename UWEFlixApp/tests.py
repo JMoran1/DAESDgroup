@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.urls import reverse
-from .models import MonthlyStatement, Club
+from .models import MonthlyStatement, Club, User
 
 class HomePageTests(TestCase):
     def test_home_page_status_code(self):
@@ -11,7 +11,17 @@ class HomePageTests(TestCase):
         response = self.client.get(reverse("home"))
         self.assertEqual(response.status_code, 200)
 
+def create_test_user_of_role(role: User.Role):
+    user = User.objects.create(username='winston', role=role)
+    user.set_password('churchill')
+    user.save()
+    return user
+
 class ViewMonthlyStatementTests(TestCase):
+    def setUp(self):
+        self.user = create_test_user_of_role(User.Role.ACCOUNT_MANAGER)
+        self.client.force_login(self.user)
+
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/view_monthly_statement/')
         self.assertEqual(response.status_code, 200)
@@ -25,7 +35,14 @@ class ViewMonthlyStatementTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "UWEFlixApp/view_monthly_statement.html")
 
+    def tearDown(self):
+        self.user.delete()
+
 class CreateClubTests(TestCase):
+    def setUp(self):
+        self.user = create_test_user_of_role(User.Role.CINEMA_MANAGER)
+        self.client.force_login(self.user)
+
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/create_club/')
         self.assertEqual(response.status_code, 200)
@@ -49,3 +66,6 @@ class CreateClubTests(TestCase):
         self.assertEqual(self.post.card_expiry, "2020-12-31")
         self.assertEqual(self.post.discount_rate, 0.1)
         self.assertEqual(self.post.address, "Bristol")
+
+    def tearDown(self):
+        self.user.delete()
