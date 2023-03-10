@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import MonthlyStatement, Club, Movie, Screen, User
+from .models import MonthlyStatement, Club, Movie, Screen, Screening, User
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm
 
 class UserRoleCheck:
