@@ -9,11 +9,20 @@ from .models import MonthlyStatement, Club, Movie, Screen, User
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm
 
 class UserRoleCheck:
-    def __init__(self, role: User.Role):
-        self._role_to_check = role
+    """
+    Custom reusable authentication test for checking User role type(s)
+    Usage: pass User.Role roles to check for in the constructor, e.g:
+    >>> UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER)
+
+    Designed to be used with the @user_passes_test() Django decorator for
+    function-based views, but you can totally call it directly via test_func()
+    in class-based views that inherit UserPassesTestMixin.
+    """
+    def __init__(self, *roles):
+        self._roles_to_check = roles
 
     def __call__(self, user):
-        return hasattr(user, 'role') and user.role == self._role_to_check
+        return hasattr(user, 'role') and user.role in self._roles_to_check
 
 
 def home(request):
@@ -108,7 +117,7 @@ class ViewMonthlyStatement(UserPassesTestMixin, ListView):
         return context
 
     def test_func(self):
-        return UserRoleCheck(User.Role.ACCOUNT_MANAGER)(self.request.user)
+        return UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER)(self.request.user)
 
 
 class ViewMovie(ListView):
