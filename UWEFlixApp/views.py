@@ -216,17 +216,6 @@ def delete_screening(request, pk):
     screening.delete()
     return redirect("show_all_screening")
 
-def login(request):
-    # user = user
-    # form = LoginForm(request.POST or None)
-
-    # if form.is_valid():
-    #     form.save()
-    #     return redirect('home')
-    context = {}
-    context['form'] = LoginForm()
-    return render(request, "UWEFlixApp/login.html", context)
-
 class CustomLoginView(LoginView):
     template_name = 'UWEFlixApp/login.html'
     authentication_form = LoginForm
