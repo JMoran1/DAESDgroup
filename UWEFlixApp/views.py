@@ -106,7 +106,7 @@ class ViewClubs(UserPassesTestMixin, ListView):
         return context
 
     def test_func(self):
-        return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
+        return UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER)(self.request.user)
 
 
 class ViewMonthlyStatement(UserPassesTestMixin, ListView):
