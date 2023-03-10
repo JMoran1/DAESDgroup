@@ -59,4 +59,6 @@ urlpatterns = [
     path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
     path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
-    path('login/', views.login, name='login'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', views.logout_user, name='logout')
+]
