@@ -209,6 +209,8 @@ def show_all_screening(request):
     all_screening = Screening.objects.all()
     return render(request, "UWEFlixApp/view_screenings.html", {"all_showings": all_screening})
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def delete_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
     screening.delete()
