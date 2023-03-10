@@ -1,5 +1,6 @@
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
@@ -12,7 +13,7 @@ class UserRoleCheck:
         self._role_to_check = role
 
     def __call__(self, user):
-        return user.role == self._role_to_check
+        return hasattr(user, 'role') and user.role == self._role_to_check
 
 
 def home(request):
@@ -88,20 +89,26 @@ def delete_club(request, pk):
     return redirect("view_clubs")
 
 
-class ViewClubs(ListView):
+class ViewClubs(UserPassesTestMixin, ListView):
     model = Club
 
     def get_context_data(self, **kwargs):
         context = super(ViewClubs, self).get_context_data(**kwargs)
         return context
 
+    def test_func(self):
+        return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
 
-class ViewMonthlyStatement(ListView):
+
+class ViewMonthlyStatement(UserPassesTestMixin, ListView):
     model = MonthlyStatement
 
     def get_context_data(self, **kwargs):
         context = super(ViewMonthlyStatement, self).get_context_data(**kwargs)
         return context
+
+    def test_func(self):
+        return UserRoleCheck(User.Role.ACCOUNT_MANAGER)(self.request.user)
 
 
 class ViewMovie(ListView):
@@ -112,12 +119,15 @@ class ViewMovie(ListView):
         return context
 
 
-class ViewScreen(ListView):
+class ViewScreen(UserPassesTestMixin, ListView):
     model = Screen
 
     def get_context_data(self, **kwargs):
         context = super(ViewScreen, self).get_context_data(**kwargs)
         return context
+
+    def test_func(self):
+        return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
