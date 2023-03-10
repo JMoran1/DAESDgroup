@@ -91,7 +91,7 @@ def update_club(request, pk):
     return render(request, "UWEFlixApp/create_club_form.html", {"form": form, "button_text": "Update Club"})
 
 @login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def delete_club(request, pk):
     club = Club.objects.get(pk=pk)
     club.delete()
