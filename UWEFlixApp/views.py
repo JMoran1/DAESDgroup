@@ -57,7 +57,7 @@ def update_movie(request, pk):
     return render(request, "UWEFlixApp/edit_movie.html", {"form": form, "button_text": "Update Movie"})
 
 @login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def create_club(request):
     form = ClubForm(request.POST or None)
 
