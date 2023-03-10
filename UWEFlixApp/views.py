@@ -79,7 +79,7 @@ def create_movie(request):
     return render(request, "UWEFlixApp/create_movie_form.html", {"form": form, "button_text": "Create Movie"})
 
 @login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def update_club(request, pk):
     club = Club.objects.get(pk=pk)
     form = ClubForm(request.POST or None, instance=club)
