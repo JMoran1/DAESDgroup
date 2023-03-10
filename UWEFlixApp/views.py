@@ -181,17 +181,6 @@ def update_screen(request, pk):
             return redirect('home')
     return render(request, "UWEFlixApp/edit_screen.html", {"form": form, "button_text": "Update Screen"})
 
-def login(request):
-    # user = user
-    # form = LoginForm(request.POST or None)
-
-    # if form.is_valid():
-    #     form.save()
-    #     return redirect('home')
-    context = {}
-    context['form'] = LoginForm()
-    return render(request, "UWEFlixApp/login.html", context)
-
 class CustomLoginView(LoginView):
     template_name = 'UWEFlixApp/login.html'
     authentication_form = LoginForm
