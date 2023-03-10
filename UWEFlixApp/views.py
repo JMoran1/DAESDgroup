@@ -147,6 +147,34 @@ def show_screening(request, pk):
     """Takes the pk of a movie and returns a list of screenings for that movie"""
     movie = Movie.objects.get(pk=pk)
     screening = Screening.objects.filter(movie=movie)
+
+    screening = sorted(screening, key=lambda x: x.showing_at)
+
+    # days = []
+    # for show in screening:
+    #     if show.showing_at not in days:
+    #         days.append(show.showing_at)
+
+    # screening_dict = {}
+    # for day in days:
+    #     screening_dict[day] = []
+    #     for show in screening:
+    #         if show.showing_at == day:
+    #             screening_dict[day].append(show)
+    dates = []
+    screening_dict = {}
+    for show in screening:
+        date = show.showing_at
+        date = date.strftime("%d/%m/%Y")
+        if date not in dates:
+            dates.append(date)
+            screening_dict[date] = []
+        screening_dict[date].append(show)
+    print(screening_dict)
+
+    
+
+    return render(request, "UWEFlixApp/show_movie_screenings_with_tabs.html", {"showing_list": screening, "movie": movie, "screening_dict": screening_dict})
     return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening, "movie": movie})
 
 def show_all_screening(request):
