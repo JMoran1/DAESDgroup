@@ -2,7 +2,7 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
 from .models import MonthlyStatement, Club, Movie, Screen, Screening
-from .forms import ClubForm, MovieForm, ScreenForm
+from .forms import ClubForm, MovieForm, ScreenForm , ShowingForm
 
 def home(request):
     return render(request, "UWEFlixApp/base.html")
@@ -123,9 +123,32 @@ def create_movie(request):
 
 
 # In progress
-def createshowings(request):
-    
-    return render(request,"UWEFlixApp/test.html")
+def create_showing(request):
+    # Retrieve all movies and screens from the database
+    movies = Movie.objects.all()
+    screens = Screen.objects.all()
+    print(movies)
+    print(screens)
+
+    if request.method == 'POST':
+        # Retrieve the selected movie, screen, and start time from the form
+        movie_id = request.POST.get('movie')
+        screen_id = request.POST.get('screen')
+        start_time = request.POST.get('start_time')
+
+        # Create a new Showing object with the selected movie, screen, and start time
+        movie = Movie.objects.get(id=movie_id)
+        screen = Screen.objects.get(id=screen_id)
+        showings = showings.objects.create(movie=movie, screen=screen, start_time=start_time)
+
+        # Redirect to the list of showings for the selected movie
+        return redirect('movie-detail', pk=movie_id)
+
+    context = {
+        'movies': movies,
+        'screens': screens,
+    }
+    return render(request, 'UWEFlixApp/create_showing.html', context)
 
 def delete_screen(request, pk):
     screen = Screen.objects.get(pk=pk)
@@ -156,3 +179,13 @@ def delete_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
     screening.delete()
     return redirect("show_all_screening")
+
+def saveshowing(request):
+    if request.method == 'POST':
+        form = ShowingForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('createshowings')
+    else:
+        form = ShowingForm()
+    return render(request, 'UWEFlixApp/create_showing.html', {'form': form})

@@ -59,4 +59,6 @@ urlpatterns = [
     path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
     path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
+    path('createshowings/', views.create_showing, name='createshowings'),
+    path('saveshowing/', views.saveshowing, name = 'saveshowing')
 ]

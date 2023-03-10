@@ -2,13 +2,17 @@
 
 {% block content %}
 <div class="m-auto  w-4/5" >
-    <div class="m-auto w-2/5 ">
-        <h1 class="text-2xl text-center">Cinema Manager View</h1>
-        <br>
-        <p class="text-center"><a href="{% url 'list-movies' %}" class="justify-center py-2"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Movie Data</button></a></p></br></br>
-        <p class="text-center"><a href="{% url 'list-screen' %}" class="justify-center py-2"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Screen Data</button></a></p></br></br>
-        <p class="text-center"><a href="{% url 'show_all_screening' %}" class="justify-center py-2"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Screening Data</button></a></p>
-            
-    </div>
+        
+    <h1 class="text-2xl text-center">Cinema Manager View</h1>
+
+    <a href="{% url 'list-movies' %}" class="float-right mr-64">
+        <button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Movie Data</button>
+    </a>
+    <a href="{% url 'list-screen' %}" class="float-left ml-64">
+        <button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Screen Data</button>
+    </a>
+    <a href="{% url 'createshowings' %}" class="block mx-auto mt-10">
+        <button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Add Showing</button>
+    </a>
 </div>
 {% endblock %}
