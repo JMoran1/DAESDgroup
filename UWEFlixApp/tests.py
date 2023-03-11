@@ -71,6 +71,10 @@ class CreateClubTests(TestCase):
         self.user.delete()
 
 class AccountManagerTest(TestCase):
+    def setUp(self):
+        self.user = create_test_user_of_role(User.Role.ACCOUNT_MANAGER)
+        self.client.force_login(self.user)
+
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/account_manager')
         self.assertEqual(response.status_code, 200)
@@ -84,7 +88,13 @@ class AccountManagerTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "UWEFlixApp/account_manager_page.html")
 
+    def tearDown(self):
+        self.user.delete()
+
 class CreateMonthlyStatementTest(TestCase):
+    def setUp(self):
+        self.user = create_test_user_of_role(User.Role.ACCOUNT_MANAGER)
+        self.client.force_login(self.user)
 
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/create_monthly_statement')
@@ -94,7 +104,14 @@ class CreateMonthlyStatementTest(TestCase):
         response = self.client.get(reverse("create_monthly_statement"))
         self.assertEqual(response.status_code, 302)
 
+    def tearDown(self):
+        self.user.delete()
+
 class ViewClubsTest(TestCase):
+    def setUp(self):
+        self.user = create_test_user_of_role(User.Role.ACCOUNT_MANAGER)
+        self.client.force_login(self.user)
+
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/view_clubs/')
         self.assertEqual(response.status_code, 200)
@@ -108,7 +125,13 @@ class ViewClubsTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "UWEFlixApp/view_clubs.html")
 
+    def tearDown(self):
+        self.user.delete()
+
 class UpdateClubTest(TestCase):
+    def setUp(self):
+        self.user = create_test_user_of_role(User.Role.ACCOUNT_MANAGER)
+        self.client.force_login(self.user)
 
     def test_view_url_exists_at_desired_location(self):
         response = self.client.get('/update_club/1/')
@@ -129,23 +152,32 @@ class UpdateClubTest(TestCase):
         self.assertEqual(self.post.discount_rate, 0.1)
         self.assertEqual(self.post.address, "Bristol")
 
+    def tearDown(self):
+        self.user.delete()
+
 class DeleteClubTest(TestCase):
+    def setUp(self):
+        self.user = create_test_user_of_role(User.Role.ACCOUNT_MANAGER)
+        self.client.force_login(self.user)
     
-        def test_view_url_exists_at_desired_location(self):
-            response = self.client.get('/delete_club/1/')
-            self.assertEqual(response.status_code, 302)
+    def test_view_url_exists_at_desired_location(self):
+        response = self.client.get('/delete_club/1/')
+        self.assertEqual(response.status_code, 302)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse("delete_club", args=[1]))
+        self.assertEqual(response.status_code, 302)
     
-        def test_view_url_accessible_by_name(self):
-            response = self.client.get(reverse("delete_club", args=[1]))
-            self.assertEqual(response.status_code, 302)
-        
-        @classmethod
-        def setUpTestData(cls):
-            cls.post = Club.objects.create(name="UWEFlix", card_number="123456", card_expiry="2020-12-31", discount_rate=0.1, address="Bristol")
-        
-        def test_model_content(self):
-            self.assertEqual(self.post.name, "UWEFlix")
-            self.assertEqual(self.post.card_number, "123456")
-            self.assertEqual(self.post.card_expiry, "2020-12-31")
-            self.assertEqual(self.post.discount_rate, 0.1)
-            self.assertEqual(self.post.address, "Bristol")
+    @classmethod
+    def setUpTestData(cls):
+        cls.post = Club.objects.create(name="UWEFlix", card_number="123456", card_expiry="2020-12-31", discount_rate=0.1, address="Bristol")
+    
+    def test_model_content(self):
+        self.assertEqual(self.post.name, "UWEFlix")
+        self.assertEqual(self.post.card_number, "123456")
+        self.assertEqual(self.post.card_expiry, "2020-12-31")
+        self.assertEqual(self.post.discount_rate, 0.1)
+        self.assertEqual(self.post.address, "Bristol")
+
+    def tearDown(self):
+        self.user.delete()
