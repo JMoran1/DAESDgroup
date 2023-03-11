@@ -216,17 +216,6 @@ def show_screening(request, pk):
 
     screening = sorted(screening, key=lambda x: x.showing_at)
 
-    # days = []
-    # for show in screening:
-    #     if show.showing_at not in days:
-    #         days.append(show.showing_at)
-
-    # screening_dict = {}
-    # for day in days:
-    #     screening_dict[day] = []
-    #     for show in screening:
-    #         if show.showing_at == day:
-    #             screening_dict[day].append(show)
     dates = []
     screening_dict = {}
     for show in screening:
@@ -238,10 +227,8 @@ def show_screening(request, pk):
         screening_dict[date].append(show)
     print(screening_dict)
 
-    
-
     return render(request, "UWEFlixApp/show_movie_screenings_with_tabs.html", {"showing_list": screening, "movie": movie, "screening_dict": screening_dict})
-    return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening, "movie": movie})
+
 
 def show_all_screening(request):
     all_screening = Screening.objects.all()
@@ -254,6 +241,8 @@ def delete_screening(request, pk):
     screening.delete()
     return redirect("show_all_screening")
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def create_monthly_statements(request):
     """Creates a monthly statement for each club in the database"""
     clubs = Club.objects.all()
@@ -267,8 +256,11 @@ def create_monthly_statements(request):
 
     return redirect("view_monthly_statement")
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def account_manager_view(request):
     return render(request, "UWEFlixApp/account_manager_page.html")
+
 class CustomLoginView(LoginView):
     template_name = 'UWEFlixApp/login.html'
     authentication_form = LoginForm
