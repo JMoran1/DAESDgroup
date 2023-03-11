@@ -107,6 +107,9 @@ class ViewClubs(UserPassesTestMixin, ListView):
 
     def test_func(self):
         return UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER)(self.request.user)
+    
+    def handle_no_permission(self):
+        return redirect('home')
 
 
 class ViewMonthlyStatement(UserPassesTestMixin, ListView):
@@ -119,6 +122,8 @@ class ViewMonthlyStatement(UserPassesTestMixin, ListView):
     def test_func(self):
         return UserRoleCheck(User.Role.CINEMA_MANAGER, User.Role.ACCOUNT_MANAGER)(self.request.user)
 
+    def handle_no_permission(self):
+        return redirect('home')
 
 class ViewMovie(ListView):
     model = Movie
@@ -137,6 +142,9 @@ class ViewScreen(UserPassesTestMixin, ListView):
 
     def test_func(self):
         return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
+    
+    def handle_no_permission(self):
+        return redirect('home')
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
