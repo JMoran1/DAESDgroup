@@ -1,7 +1,7 @@
 from UWEFlixApp.models import MonthlyStatement, Club, Booking, Screening, Movie, Screen
 from random import randint
 from string import ascii_letters
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date, time
 
 def create_random_date():
     year = randint(2022, 2023)
@@ -67,14 +67,22 @@ def create_random_booking(screening, club):
     booking = Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price, club=club, date=date)
     return booking
 
+from datetime import datetime, timedelta
+def create_screenings(movie, screen):
+    dates = []
+    dates.append(datetime.now().date())
+    for d in range(1,6):
+        dates.append(datetime.now().date() + timedelta(days=d))
+    for date in dates:
+        for _ in range(10):
+            date = datetime.combine(date , time(randint(8, 22),0,0))
+            screening = Screening.objects.create(movie=movie, screen=screen, showing_at=date, seats_remaining=screen.capacity)
+            screening.save()
+
+
 def run():
     # Create a Club
     for _ in range(10):
-        club = create_random_club()
-        club.save()
-        # Create a MonthlyStatement
-        monthly_statement = create_random_monthly_statement(club)
-        monthly_statement.save()
         # Create a Movie
         movie = create_random_movie()
         movie.save()
@@ -82,10 +90,6 @@ def run():
         screen = create_random_screen()
         screen.save()
         # Create a Screening
-        for _ in range(10):
-            screening = create_random_screening(movie, screen)
-            screening.save()
-        # Create a Booking
-        for _ in range(3):
-            booking = create_random_booking(screening, club)
-            booking.save()
+        screening = create_screenings(movie, screen)
+
+

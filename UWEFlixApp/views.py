@@ -5,8 +5,10 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-from .models import MonthlyStatement, Club, Movie, Screen, Screening, User
+
+from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm
+from datetime import datetime
 
 class UserRoleCheck:
     """
@@ -211,7 +213,22 @@ def show_screening(request, pk):
     """Takes the pk of a movie and returns a list of screenings for that movie"""
     movie = Movie.objects.get(pk=pk)
     screening = Screening.objects.filter(movie=movie)
-    return render(request, "UWEFlixApp/show_movie_screenings.html", {"showing_list": screening, "movie": movie})
+
+    screening = sorted(screening, key=lambda x: x.showing_at)
+
+    dates = []
+    screening_dict = {}
+    for show in screening:
+        date = show.showing_at
+        date = date.strftime("%d/%m/%Y")
+        if date not in dates:
+            dates.append(date)
+            screening_dict[date] = []
+        screening_dict[date].append(show)
+    print(screening_dict)
+
+    return render(request, "UWEFlixApp/show_movie_screenings_with_tabs.html", {"showing_list": screening, "movie": movie, "screening_dict": screening_dict})
+
 
 def show_all_screening(request):
     all_screening = Screening.objects.all()
@@ -223,6 +240,26 @@ def delete_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
     screening.delete()
     return redirect("show_all_screening")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
+def create_monthly_statements(request):
+    """Creates a monthly statement for each club in the database"""
+    clubs = Club.objects.all()
+    for club in clubs:
+        bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
+        amount = 0
+        for booking in bookings:
+            amount += booking.total_price
+        ms = MonthlyStatement.objects.create(club=club, amount=amount, date = datetime.now())
+        ms.save()
+
+    return redirect("view_monthly_statement")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
+def account_manager_view(request):
+    return render(request, "UWEFlixApp/account_manager_page.html")
 
 class CustomLoginView(LoginView):
     template_name = 'UWEFlixApp/login.html'
