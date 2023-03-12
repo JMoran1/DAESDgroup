@@ -2,7 +2,7 @@
 {% block content %}
 <div class="w-full max-w-md mx-auto">
   <h1 class="text-3xl font-bold mb-6 text-center">Create a New Showing</h1>
-  <form method="post" action = "{% url 'saveshowing' %}">
+  <form method="post" action = "{% url 'save_showing' %}">
     {% csrf_token %}
     <div class="mb-4">
       <label for="movie" class="block text-gray-700 font-bold mb-2">Movie:</label>

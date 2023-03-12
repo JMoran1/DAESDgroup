@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from UWEFlixApp.models import Club, Movie, Screen, User
+from UWEFlixApp.models import Club, Movie, Screen, User, showing
 from .check_luhn import check_luhn
 from datetime import datetime
 
@@ -82,3 +82,15 @@ class UserForm(forms.ModelForm):
 
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
+
+
+class ShowingForm(forms.ModelForm):
+    class Meta:
+        model = showing.Showing
+        fields = ('movie', 'screen', 'start_time')
+
+        widgets = {
+            'movie': forms.Select(attrs={'class': 'form-control'}),
+            'screen': forms.Select(attrs={'class': 'form-control'}),
+            'start_time': forms.DateTimeInput(attrs={'class': 'form-control'}),
+        }
