@@ -136,3 +136,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # we are using a custom User model so we can add extra fields to Django's one
 # https://docs.djangoproject.com/en/4.1/topics/auth/customizing/#auth-custom-user
 AUTH_USER_MODEL = 'UWEFlixApp.User'
+
+LOGIN_URL = 'login'
+LOGIN_REDIRECT_URL = '/'

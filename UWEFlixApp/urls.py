@@ -4,7 +4,7 @@ from .models import MonthlyStatement, Club, Movie, Screen, Screening
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
-    queryset=MonthlyStatement.objects.order_by("id")[:5],  
+    queryset=MonthlyStatement.objects.order_by("id"),  
     context_object_name="monthly_statement_list",
     template_name="UWEFlixApp/view_monthly_statement.html",
 )
@@ -60,5 +60,10 @@ urlpatterns = [
     path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
     path('create_screening/', views.create_screening, name='create_screening'),
-    path('save_screening/', views.save_screening, name = 'save_screening')
+    path('save_screening/', views.save_screening, name = 'save_screening'),
+    path('create_monthly_statement/', views.create_monthly_statements, name='create_monthly_statement'),
+    path('account_manager', views.account_manager_view, name='account_manager'),
+    path('login/', views.CustomLoginView.as_view(), name='login'),
+    path('logout/', views.logout_user, name='logout'),
+
 ]
