@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
-from .forms import ClubForm, MovieForm, ScreenForm, LoginForm
+from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, UserForm, BookingForm
 from datetime import datetime
 
 class UserRoleCheck:
@@ -269,3 +269,16 @@ class CustomLoginView(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('home')
+
+def book_ticket(request, pk):
+    form = BookingForm(request.POST or None, instance=Booking)
+    user = request.user
+    movie = Movie.objects.get(pk=pk)
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    else:
+        form = BookingForm()
+    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "movie": movie})
