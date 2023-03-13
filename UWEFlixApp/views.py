@@ -5,11 +5,8 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-<<<<<<< HEAD
+
 from .forms import ClubForm, MovieForm, ScreenForm , ScreeningForm, LoginForm
-=======
-from .forms import ClubForm, MovieForm, ScreenForm , ShowingForm, LoginForm
->>>>>>> eb9f40810f2d5edb1efa135b385d90fc2650a8cf
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
 from datetime import datetime
 
@@ -277,11 +274,7 @@ def save_screening(request):
             form.save()
             return redirect('create_screening')
     else:
-<<<<<<< HEAD
         form = ScreeningForm()
-=======
-        form = ShowingForm()
->>>>>>> eb9f40810f2d5edb1efa135b385d90fc2650a8cf
     return render(request, 'UWEFlixApp/create_screening.html', {'form': form})
 
 @login_required()
