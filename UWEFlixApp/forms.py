@@ -87,3 +87,14 @@ class UserAdmin(admin.ModelAdmin):
 class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
+
+class ClubTopUpForm(forms.Form):
+    amount = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_number = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_expiry = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}))
+
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        if amount < 0:
+            raise forms.ValidationError("Amount must be greater than 0")
+        return amount

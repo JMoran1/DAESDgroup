@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
-from .forms import ClubForm, MovieForm, ScreenForm, LoginForm
+from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm
 from datetime import datetime
 
 class UserRoleCheck:
@@ -269,3 +269,26 @@ class CustomLoginView(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('home')
+
+def club_top_up(request):
+    """Allows club rep to top up club account balance"""
+    club = Club.objects.get(pk=1)
+    form = ClubTopUpForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            card_number = form.cleaned_data["card_number"]
+            expiry_date = form.cleaned_data["card_expiry"]
+
+            if card_number != club.card_number:
+                return render(request, "UWEFlixApp/club_top_up.html", {"club": club, "error": "Card number does not match", "form": form})
+            
+            if expiry_date != club.card_expiry:
+                return render(request, "UWEFlixApp/club_top_up.html", {"club": club, "error": "Expiry date does not match", "form": form})
+
+            club.balance += form.cleaned_data["amount"]
+            club.save()
+            return redirect('home')
+
+
+    return render(request, "UWEFlixApp/club_top_up.html", {"form": form})
