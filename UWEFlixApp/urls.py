@@ -63,5 +63,5 @@ urlpatterns = [
     path('account_manager', views.account_manager_view, name='account_manager'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
     path('logout/', views.logout_user, name='logout'),
-    path('book_ticket/<int:pk>/', views.book_ticket, name='book_ticket'),
+    path('create_booking/<int:pk>/', views.create_booking, name='create_booking'),
 ]

@@ -29,7 +29,7 @@
                 <td> {{ Movie.rating }} </td>
                 <td> {{ Movie.minutes_long }} mins </td>
                 <td><a href="{% url 'update_movie' Movie.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
-                <td><a href="{% url 'delete_movie' Movie.id %}"><button class="btn btn-danger">Delete</button></a>
+                <td><a href="{% url 'delete_movie' Movie.id %}"><button class="btn btn-danger">Delete</button></a></td>
             </tr>
             {% endfor %}
         </tbody>

@@ -270,10 +270,11 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
-def book_ticket(request, pk):
+def create_booking(request, pk):
     form = BookingForm(request.POST or None, instance=Booking)
     user = request.user
-    movie = Movie.objects.get(pk=pk)
+    screening = Screening.objects.get(pk=pk)
+
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
@@ -281,4 +282,4 @@ def book_ticket(request, pk):
             return redirect('home')
     else:
         form = BookingForm()
-    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "movie": movie})
+    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening})
