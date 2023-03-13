@@ -1,6 +1,10 @@
 from django import forms
 from django.contrib import admin
+<<<<<<< HEAD
 from UWEFlixApp.models import Club, Movie, Screen, User, screening
+=======
+from UWEFlixApp.models import Club, Movie, Screen, User, showing
+>>>>>>> eb9f40810f2d5edb1efa135b385d90fc2650a8cf
 from django.contrib.auth.forms import AuthenticationForm
 from .check_luhn import check_luhn
 from datetime import datetime
@@ -84,7 +88,11 @@ class UserForm(forms.ModelForm):
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
 
+<<<<<<< HEAD
 class ScreeningForm(forms.ModelForm):
+=======
+class ShowingForm(forms.ModelForm):
+>>>>>>> eb9f40810f2d5edb1efa135b385d90fc2650a8cf
     class Meta:
         model = screening.Screening
         fields = ('movie', 'screen', 'showing_at')
@@ -92,7 +100,11 @@ class ScreeningForm(forms.ModelForm):
         widgets = {
             'movie': forms.Select(attrs={'class': 'form-control'}),
             'screen': forms.Select(attrs={'class': 'form-control'}),
+<<<<<<< HEAD
             'showing_at': forms.DateTimeInput(attrs={'class': 'form-control'}),
+=======
+            'start_time': forms.DateTimeInput(attrs={'class': 'form-control'}),
+>>>>>>> eb9f40810f2d5edb1efa135b385d90fc2650a8cf
         }
 
 class LoginForm(AuthenticationForm):

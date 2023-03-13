@@ -64,6 +64,10 @@ urlpatterns = [
     path('create_monthly_statement/', views.create_monthly_statements, name='create_monthly_statement'),
     path('account_manager', views.account_manager_view, name='account_manager'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
+<<<<<<< HEAD
     path('logout/', views.logout_user, name='logout')
+=======
+    path('logout/', views.logout_user, name='logout'),
+>>>>>>> eb9f40810f2d5edb1efa135b385d90fc2650a8cf
 
 ]
