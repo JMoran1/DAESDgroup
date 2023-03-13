@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import AuthenticationForm
-from UWEFlixApp.models import Club, Movie, Screen, User, Booking
+from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
 from .check_luhn import check_luhn
 from datetime import datetime
 
@@ -89,11 +89,13 @@ class LoginForm(AuthenticationForm):
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
 class BookingForm(forms.ModelForm):
+    date = 'testing string'
     ticket_options = [('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8')]
     user = forms.ModelChoiceField(initial='Select', queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'})),
     screening =  forms.TextInput(attrs={'class': 'form-control'}),
+    date = date
     number_of_tickets = forms.CharField(label='Number of Tickets', widget=forms.Select(choices=ticket_options))    
     class Meta:
         model = Booking
-        fields = ('user', 'screening', 'number_of_tickets','club')
+        fields = ('user', 'screening', 'date', 'number_of_tickets','club')
         

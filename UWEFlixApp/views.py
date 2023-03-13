@@ -274,7 +274,8 @@ def create_booking(request, pk):
     form = BookingForm(request.POST or None, instance=Booking)
     user = request.user
     screening = Screening.objects.get(pk=pk)
-
+    
+    date = screening.showing_at
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
@@ -282,4 +283,4 @@ def create_booking(request, pk):
             return redirect('home')
     else:
         form = BookingForm()
-    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening})
+    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date})
