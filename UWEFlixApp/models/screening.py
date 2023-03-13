@@ -1,4 +1,5 @@
 from django.db import models
+from UWEFlixApp.models import Movie, Screen
 
 
 class Screening(models.Model):
@@ -13,4 +14,4 @@ class Screening(models.Model):
     seats_remaining = models.IntegerField()
 
     def __str__(self):
-        return str(self.id)
+        return f"{self.movie.name} - {self.screen.name} - {self.showing_at}"
