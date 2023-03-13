@@ -1,18 +1,18 @@
 {% extends "UWEFlixApp/base.html" %}
 
 {% block content %}
-<div class="m-auto  w-4/5" >
-        
-    <h1 class="text-2xl text-center">Cinema Manager View</h1>
 
-    <a href="{% url 'list-movies' %}" class="float-right mr-64">
+<div class="m-auto w-4/5 text-center">
+    <h1 class="text-2xl">Cinema Manager View</h1>
+
+    <a href="{% url 'list-movies' %}" class="inline-block mx-4">
         <button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Movie Data</button>
     </a>
-    <a href="{% url 'list-screen' %}" class="float-left ml-64">
+    <a href="{% url 'list-screen' %}" class="inline-block mx-4">
         <button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Screen Data</button>
     </a>
-    <a href="{% url 'createshowings' %}" class="block mx-auto mt-10">
-        <button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Add Showing</button>
+    <a href="{% url 'create_screening' %}" class="inline-block mx-4 mt-10">
+        <button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View/Edit Create Screening</button>
     </a>
 </div>
-{% endblock %}
+{% endblock %}    

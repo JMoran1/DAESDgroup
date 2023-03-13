@@ -123,7 +123,7 @@ def create_movie(request):
 
 
 # In progress
-def create_showing(request):
+def create_screening(request):
     # Retrieve all movies and screens from the database
     movies = Movie.objects.all()
     screens = Screen.objects.all()
@@ -148,7 +148,7 @@ def create_showing(request):
         'movies': movies,
         'screens': screens,
     }
-    return render(request, 'UWEFlixApp/create_showing.html', context)
+    return render(request, 'UWEFlixApp/create_screening.html', context)
 
 def delete_screen(request, pk):
     screen = Screen.objects.get(pk=pk)
@@ -180,12 +180,12 @@ def delete_screening(request, pk):
     screening.delete()
     return redirect("show_all_screening")
 
-def saveshowing(request):
+def save_screening(request):
     if request.method == 'POST':
         form = ShowingForm(request.POST)
         if form.is_valid():
             form.save()
-            return redirect('createshowings')
+            return redirect('create_screening')
     else:
         form = ShowingForm()
-    return render(request, 'UWEFlixApp/create_showing.html', {'form': form})
+    return render(request, 'UWEFlixApp/create_screening.html', {'form': form})
