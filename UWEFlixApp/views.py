@@ -274,8 +274,8 @@ def create_booking(request, pk):
     form = BookingForm(request.POST or None, instance=Booking)
     user = request.user
     screening = Screening.objects.get(pk=pk)
+    date = Screening.objects.get(pk=pk).showing_at
     
-    date = screening.showing_at
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
