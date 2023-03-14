@@ -139,3 +139,6 @@ AUTH_USER_MODEL = 'UWEFlixApp.User'
 
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/'
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"

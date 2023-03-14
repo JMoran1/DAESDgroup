@@ -36,7 +36,7 @@ class ClubForm(forms.ModelForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ('name', 'minutes_long', 'rating')
+        fields = ('name', 'minutes_long', 'rating', 'image')
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
