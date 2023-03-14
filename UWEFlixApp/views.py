@@ -75,9 +75,10 @@ def create_movie(request):
     form = MovieForm(request.POST or None)
 
     if request.method == "POST":
+        form = MovieForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('cinema_manager_view')
     return render(request, "UWEFlixApp/create_movie_form.html", {"form": form, "button_text": "Create Movie"})
 
 @login_required()
@@ -170,17 +171,6 @@ def create_screen(request):
         form = ScreenForm()
 
     return render(request, 'UWEFlixApp/create_screen.html', {'form': form, "button_text": "Create Screen"})
-
-@login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
-def create_movie(request):
-    form = MovieForm(request.POST or None)
-
-    if request.method == "POST":
-        if form.is_valid():
-            form.save()
-            return redirect('list-movies')
-    return render(request, "UWEFlixApp/create_movie_form.html", {"form": form, "button_text": "Create Movie"})
 
 
 # In progress
