@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-
+import json as json
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, UserForm, BookingForm
 from datetime import datetime
@@ -216,6 +216,7 @@ def show_screening(request, pk):
 
     screening = sorted(screening, key=lambda x: x.showing_at)
 
+
     dates = []
     screening_dict = {}
     for show in screening:
@@ -276,11 +277,19 @@ def create_booking(request, pk):
     screening = Screening.objects.get(pk=pk)
     date = Screening.objects.get(pk=pk).showing_at
     
-    if request.method == 'POST':
-        form = BookingForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    else:
-        form = BookingForm()
+    #Figuring out how to use Sessions to store the relevent ticket information and then use it in the final confimation view
+    screeningtext = screening.id
+    request.session['selected_screening'] = screeningtext
+
+    
+    print(str(request.session['selected_screening']))
     return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date})
+
+def confirm_booking(request):
+    
+    screening = Screening.objects.get(id=request.session['selected_screening'])
+    print('session data = ' + str(request.session['selected_screening']))
+    user = request.user
+    print('screening details = ' + str(screening))
+
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening})

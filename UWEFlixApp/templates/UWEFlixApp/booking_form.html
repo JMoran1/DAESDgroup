@@ -17,9 +17,10 @@
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="text-center">
-                <button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button> 
             </div>
             </form>
+            
+            <a href="{% url 'confirm_booking' %}"><button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button></a>
         </div>
         <div class="col"></div>
     </div>
