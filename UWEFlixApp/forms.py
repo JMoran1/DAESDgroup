@@ -88,15 +88,7 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
-class BookingForm(forms.ModelForm):
-    class Meta:
-        model = Booking
-        fields = ('user', 'screening', 'date', 'number_of_tickets','club')
-        
-    ticket_options = [('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8')]
-    user = forms.ModelChoiceField(initial='Select', queryset=User.objects.all(), widget=forms.Select(attrs={'class': 'form-control'})),
-    screening =  forms.TextInput(attrs={'class': 'form-control'}),
+class BookingForm(forms.Form):
+    ticket_options = [('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8'), ('9','9')]
     number_of_tickets = forms.CharField(label='Number of Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=ticket_options)) 
-    club = forms.ModelChoiceField(initial='Select', queryset=Club.objects.all(), widget=forms.Select(attrs={'class': 'form-control'})),   
     
-        

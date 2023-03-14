@@ -271,7 +271,7 @@ def logout_user(request):
     return redirect('home')
 
 def create_booking(request, pk):
-    form = BookingForm(request.POST or None, instance=Booking)
+    form = BookingForm(request.POST or None)
     user = request.user
     screening = Screening.objects.get(pk=pk)
     date = Screening.objects.get(pk=pk).showing_at
