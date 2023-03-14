@@ -5,9 +5,8 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-
-from .forms import ClubForm, MovieForm, ScreenForm , ScreeningForm, LoginForm
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
+from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm , ScreeningForm
 from datetime import datetime
 
 class UserRoleCheck:
@@ -74,9 +73,10 @@ def create_movie(request):
     form = MovieForm(request.POST or None)
 
     if request.method == "POST":
+        form = MovieForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('cinema_manager_view')
     return render(request, "UWEFlixApp/create_movie_form.html", {"form": form, "button_text": "Create Movie"})
 
 @login_required()
@@ -169,17 +169,6 @@ def create_screen(request):
         form = ScreenForm()
 
     return render(request, 'UWEFlixApp/create_screen.html', {'form': form, "button_text": "Create Screen"})
-
-@login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
-def create_movie(request):
-    form = MovieForm(request.POST or None)
-
-    if request.method == "POST":
-        if form.is_valid():
-            form.save()
-            return redirect('list-movies')
-    return render(request, "UWEFlixApp/create_movie_form.html", {"form": form, "button_text": "Create Movie"})
 
 
 # In progress
@@ -305,3 +294,26 @@ class CustomLoginView(LoginView):
 def logout_user(request):
     logout(request)
     return redirect('home')
+
+def club_top_up(request):
+    """Allows club rep to top up club account balance"""
+    club = Club.objects.get(pk=1)
+    form = ClubTopUpForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            card_number = form.cleaned_data["card_number"]
+            expiry_date = form.cleaned_data["card_expiry"]
+
+            if card_number != club.card_number:
+                return render(request, "UWEFlixApp/club_top_up.html", {"club": club, "error": "Card number does not match", "form": form})
+            
+            if expiry_date != club.card_expiry:
+                return render(request, "UWEFlixApp/club_top_up.html", {"club": club, "error": "Expiry date does not match", "form": form})
+
+            club.balance += form.cleaned_data["amount"]
+            club.save()
+            return redirect('home')
+
+
+    return render(request, "UWEFlixApp/club_top_up.html", {"form": form})
