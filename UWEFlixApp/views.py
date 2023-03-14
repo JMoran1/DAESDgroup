@@ -7,7 +7,7 @@ from django.shortcuts import render, redirect
 from django.views.generic import ListView
 
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
-from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm
+from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm, CustomerRegistrationForm
 from datetime import datetime
 
 class UserRoleCheck:
@@ -282,3 +282,20 @@ def club_top_up(request):
 
 
     return render(request, "UWEFlixApp/club_top_up.html", {"form": form})
+
+def register_customer(request):
+    """Allows a customer to register for an account"""
+    form = CustomerRegistrationForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            password1 = form.cleaned_data["password1"]
+            password2 = form.cleaned_data["password2"]
+
+            if password1 != password2:
+                return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
+            else:
+                user = User.objects.create_user(username=form.cleaned_data["username"], password=password1, role=User.Role.CUSTOMER)
+                return redirect('login')
+
+    return render(request, "UWEFlixApp/register.html", {"form": form})
