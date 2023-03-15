@@ -14,6 +14,7 @@
         <div class="col"></div>
         <div class="col">
             <form method="POST" class="log-form">
+                <p>{{error}}</p>
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="text-center">

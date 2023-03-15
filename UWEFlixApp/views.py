@@ -295,7 +295,10 @@ def register_customer(request):
             if password1 != password2:
                 return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
             else:
-                user = User.objects.create_user(username=form.cleaned_data["username"], password=password1, role=User.Role.CUSTOMER)
-                return redirect('login')
+                if User.objects.filter(username=form.cleaned_data["username"]).exists():
+                    return render(request, "UWEFlixApp/register.html", {"error": "Username already taken", "form": form})
+                else:
+                    User.objects.create_user(username=form.cleaned_data["username"], password=password1, role=User.Role.CUSTOMER)
+                    return redirect('login')
 
     return render(request, "UWEFlixApp/register.html", {"form": form})
