@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib import admin
-from UWEFlixApp.models import Club, Movie, Screen, User, screening
+from UWEFlixApp.models import Club, Movie, Screen, User, Screening
 from django.contrib.auth.forms import AuthenticationForm
 from .check_luhn import check_luhn
 from datetime import datetime
@@ -86,7 +86,7 @@ class UserAdmin(admin.ModelAdmin):
 class ScreeningForm(forms.ModelForm):
 
     class Meta:
-        model = screening.Screening
+        model = Screening
         fields = ('movie', 'screen', 'showing_at')
 
         widgets = {
