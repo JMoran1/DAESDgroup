@@ -110,3 +110,21 @@ class ClubTopUpForm(forms.Form):
             raise forms.ValidationError("Amount must be greater than 0")
         return amount
 
+
+class CustomerRegistrationForm(forms.Form):
+    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
+
+    def clean_password2(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+        if password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
+        return password2
+
+    def clean_username(self):
+        if User.objects.filter(username=self.cleaned_data["username"]).exists():
+            raise forms.ValidationError("Username already exists")
+        return self.cleaned_data["username"]
+
