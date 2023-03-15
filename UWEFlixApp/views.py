@@ -171,7 +171,8 @@ def create_screen(request):
     return render(request, 'UWEFlixApp/create_screen.html', {'form': form, "button_text": "Create Screen"})
 
 
-# In progress
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def create_screening(request):
     # Retrieve all movies and screens from the database
     movies = Movie.objects.all()
@@ -198,12 +199,6 @@ def create_screening(request):
         'screens': screens,
     }
     return render(request, 'UWEFlixApp/create_screening.html', context)
-
-@login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
-def createshowings(request):
-
-    return render(request, "UWEFlixApp/test.html")
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
