@@ -65,4 +65,6 @@ urlpatterns = [
     path('logout/', views.logout_user, name='logout'),
     path('create_booking/<int:pk>/', views.create_booking, name='create_booking'),
     path('confirm_booking/', views.confirm_booking, name='confirm_booking'),
+    path('top_up/', views.club_top_up, name='top_up'),
+    path('register/', views.register_customer, name='register_customer'),
 ]

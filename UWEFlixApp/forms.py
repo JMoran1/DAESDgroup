@@ -36,7 +36,7 @@ class ClubForm(forms.ModelForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ('name', 'minutes_long', 'rating')
+        fields = ('name', 'minutes_long', 'rating', 'image')
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -92,3 +92,30 @@ class BookingForm(forms.Form):
     ticket_options = [('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8'), ('9','9')]
     number_of_tickets = forms.CharField(label='Number of Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=ticket_options)) 
     
+class ClubTopUpForm(forms.Form):
+    amount = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_number = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_expiry = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}))
+
+    def clean_amount(self):
+        amount = self.cleaned_data['amount']
+        if amount < 0:
+            raise forms.ValidationError("Amount must be greater than 0")
+        return amount
+
+class CustomerRegistrationForm(forms.Form):
+    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
+
+    def clean_password2(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+        if password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
+        return password2
+
+    def clean_username(self):
+        if User.objects.filter(username=self.cleaned_data["username"]).exists():
+            raise forms.ValidationError("Username already exists")
+        return self.cleaned_data["username"]
