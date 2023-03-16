@@ -265,8 +265,13 @@ def create_booking(request, pk):
         form = BookingForm(request.POST)
         print(form)
         if form.is_valid():
-            form.save()
-            print('form is valid')
+            number_of_tickets = form.cleaned_data['number_of_tickets']
+            total_price = int(number_of_tickets) * 4.99
+            if request.user.is_authenticated:
+                Booking.objects.create(user=user, screening=screening, number_of_tickets=number_of_tickets, total_price=total_price, date=date)
+            else:
+                Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price, date=date)
+
             return redirect('list-screen')
     else:
         print('form is not valid')
