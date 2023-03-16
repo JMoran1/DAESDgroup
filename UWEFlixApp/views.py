@@ -275,6 +275,7 @@ def create_booking(request, pk):
                 Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price, date=date)
 
             return redirect('confirm_booking')
+            # THIS IS CURRENTLY WHAT POSTS TO THE DATABASE, TRYING TO MOVE THIS TO AFTER THE CONFIMATION PAGE, BUT NEED SOME GUIDENCE ON HOW TO DO THIS. 
     else:
         print('form is not valid')
         form = BookingForm()
@@ -292,19 +293,19 @@ def confirm_booking(request):
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if form.is_valid():
-            number_of_tickets = form.cleaned_data['number_of_tickets']
+            number_of_tickets = numtickets
             total_price = int(number_of_tickets) * 4.99
             if request.user.is_authenticated:
                 Booking.objects.create(user=user, screening=screening, number_of_tickets=number_of_tickets, total_price=total_price)
             else:
                 Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price)
 
-            return redirect('confirm_booking')
+            return redirect('')
     else:
         print('form is not valid')
         form = BookingForm()
     
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": numtickets})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": numtickets, "button_text": "Confirm booking", "button_texttwo": "Cancel booking"})
 
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
