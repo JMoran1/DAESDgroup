@@ -8,7 +8,7 @@ class Booking(models.Model):
     number_of_tickets = models.IntegerField()
     total_price = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     club = models.ForeignKey('Club', on_delete=models.CASCADE, null=True, blank=True)
-    date = models.CharField(blank=True, null=True, max_length=100)
+    date = models.DateTimeField(auto_now=True, blank=True, null=True, max_length=100)
  
     def __str__(self):
         return str(self.user)

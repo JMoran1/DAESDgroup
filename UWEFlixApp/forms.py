@@ -88,9 +88,14 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
-class BookingForm(forms.Form):
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = ('number_of_tickets',)
+
     ticket_options = [('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8'), ('9','9')]
     number_of_tickets = forms.CharField(label='Number of Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=ticket_options)) 
+
     
 class ClubTopUpForm(forms.Form):
     amount = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))

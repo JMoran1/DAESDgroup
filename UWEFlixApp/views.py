@@ -172,14 +172,6 @@ def create_screen(request):
 
     return render(request, 'UWEFlixApp/create_screen.html', {'form': form, "button_text": "Create Screen"})
 
-
-# In progress
-@login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
-def createshowings(request):
-
-    return render(request, "UWEFlixApp/test.html")
-
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def delete_screen(request, pk):
@@ -266,22 +258,42 @@ def create_booking(request, pk):
     user = request.user
     screening = Screening.objects.get(pk=pk)
     date = Screening.objects.get(pk=pk).showing_at
-    
     #Figuring out how to use Sessions to store the relevent ticket information and then use it in the final confimation view
     screeningtext = screening.id
     request.session['selected_screening'] = screeningtext
-
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+        print(form)
+        if form.is_valid():
+            form.save()
+            print('form is valid')
+            return redirect('list-screen')
+    else:
+        print('form is not valid')
+        form = BookingForm()
     
     print(str(request.session['selected_screening']))
     return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date})
 
 def confirm_booking(request):
     
+    booking_form = BookingForm(request.POST or None)
     screening = Screening.objects.get(id=request.session['selected_screening'])
     print('session data = ' + str(request.session['selected_screening']))
     user = request.user
     print('screening details = ' + str(screening))
-
+    
+    if request.method == 'POST':
+        booking_form = BookingForm(request.POST, request.FILES)
+        if booking_form.is_valid():
+            cd = booking_form.cleaned_data
+            Booking.save()
+            print('form is valid')
+            return redirect('home')
+    else:
+        print('form is not valid')
+        booking_form = BookingForm()
+    
     return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening})
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
