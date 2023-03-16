@@ -8,10 +8,19 @@
     crossorigin="anonymous"></script>
 
 <div class="container">
-    <h1> To confirm booking: </h1>
-    <h2> {{user.get_username}} to see {{Screening.movie}} and {{Screening.showing_at}}</h2>
-
-    
-    <a href="{% url 'home' %}"><button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button></a>
+    <div class="row">
+        <div class="col"></div>
+        <div class="col">
+            <form method="POST" class="log-form">
+                {% csrf_token %}
+                <h1> To confirm booking: </h1>
+                <h2> Username : {{user.get_username}} </h2>
+                <h2> Screening :  {{Screening.movie}} </h2>
+                <h2> Showing time:  {{Screening.showing_at}} </h2>
+                <h2> Quanity of Tickets: {{ numtickets }}</h2>
+                <button type="submit" class="btn btn-outline-secondary">Accept Booking</button>
+                <div class="text-center">
+                </div>
+            </form>
 </div>
 {% endblock %}

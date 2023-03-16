@@ -254,16 +254,18 @@ def logout_user(request):
     return redirect('home')
 
 def create_booking(request, pk):
-    form = BookingForm(request.POST or None)
     user = request.user
     screening = Screening.objects.get(pk=pk)
     date = Screening.objects.get(pk=pk).showing_at
-    #Figuring out how to use Sessions to store the relevent ticket information and then use it in the final confimation view
+    # This section is being used to pass information to sessions for future use
     screeningtext = screening.id
     request.session['selected_screening'] = screeningtext
+    # The below code will be moved 
+    # For posting to the database after being filled in. 
+    request.session['number_of_tickets'] = request.POST.get('number_of_tickets')
+    print("testing now = " + str(request.session['number_of_tickets']))
     if request.method == 'POST':
         form = BookingForm(request.POST)
-        print(form)
         if form.is_valid():
             number_of_tickets = form.cleaned_data['number_of_tickets']
             total_price = int(number_of_tickets) * 4.99
@@ -272,34 +274,38 @@ def create_booking(request, pk):
             else:
                 Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price, date=date)
 
-            return redirect('list-screen')
+            return redirect('confirm_booking')
     else:
         print('form is not valid')
         form = BookingForm()
     
-    print(str(request.session['selected_screening']))
     return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date})
 
 def confirm_booking(request):
     
-    booking_form = BookingForm(request.POST or None)
     screening = Screening.objects.get(id=request.session['selected_screening'])
     print('session data = ' + str(request.session['selected_screening']))
     user = request.user
     print('screening details = ' + str(screening))
+    numtickets = request.session['number_of_tickets']
     
     if request.method == 'POST':
-        booking_form = BookingForm(request.POST, request.FILES)
-        if booking_form.is_valid():
-            cd = booking_form.cleaned_data
-            Booking.save()
-            print('form is valid')
-            return redirect('home')
+        form = BookingForm(request.POST)
+        if form.is_valid():
+            number_of_tickets = form.cleaned_data['number_of_tickets']
+            total_price = int(number_of_tickets) * 4.99
+            if request.user.is_authenticated:
+                Booking.objects.create(user=user, screening=screening, number_of_tickets=number_of_tickets, total_price=total_price)
+            else:
+                Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price)
+
+            return redirect('confirm_booking')
     else:
         print('form is not valid')
-        booking_form = BookingForm()
+        form = BookingForm()
     
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": numtickets})
+
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
     club = Club.objects.get(pk=1)
