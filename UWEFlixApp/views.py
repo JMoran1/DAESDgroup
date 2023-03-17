@@ -262,10 +262,20 @@ def create_booking(request, pk):
     request.session['selected_screening'] = screeningtext
     # The below code will be moved 
     # For posting to the database after being filled in. 
-    request.session['number_of_tickets'] = request.POST.get('number_of_tickets')
-    print("testing now = " + str(request.session['number_of_tickets']))
+    request.session['number_of_adult_tickets'] = request.POST.get('number_of_adult_tickets')
+    
+    request.session['number_of_child_tickets'] = request.POST.get('number_of_child_tickets')
+    
+    request.session['number_of_student_tickets'] = request.POST.get('number_of_student_tickets')
+
+    print("testing adult tickets  = " + str(request.session['number_of_adult_tickets']))
+    
+    print("testing child tickets  = " + str(request.session['number_of_child_tickets']))
+    
+    print("testing student tickets  = " + str(request.session['number_of_student_tickets']))
     if request.method == 'POST':
         return redirect('confirm_booking')
+    
 
     form = BookingForm()
     
@@ -277,21 +287,26 @@ def confirm_booking(request):
     print('session data = ' + str(request.session['selected_screening']))
     user = request.user
     print('screening details = ' + str(screening))
-    number_of_tickets = request.session['number_of_tickets']
-    total_price = int(number_of_tickets) * 4.99
+    number_of_adult_tickets = request.session['number_of_adult_tickets']
+    number_of_child_tickets = request.session['number_of_child_tickets']
+    number_of_student_tickets = request.session['number_of_student_tickets']
+    
+    total_price = int(number_of_adult_tickets) * 4.99 + int(number_of_child_tickets) * 2.99 + int(number_of_student_tickets) * 3.99
+
     if request.method == 'POST':
         form = BookingForm(request.POST)
-        total_price = int(number_of_tickets) * 4.99
+        total_price = int(number_of_adult_tickets) * 4.99 + int(number_of_child_tickets) * 2.99 + int(number_of_student_tickets) * 3.99
+        print(total_price)
         if request.user.is_authenticated:
-            Booking.objects.create(user=user, screening=screening, number_of_tickets=number_of_tickets, total_price=total_price)
+            Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,number_of_child_tickets=number_of_child_tickets,number_of_student_tickets=number_of_student_tickets )
         else:
-            Booking.objects.create(screening=screening, number_of_tickets=number_of_tickets, total_price=total_price)
+            Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price, number_of_child_tickets=number_of_child_tickets,number_of_student_tickets=number_of_student_tickets )
 
         return redirect('home')
     else:
         form = BookingForm()
     
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price})
 
 def club_top_up(request):
     """Allows club rep to top up club account balance"""

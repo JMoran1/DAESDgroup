@@ -91,10 +91,14 @@ class LoginForm(AuthenticationForm):
 class BookingForm(forms.ModelForm):
     class Meta:
         model = Booking
-        fields = ('number_of_tickets',)
+        fields = ('number_of_student_tickets','number_of_child_tickets','number_of_adult_tickets')
 
-    ticket_options = [('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8'), ('9','9')]
-    number_of_tickets = forms.CharField(label='Number of Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=ticket_options)) 
+    ticket_options = [('0','0'), ('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8'), ('9','9')]
+    number_of_student_tickets = forms.CharField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=ticket_options)) 
+    
+    number_of_child_tickets = forms.CharField(label='Number of Child Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=ticket_options)) 
+    
+    number_of_adult_tickets = forms.CharField(label='Number of Adult Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=ticket_options)) 
 
     
 class ClubTopUpForm(forms.Form):
