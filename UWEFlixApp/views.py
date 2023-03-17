@@ -278,7 +278,7 @@ def confirm_booking(request):
     user = request.user
     print('screening details = ' + str(screening))
     number_of_tickets = request.session['number_of_tickets']
-    
+    total_price = int(number_of_tickets) * 4.99
     if request.method == 'POST':
         form = BookingForm(request.POST)
         total_price = int(number_of_tickets) * 4.99
@@ -291,7 +291,7 @@ def confirm_booking(request):
     else:
         form = BookingForm()
     
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_tickets, 'button_text': 'Confirm Booking'})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_tickets, 'button_text': 'Confirm Booking', 'total_price': total_price})
 
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
