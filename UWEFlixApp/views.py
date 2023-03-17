@@ -259,6 +259,7 @@ def create_booking(request, pk):
     date = Screening.objects.get(pk=pk).showing_at
     # This section is being used to pass information to sessions for future use
     screeningtext = screening.id
+    warning = "Please select tickets"
     request.session['selected_screening'] = screeningtext
     # The below code will be moved 
     # For posting to the database after being filled in. 
@@ -274,12 +275,21 @@ def create_booking(request, pk):
     
     print("testing student tickets  = " + str(request.session['number_of_student_tickets']))
     if request.method == 'POST':
-        return redirect('confirm_booking')
+        total_tickets= int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get('number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
+        print(total_tickets)
+        if total_tickets > 9:
+            print("Too many tickets, no more then 9 in one booking")
+            warning = "Too many tickets, no more then 9 in one booking"
+        elif total_tickets == 0:
+            print("No tickets selected")
+            warning = "No tickets selected"
+        else:
+            return redirect('confirm_booking')
     
 
     form = BookingForm()
     
-    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date})
+    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
 def confirm_booking(request):
     
