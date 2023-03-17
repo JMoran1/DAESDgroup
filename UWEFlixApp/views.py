@@ -291,7 +291,7 @@ def confirm_booking(request):
     else:
         form = BookingForm()
     
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_tickets})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_tickets, 'button_text': 'Confirm Booking'})
 
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
