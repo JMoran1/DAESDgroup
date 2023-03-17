@@ -20,6 +20,7 @@
                 <h2> Quanity of Tickets: {{ numtickets }}</h2>
                 <h2> Total Price: £{{ total_price }}</h2>
             <button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button>
+            <button type="cancel" class="btn btn-outline-danger"><a href="{% url 'home' %}">{{ button_texttwo }}</a></button>
             </form>
 </div>
 {% endblock %}
