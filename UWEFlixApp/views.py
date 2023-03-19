@@ -178,28 +178,31 @@ def create_screening(request):
     # Retrieve all movies and screens from the database
     movies = Movie.objects.all()
     screens = Screen.objects.all()
-    print(movies)
-    print(screens)
+
 
     if request.method == 'POST':
-        # Retrieve the selected movie, screen, and start time from the form
-        movie_id = request.POST.get('movie')
-        screen_id = request.POST.get('screen')
-        start_time = request.POST.get('start_time')
-
-        # Create a new Showing object with the selected movie, screen, and start time
-        movie = Movie.objects.get(id=movie_id)
-        screen = Screen.objects.get(id=screen_id)
-        showings = showings.objects.create(movie=movie, screen=screen, start_time=start_time)
-
-        # Redirect to the list of showings for the selected movie
-        return redirect('movie-detail', pk=movie_id)
+        # If the form is submitted, save the form
+        form = ScreeningForm(request.POST)
+        print(form.data)
+        if form.is_valid():
+            form.save()
+            # Retrieve the selected movie id from the form
+            movie_id = form.cleaned_data['movie'].id
+            # Redirect to the list of showings for the selected movie
+            return redirect('show_all_screening')
+        else:
+            print(form.errors)
+    else:
+        # If the form is not submitted, create a new form
+        form = ScreeningForm()
 
     context = {
         'movies': movies,
         'screens': screens,
+        'form': form,
     }
     return render(request, 'UWEFlixApp/create_screening.html', context)
+
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
@@ -251,16 +254,6 @@ def delete_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
     screening.delete()
     return redirect("show_all_screening")
-
-def save_screening(request):
-    if request.method == 'POST':
-        form = ScreeningForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('create_screening')
-    else:
-        form = ScreeningForm()
-    return render(request, 'UWEFlixApp/create_screening.html', {'form': form})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)

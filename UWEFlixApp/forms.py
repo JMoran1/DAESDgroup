@@ -92,7 +92,7 @@ class ScreeningForm(forms.ModelForm):
         widgets = {
             'movie': forms.Select(attrs={'class': 'form-control'}),
             'screen': forms.Select(attrs={'class': 'form-control'}),
-            'showing_at': forms.DateTimeInput(attrs={'class': 'form-control'}),'start_time': forms.DateTimeInput(attrs={'class': 'form-control'}),
+            'showing_at': forms.DateTimeInput(attrs={'class': 'form-control'}),
         }
 
 class LoginForm(AuthenticationForm):

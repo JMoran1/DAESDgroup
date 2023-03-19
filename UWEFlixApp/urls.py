@@ -60,7 +60,6 @@ urlpatterns = [
     path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
     path('create_screening/', views.create_screening, name='create_screening'),
-    path('save_screening/', views.save_screening, name = 'save_screening'),
     path('create_monthly_statement/', views.create_monthly_statements, name='create_monthly_statement'),
     path('account_manager', views.account_manager_view, name='account_manager'),
     path('login/', views.CustomLoginView.as_view(), name='login'),

@@ -11,7 +11,7 @@ class Screening(models.Model):
     of seats remaining by querying the total number of seats for the screen and
     subtracting the total number of places across all bookings for the screening
     '''
-    seats_remaining = models.IntegerField()
+    seats_remaining = models.IntegerField(default=0)
 
     def __str__(self):
         return f"{self.movie.name} - {self.screen.name} - {self.showing_at}"
