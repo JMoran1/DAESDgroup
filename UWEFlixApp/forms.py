@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib import admin
+from UWEFlixApp.models import Club, Movie, Screen, User, Screening
 from django.contrib.auth.forms import AuthenticationForm
-from UWEFlixApp.models import Club, Movie, Screen, User
 from .check_luhn import check_luhn
 from datetime import datetime
 
@@ -83,6 +83,17 @@ class UserForm(forms.ModelForm):
 
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
+class ScreeningForm(forms.ModelForm):
+
+    class Meta:
+        model = Screening
+        fields = ('movie', 'screen', 'showing_at')
+
+        widgets = {
+            'movie': forms.Select(attrs={'class': 'form-control'}),
+            'screen': forms.Select(attrs={'class': 'form-control'}),
+            'showing_at': forms.DateTimeInput(attrs={'class': 'form-control'}),
+        }
 
 class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -98,6 +109,7 @@ class ClubTopUpForm(forms.Form):
         if amount < 0:
             raise forms.ValidationError("Amount must be greater than 0")
         return amount
+
 
 class CustomerRegistrationForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -115,3 +127,4 @@ class CustomerRegistrationForm(forms.Form):
         if User.objects.filter(username=self.cleaned_data["username"]).exists():
             raise forms.ValidationError("Username already exists")
         return self.cleaned_data["username"]
+
