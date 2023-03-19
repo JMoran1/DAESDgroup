@@ -5,6 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
+from django.urls import reverse_lazy
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm , ScreeningForm
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm, CustomerRegistrationForm
@@ -280,6 +281,10 @@ class CustomLoginView(LoginView):
     authentication_form = LoginForm
     redirect_authenticated_user = True
 
+    def get_success_url(self):
+        if self.request.user.role == User.Role.CLUB_REP:
+            return reverse_lazy('club_rep_view')
+
 def logout_user(request):
     logout(request)
     return redirect('home')
@@ -327,3 +332,8 @@ def register_customer(request):
 
     return render(request, "UWEFlixApp/register.html", {"form": form})
 
+
+
+def club_rep_view(request):
+    """Displays the club rep page"""
+    return render(request, "UWEFlixApp/club_rep_page.html")
