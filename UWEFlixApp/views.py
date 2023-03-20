@@ -284,6 +284,8 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         if self.request.user.role == User.Role.CLUB_REP:
             return reverse_lazy('club_rep_view')
+        else:
+            return reverse_lazy('home')
 
 def logout_user(request):
     logout(request)
@@ -337,3 +339,9 @@ def register_customer(request):
 def club_rep_view(request):
     """Displays the club rep page"""
     return render(request, "UWEFlixApp/club_rep_page.html")
+
+def view_transactions(request):
+    """Displays all transactions for the club"""
+    club = Club.objects.get(pk=1)
+    bookings = Booking.objects.filter(club=club)
+    return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
