@@ -300,7 +300,7 @@ def confirm_booking(request):
     number_of_adult_tickets = request.session['number_of_adult_tickets']
     number_of_child_tickets = request.session['number_of_child_tickets']
     number_of_student_tickets = request.session['number_of_student_tickets']
-    
+    screening.seats_remaining = screening.seats_remaining - int(number_of_adult_tickets) - int(number_of_child_tickets) - int(number_of_student_tickets)
     total_price = int(number_of_adult_tickets) * 4.99 + int(number_of_child_tickets) * 2.99 + int(number_of_student_tickets) * 3.99
 
     if request.method == 'POST':
