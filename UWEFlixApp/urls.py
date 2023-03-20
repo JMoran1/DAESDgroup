@@ -59,6 +59,7 @@ urlpatterns = [
     path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
     path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
+    path('create_screening/', views.create_screening, name='create_screening'),
     path('create_monthly_statement/', views.create_monthly_statements, name='create_monthly_statement'),
     path('account_manager', views.account_manager_view, name='account_manager'),
     path('login/', views.CustomLoginView.as_view(), name='login'),
@@ -67,4 +68,6 @@ urlpatterns = [
     path('confirm_booking/', views.confirm_booking, name='confirm_booking'),
     path('top_up/', views.club_top_up, name='top_up'),
     path('register/', views.register_customer, name='register_customer'),
+    path("club_rep_view", views.club_rep_view, name="club_rep_view"),
+    
 ]

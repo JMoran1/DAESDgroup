@@ -5,9 +5,9 @@ from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from django.views.generic import ListView
-import json as json
 from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
-from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, UserForm, BookingForm, ClubTopUpForm, CustomerRegistrationForm
+from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, UserForm, BookingForm, ClubTopUpForm, CustomerRegistrationForm, ScreeningForm
+from django.urls import reverse_lazy
 from datetime import datetime
 
 class UserRoleCheck:
@@ -25,7 +25,6 @@ class UserRoleCheck:
 
     def __call__(self, user):
         return hasattr(user, 'role') and user.role in self._roles_to_check
-
 
 def home(request):
     return render(request, "UWEFlixApp/base.html")
@@ -172,6 +171,39 @@ def create_screen(request):
 
     return render(request, 'UWEFlixApp/create_screen.html', {'form': form, "button_text": "Create Screen"})
 
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def create_screening(request):
+    # Retrieve all movies and screens from the database
+    movies = Movie.objects.all()
+    screens = Screen.objects.all()
+
+
+    if request.method == 'POST':
+        # If the form is submitted, save the form
+        form = ScreeningForm(request.POST)
+        print(form.data)
+        if form.is_valid():
+            form.save()
+            # Retrieve the selected movie id from the form
+            movie_id = form.cleaned_data['movie'].id
+            # Redirect to the list of showings for the selected movie
+            return redirect('show_all_screening')
+        else:
+            print(form.errors)
+    else:
+        # If the form is not submitted, create a new form
+        form = ScreeningForm()
+
+    context = {
+        'movies': movies,
+        'screens': screens,
+        'form': form,
+    }
+    return render(request, 'UWEFlixApp/create_screening.html', context)
+
+
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def delete_screen(request, pk):
@@ -248,6 +280,12 @@ class CustomLoginView(LoginView):
     template_name = 'UWEFlixApp/login.html'
     authentication_form = LoginForm
     redirect_authenticated_user = True
+
+    def get_success_url(self):
+        if self.request.user.role == User.Role.CLUB_REP:
+            return reverse_lazy('club_rep_view')
+        else:
+            return reverse_lazy('home')
 
 def logout_user(request):
     logout(request)
@@ -360,3 +398,9 @@ def register_customer(request):
                     return redirect('login')
 
     return render(request, "UWEFlixApp/register.html", {"form": form})
+
+
+
+def club_rep_view(request):
+    """Displays the club rep page"""
+    return render(request, "UWEFlixApp/club_rep_page.html")
