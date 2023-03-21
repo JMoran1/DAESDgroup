@@ -10,6 +10,8 @@ from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Book
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm , ScreeningForm
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm, CustomerRegistrationForm
 from datetime import datetime
+import random
+from string import ascii_letters
 
 class UserRoleCheck:
     """
@@ -337,3 +339,16 @@ def register_customer(request):
 def club_rep_view(request):
     """Displays the club rep page"""
     return render(request, "UWEFlixApp/club_rep_page.html")
+
+
+def register_club_rep(request):
+    """Allows a cinema manager register a club rep"""
+    if request.method == 'POST':
+        username = random.randint(100000, 999999)
+        password = "".join(
+            [ascii_letters[random.randint(0, len(ascii_letters) - 1)] for _ in range(10)])
+        if username not in User.objects.all():
+            User.objects.create_user(
+                username=username, password=password, role=User.Role.CLUB_REP)
+            return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
+    return render(request, "UWEFlixApp/create_club_rep.html")
