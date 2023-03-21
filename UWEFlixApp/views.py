@@ -349,7 +349,7 @@ def register_club_rep(request):
         username = random.randint(100000, 999999)
         password = "".join(
             [ascii_letters[random.randint(0, len(ascii_letters) - 1)] for _ in range(10)])
-        if username not in User.objects.all():
+        if not User.objects.filter(username=username).exists():
             User.objects.create_user(
                 username=username, password=password, role=User.Role.CLUB_REP)
             return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
