@@ -341,6 +341,8 @@ def club_rep_view(request):
     return render(request, "UWEFlixApp/club_rep_page.html")
 
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def register_club_rep(request):
     """Allows a cinema manager register a club rep"""
     if request.method == 'POST':
