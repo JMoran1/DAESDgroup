@@ -343,5 +343,5 @@ def club_rep_view(request):
 def view_transactions(request):
     """Displays all transactions for the club"""
     club = Club.objects.get(pk=1)
-    bookings = Booking.objects.filter(club=club)
+    bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
