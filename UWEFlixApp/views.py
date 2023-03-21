@@ -183,7 +183,6 @@ def create_screening(request):
     if request.method == 'POST':
         # If the form is submitted, save the form
         form = ScreeningForm(request.POST)
-        print(form.data)
         if form.is_valid():
             form.save()
             # Retrieve the selected movie id from the form
@@ -240,7 +239,6 @@ def show_screening(request, pk):
             dates.append(date)
             screening_dict[date] = []
         screening_dict[date].append(show)
-    print(screening_dict)
 
     return render(request, "UWEFlixApp/show_movie_screenings_with_tabs.html", {"showing_list": screening, "movie": movie, "screening_dict": screening_dict})
 
@@ -307,19 +305,12 @@ def create_booking(request, pk):
     
     request.session['number_of_student_tickets'] = request.POST.get('number_of_student_tickets')
 
-    print("testing adult tickets  = " + str(request.session['number_of_adult_tickets']))
-    
-    print("testing child tickets  = " + str(request.session['number_of_child_tickets']))
-    
-    print("testing student tickets  = " + str(request.session['number_of_student_tickets']))
     if request.method == 'POST':
         total_tickets= int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get('number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
-        print(total_tickets)
+        request.session['total_tickets_number'] = total_tickets
         if total_tickets > 9:
-            print("Too many tickets, no more then 9 in one booking")
             warning = "Too many tickets, no more then 9 in one booking"
         elif total_tickets == 0:
-            print("No tickets selected")
             warning = "No tickets selected"
         else:
             return redirect('confirm_booking')
@@ -332,19 +323,16 @@ def create_booking(request, pk):
 def confirm_booking(request):
     
     screening = Screening.objects.get(id=request.session['selected_screening'])
-    print('session data = ' + str(request.session['selected_screening']))
+
     user = request.user
-    print('screening details = ' + str(screening))
     number_of_adult_tickets = request.session['number_of_adult_tickets']
     number_of_child_tickets = request.session['number_of_child_tickets']
     number_of_student_tickets = request.session['number_of_student_tickets']
     screening.seats_remaining = screening.seats_remaining - int(number_of_adult_tickets) - int(number_of_child_tickets) - int(number_of_student_tickets)
     total_price = int(number_of_adult_tickets) * 4.99 + int(number_of_child_tickets) * 2.99 + int(number_of_student_tickets) * 3.99
-
+    total_ticket_quantity = int(number_of_adult_tickets) + int(number_of_child_tickets) + int(number_of_student_tickets)
     if request.method == 'POST':
         form = BookingForm(request.POST)
-        total_price = int(number_of_adult_tickets) * 4.99 + int(number_of_child_tickets) * 2.99 + int(number_of_student_tickets) * 3.99
-        print(total_price)
         if request.user.is_authenticated:
             Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,number_of_child_tickets=number_of_child_tickets,number_of_student_tickets=number_of_student_tickets )
         else:
@@ -354,7 +342,7 @@ def confirm_booking(request):
     else:
         form = BookingForm()
     
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity})
 
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
