@@ -1,0 +1,47 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+<div class="row">
+    <div class="col"></div>
+    <div class="col"><h2 class="text-center">{{club.name}}: {{month|date:"F"}} Transactions</h2></div>
+    <div class="col">
+    </div>
+</div>
+
+
+{% if transaction_list %}
+<div class="w-75 m-auto">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for transaction in transaction_list %}
+            <tr>
+                <td> {{ transaction.date |date:"dS N Y"}}</td>
+                <td> {{ transaction.total_price }} </td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td><br></td>
+                <td><br></td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td>{{total}}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% else %}
+<p class="text-center">No transactions have been made. </p>
+{% endif %}
+{% endblock %}
