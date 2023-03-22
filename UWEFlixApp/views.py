@@ -51,10 +51,11 @@ def delete_movie(request, pk):
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def update_movie(request, pk):
-    club = Movie.objects.get(pk=pk)
-    form = MovieForm(request.POST or None, instance=club)
+    movie = Movie.objects.get(pk=pk)
+    form = MovieForm(request.POST or None, instance=movie)
 
     if request.method == "POST":
+        form = MovieForm(request.POST, request.FILES, instance=movie)
         if form.is_valid():
             form.save()
             return redirect('home')
@@ -286,11 +287,15 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         if self.request.user.role == User.Role.CLUB_REP:
             return reverse_lazy('club_rep_view')
+        else:
+            return reverse_lazy('home')
 
 def logout_user(request):
     logout(request)
     return redirect('home')
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
     club = Club.objects.get(pk=1)
@@ -335,7 +340,8 @@ def register_customer(request):
     return render(request, "UWEFlixApp/register.html", {"form": form})
 
 
-
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_rep_view(request):
     """Displays the club rep page"""
     return render(request, "UWEFlixApp/club_rep_page.html")
@@ -354,3 +360,13 @@ def register_club_rep(request):
                 username=username, password=password, role=User.Role.CLUB_REP)
             return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
     return render(request, "UWEFlixApp/create_club_rep.html")
+
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def view_transactions(request):
+    """Displays all transactions for the club"""
+    # TODO: Change to get club from session when club rep is given a club
+    club = Club.objects.get(pk=1)
+    bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
