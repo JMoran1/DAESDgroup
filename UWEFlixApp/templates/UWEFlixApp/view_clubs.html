@@ -22,6 +22,7 @@
                 <th>Address</th>
                 <th></th>
                 <th></th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,7 @@
                 <td> {{ club.card_expiry }}</td>
                 <td> {{ club.discount_rate }}</td>
                 <td> {{ club.address }}</td>
+                <td><a href="{% url 'view_club_transactions' club.id %}" class="btn btn-outline-primary">View Club Transactions</a></td>
                 <td><a href="{% url 'update_club' club.id %}" class="btn btn-outline-success">Update</a></td>
                 <td><a href="{% url 'delete_club' club.id %}" class="btn btn-danger">Delete</a></td>
 
