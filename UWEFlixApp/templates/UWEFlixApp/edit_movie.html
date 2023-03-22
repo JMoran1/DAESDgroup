@@ -14,7 +14,7 @@ Home
     <div class="row">
         <div class="col"></div>
         <div class="col">
-            <form method="POST" class="log-form">
+            <form method="POST" class="log-form" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="text-center">

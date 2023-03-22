@@ -49,10 +49,11 @@ def delete_movie(request, pk):
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def update_movie(request, pk):
-    club = Movie.objects.get(pk=pk)
-    form = MovieForm(request.POST or None, instance=club)
+    movie = Movie.objects.get(pk=pk)
+    form = MovieForm(request.POST or None, instance=movie)
 
     if request.method == "POST":
+        form = MovieForm(request.POST, request.FILES, instance=movie)
         if form.is_valid():
             form.save()
             return redirect('home')
