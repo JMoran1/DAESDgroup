@@ -24,6 +24,7 @@
                 <th>Club</th>
                 <th>Date</th>
                 <th>Amount</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -32,6 +33,9 @@
                 <td> {{ statement.club }}</td>
                 <td> {{ statement.date }}</td>
                 <td> {{ statement.amount }}</td>
+                <td>
+                    <a href="{% url 'view_club_transactions' statement.club.id %}" class="btn btn-primary">View</a>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
