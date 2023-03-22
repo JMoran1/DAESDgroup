@@ -11,7 +11,8 @@ from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm , S
 from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm, CustomerRegistrationForm
 from datetime import datetime
 import random
-from string import ascii_letters
+from string import ascii_letters, digits
+import secrets
 
 class UserRoleCheck:
     """
@@ -353,8 +354,8 @@ def register_club_rep(request):
     """Allows a cinema manager register a club rep"""
     if request.method == 'POST':
         username = random.randint(100000, 999999)
-        password = "".join(
-            [ascii_letters[random.randint(0, len(ascii_letters) - 1)] for _ in range(10)])
+        password = ''.join(secrets.choice(ascii_letters + digits)
+                           for i in range(8))
         if not User.objects.filter(username=username).exists():
             User.objects.create_user(
                 username=username, password=password, role=User.Role.CLUB_REP)
