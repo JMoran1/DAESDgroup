@@ -285,11 +285,15 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         if self.request.user.role == User.Role.CLUB_REP:
             return reverse_lazy('club_rep_view')
+        else:
+            return reverse_lazy('home')
 
 def logout_user(request):
     logout(request)
     return redirect('home')
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
     club = Club.objects.get(pk=1)
@@ -334,7 +338,17 @@ def register_customer(request):
     return render(request, "UWEFlixApp/register.html", {"form": form})
 
 
-
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_rep_view(request):
     """Displays the club rep page"""
     return render(request, "UWEFlixApp/club_rep_page.html")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def view_transactions(request):
+    """Displays all transactions for the club"""
+    # TODO: Change to get club from session when club rep is given a club
+    club = Club.objects.get(pk=1)
+    bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
