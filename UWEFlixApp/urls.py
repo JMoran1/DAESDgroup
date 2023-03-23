@@ -67,5 +67,6 @@ urlpatterns = [
     path('top_up/', views.club_top_up, name='top_up'),
     path('register/', views.register_customer, name='register_customer'),
     path("club_rep_view", views.club_rep_view, name="club_rep_view"),
+    path('register_club_rep/', views.register_club_rep, name='register_club_rep'),
     path("view_transactions", views.view_transactions, name="view_transactions"),
 ]
