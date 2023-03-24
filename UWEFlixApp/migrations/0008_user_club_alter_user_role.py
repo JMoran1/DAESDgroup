@@ -22,7 +22,7 @@ def drop_customers(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('UWEFlixApp', '0006_club_balance'),
+        ('UWEFlixApp', '0007_alter_screening_seats_remaining'),
     ]
 
     operations = [
