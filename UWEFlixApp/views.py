@@ -317,7 +317,7 @@ def create_booking(request, pk):
             return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
     if request.method == 'POST':
-        if request.user.is_anonymous:
+        if request.user.is_anonymous or request.user.role != User.Role.CLUB_REP:
             request.session['number_of_adult_tickets'] = request.POST.get(
                 'number_of_adult_tickets')
 
