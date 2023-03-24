@@ -8,40 +8,40 @@
     crossorigin="anonymous"></script>
 <div class="row">
     <div class="col"></div>
-    <div class="col"><h2 class="text-center">Monthly Statements</h2></div>
+    <div class="col"><h2 class="text-center">{{club.name}}: {{month|date:"F"}} Transactions</h2></div>
     <div class="col">
-        <!-- Create a button to create new monthly statements -->
-        <a href="{% url 'create_monthly_statement' %}" class="btn btn-primary">Create Monthly Statement</a>
     </div>
 </div>
 
 
-{% if monthly_statement_list %}
+{% if transaction_list %}
 <div class="w-75 m-auto">
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Club</th>
                 <th>Date</th>
                 <th>Amount</th>
-                <th></th>
             </tr>
         </thead>
         <tbody>
-            {% for statement in monthly_statement_list %}
+            {% for transaction in transaction_list %}
             <tr>
-                <td> {{ statement.club }}</td>
-                <td> {{ statement.date }}</td>
-                <td> {{ statement.amount }}</td>
-                <td>
-                    <a href="{% url 'view_club_transactions' statement.club.id %}" class="btn btn-primary">View</a>
-                </td>
+                <td> {{ transaction.date |date:"dS N Y"}}</td>
+                <td> {{ transaction.total_price }} </td>
             </tr>
             {% endfor %}
+            <tr>
+                <td><br></td>
+                <td><br></td>
+            </tr>
+            <tr>
+                <td>Total</td>
+                <td>{{total}}</td>
+            </tr>
         </tbody>
     </table>
 </div>
 {% else %}
-<p class="text-center">No monthly statements have been created. </p>
+<p class="text-center">No transactions have been made. </p>
 {% endif %}
 {% endblock %}
