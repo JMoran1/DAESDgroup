@@ -374,6 +374,7 @@ def view_transactions(request):
     return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
 
 
+
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def view_club_transactions(request, pk):
@@ -381,5 +382,10 @@ def view_club_transactions(request, pk):
     club = Club.objects.get(pk=pk)
     bookings = Booking.objects.filter(
         club=club, date__month=datetime.now().month)
-    total = Booking.objects.filter(club__pk=pk, date__month=datetime.now().month).aggregate(Sum('total_price'))['total_price__sum'] or 0
+    total = 0
+    for booking in bookings:
+        total += booking.total_price
+    # TODO: Change this when moving to docker
+    # total = Booking.objects.filter(club__pk=pk, date__month=datetime.now()
+    #                                .month).aggregate(Sum('total_price'))['total_price__sum'] or 0
     return render(request, "UWEFlixApp/view_club_transactions.html", {"transaction_list": bookings, "club": club, "total": total, "month": datetime.now()})
