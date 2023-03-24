@@ -9,7 +9,7 @@
 
 <div class="container">
     <div class="row">
-        <div class="col"></div>
+        <div class="col-6 m-auto text-center">
             <form method="POST" class="log-form">
                 {% csrf_token %}
                 {{ form.as_p }}
@@ -24,8 +24,11 @@
                 {% endif %}
                 <h2> Total Price: £{{ total_price }}</h2>
             <button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button>
-            <button type="cancel" class="btn btn-outline-danger"><a href="{% url 'home' %}">{{ button_texttwo }}</a></button>
+            <button type="cancel" class="btn btn-outline-danger "><a href="{% url 'home' %}" class="text-decoration-none">{{ button_texttwo }}</a></button>
             </form>
-            {{ warning }}
+            {% if warning %}
+                <h4 class="text-danger"> {{ warning }}</h4>
+            {% endif %}
+        </div>
 </div>
 {% endblock %}
