@@ -14,6 +14,7 @@ import random
 from string import ascii_letters, digits
 import secrets
 from django.db.models import Sum
+from django.shortcuts import get_object_or_404
 
 class UserRoleCheck:
     """
@@ -379,7 +380,7 @@ def view_transactions(request):
 @user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def view_club_transactions(request, pk):
     """Displays all transactions for the club for the current mmonth"""
-    club = Club.objects.get(pk=pk)
+    club = get_object_or_404(Club, pk=pk)
     bookings = Booking.objects.filter(
         club=club, date__month=datetime.now().month)
     total = 0
