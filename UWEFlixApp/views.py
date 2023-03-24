@@ -383,9 +383,9 @@ def confirm_booking(request):
     number_of_adult_tickets = request.session['number_of_adult_tickets']
     number_of_child_tickets = request.session['number_of_child_tickets']
     number_of_student_tickets = request.session['number_of_student_tickets']
-    screening.seats_remaining = screening.seats_remaining - \
-        int(number_of_adult_tickets) - int(number_of_child_tickets) - \
-        int(number_of_student_tickets)
+    # screening.seats_remaining = screening.seats_remaining - \
+    #     int(number_of_adult_tickets) - int(number_of_child_tickets) - \
+    #     int(number_of_student_tickets)
     total_price = int(number_of_adult_tickets) * 4.99 + \
         int(number_of_child_tickets) * 2.99 + \
         int(number_of_student_tickets) * 3.99
@@ -400,24 +400,32 @@ def confirm_booking(request):
     
     if request.method == 'POST':
         form = BookingForm(request.POST)
-        if request.user.is_authenticated:
-            if user.role == User.Role.CLUB_REP:
-                if club.balance < total_price:
-                    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, 'number_of_adult_tickets': number_of_adult_tickets, 'number_of_child_tickets': number_of_child_tickets, 'number_of_student_tickets': number_of_student_tickets, 'total_price': total_price, 'subtotal': subtotal, 'discount': discount, 'total_ticket_quantity': total_ticket_quantity, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'warning': 'Insufficient funds'})
-                else:
-
-                    Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
-                                        number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
-                    club.balance = float(club.balance) - total_price
-                    club.save()
-            else:
-                Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
-                                   number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
+        if screening.seats_remaining < total_ticket_quantity:
+            return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, 'number_of_adult_tickets': number_of_adult_tickets, 'number_of_child_tickets': number_of_child_tickets, 'number_of_student_tickets': number_of_student_tickets, 'total_price': total_price, 'subtotal': subtotal, 'discount': discount, 'total_ticket_quantity': total_ticket_quantity, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'warning': 'Too many tickets selected'})
         else:
-            Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
-                                   number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
+            if request.user.is_authenticated:
+                if user.role == User.Role.CLUB_REP:
+                    if club.balance < total_price:
+                        return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, 'number_of_adult_tickets': number_of_adult_tickets, 'number_of_child_tickets': number_of_child_tickets, 'number_of_student_tickets': number_of_student_tickets, 'total_price': total_price, 'subtotal': subtotal, 'discount': discount, 'total_ticket_quantity': total_ticket_quantity, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'warning': 'Insufficient funds'})
+                    else:
+                        Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                            number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
+                        club.balance = float(club.balance) - total_price
+                        club.save()
+                        screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
+                        screening.save()
+                else:
+                    Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                    number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
+                    screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
+                    screening.save()
+            else:
+                Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                    number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
+                screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
+                screening.save()
 
-        return redirect('home')
+            return redirect('home')
     else:
         form = BookingForm()
 
