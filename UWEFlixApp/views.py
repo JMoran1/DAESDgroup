@@ -1,17 +1,23 @@
+import random
+import secrets
+from datetime import datetime
+from string import ascii_letters, digits
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
 from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from django.views.generic import ListView
-from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
-from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, UserForm, BookingForm, ClubTopUpForm, CustomerRegistrationForm, ScreeningForm
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
-from datetime import datetime
-import random
-from string import ascii_letters, digits
-import secrets
+from django.views.generic import ListView
+
+from .forms import (BookingForm, ClubForm, ClubRepBookingForm, ClubTopUpForm,
+                    CustomerRegistrationForm, LoginForm, MovieForm, ScreenForm,
+                    ScreeningForm, UserForm)
+from .models import (Booking, Club, MonthlyStatement, Movie, Screen, Screening,
+                     User)
+
 
 class UserRoleCheck:
     """
@@ -300,20 +306,24 @@ def create_booking(request, pk):
     date = Screening.objects.get(pk=pk).showing_at
 
     screeningtext = screening.id
-    warning = "Please select tickets"
+    warning = None
     request.session['selected_screening'] = screeningtext
 
-    request.session['number_of_adult_tickets'] = request.POST.get(
-        'number_of_adult_tickets')
-
-    request.session['number_of_child_tickets'] = request.POST.get(
-        'number_of_child_tickets')
-
-    request.session['number_of_student_tickets'] = request.POST.get(
-        'number_of_student_tickets')
+    if request.method == 'GET':
+        if not user.is_anonymous and user.role == User.Role.CLUB_REP:
+            form = ClubRepBookingForm()
+            return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
     if request.method == 'POST':
         if request.user.is_anonymous:
+            request.session['number_of_adult_tickets'] = request.POST.get(
+                'number_of_adult_tickets')
+
+            request.session['number_of_child_tickets'] = request.POST.get(
+                'number_of_child_tickets')
+
+            request.session['number_of_student_tickets'] = request.POST.get(
+                'number_of_student_tickets')
             total_tickets = int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get(
                 'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
             request.session['total_tickets_number'] = total_tickets
@@ -324,11 +334,19 @@ def create_booking(request, pk):
             else:
                 return redirect('confirm_booking')
         else:
-            total_tickets = int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get(
-                'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
+            request.session['number_of_student_tickets'] = request.POST.get(
+                'number_of_student_tickets')
+            request.session['number_of_adult_tickets'] = 0
+
+            request.session['number_of_child_tickets'] = 0
+
+            total_tickets = int(request.POST.get('number_of_student_tickets'))
+            print(total_tickets)
             request.session['total_tickets_number'] = total_tickets
             if total_tickets < 9:
                 warning = "A club booking requirement is 10 tickets or more"
+                form = ClubRepBookingForm()
+                return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
             else:
                 return redirect('confirm_booking')
 
