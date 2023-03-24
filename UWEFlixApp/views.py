@@ -13,6 +13,7 @@ from datetime import datetime
 import random
 from string import ascii_letters, digits
 import secrets
+from django.db.models import Sum
 
 class UserRoleCheck:
     """
@@ -380,7 +381,5 @@ def view_club_transactions(request, pk):
     club = Club.objects.get(pk=pk)
     bookings = Booking.objects.filter(
         club=club, date__month=datetime.now().month)
-    total = 0
-    for booking in bookings:
-        total += booking.total_price
+    total = Booking.objects.filter(club__pk=pk, date__month=datetime.now().month).aggregate(Sum('total_price'))['total_price__sum'] or 0
     return render(request, "UWEFlixApp/view_club_transactions.html", {"transaction_list": bookings, "club": club, "total": total, "month": datetime.now()})
