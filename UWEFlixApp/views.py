@@ -293,60 +293,95 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
+
 def create_booking(request, pk):
     user = request.user
     screening = Screening.objects.get(pk=pk)
     date = Screening.objects.get(pk=pk).showing_at
-    # This section is being used to pass information to sessions for future use
+
     screeningtext = screening.id
     warning = "Please select tickets"
     request.session['selected_screening'] = screeningtext
-    # The below code will be moved 
-    # For posting to the database after being filled in. 
-    request.session['number_of_adult_tickets'] = request.POST.get('number_of_adult_tickets')
-    
-    request.session['number_of_child_tickets'] = request.POST.get('number_of_child_tickets')
-    
-    request.session['number_of_student_tickets'] = request.POST.get('number_of_student_tickets')
+
+    request.session['number_of_adult_tickets'] = request.POST.get(
+        'number_of_adult_tickets')
+
+    request.session['number_of_child_tickets'] = request.POST.get(
+        'number_of_child_tickets')
+
+    request.session['number_of_student_tickets'] = request.POST.get(
+        'number_of_student_tickets')
 
     if request.method == 'POST':
-        total_tickets= int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get('number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
-        request.session['total_tickets_number'] = total_tickets
-        if total_tickets > 9:
-            warning = "Too many tickets, no more then 9 in one booking"
-        elif total_tickets == 0:
-            warning = "No tickets selected"
+        if request.user.is_anonymous:
+            total_tickets = int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get(
+                'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
+            request.session['total_tickets_number'] = total_tickets
+            if total_tickets > 9:
+                warning = "Too many tickets, no more than 9 in one booking"
+            elif total_tickets == 0:
+                warning = "No tickets selected"
+            else:
+                return redirect('confirm_booking')
         else:
-            return redirect('confirm_booking')
-    
+            total_tickets = int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get(
+                'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
+            request.session['total_tickets_number'] = total_tickets
+            if total_tickets < 9:
+                warning = "A club booking requirement is 10 tickets or more"
+            else:
+                return redirect('confirm_booking')
 
     form = BookingForm()
-    
+
     return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
+
 def confirm_booking(request):
-    
+
     screening = Screening.objects.get(id=request.session['selected_screening'])
 
     user = request.user
+    # TODO: Change club to be based on the user's club
+    club = Club.objects.get(pk=2)
+    discount_rate = club.discount_rate
+    discount = None
     number_of_adult_tickets = request.session['number_of_adult_tickets']
     number_of_child_tickets = request.session['number_of_child_tickets']
     number_of_student_tickets = request.session['number_of_student_tickets']
-    screening.seats_remaining = screening.seats_remaining - int(number_of_adult_tickets) - int(number_of_child_tickets) - int(number_of_student_tickets)
-    total_price = int(number_of_adult_tickets) * 4.99 + int(number_of_child_tickets) * 2.99 + int(number_of_student_tickets) * 3.99
-    total_ticket_quantity = int(number_of_adult_tickets) + int(number_of_child_tickets) + int(number_of_student_tickets)
+    screening.seats_remaining = screening.seats_remaining - \
+        int(number_of_adult_tickets) - int(number_of_child_tickets) - \
+        int(number_of_student_tickets)
+    total_price = int(number_of_adult_tickets) * 4.99 + \
+        int(number_of_child_tickets) * 2.99 + \
+        int(number_of_student_tickets) * 3.99
+    subtotal = total_price
+    if not request.user.is_anonymous:
+        if user.role == User.Role.CLUB_REP:
+            discount = total_price * float(discount_rate)
+            total_price = total_price - discount
+
+    total_ticket_quantity = int(number_of_adult_tickets) + \
+        int(number_of_child_tickets) + int(number_of_student_tickets)
+    
     if request.method == 'POST':
         form = BookingForm(request.POST)
         if request.user.is_authenticated:
-            Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,number_of_child_tickets=number_of_child_tickets,number_of_student_tickets=number_of_student_tickets )
+            if user.role == User.Role.CLUB_REP:
+                Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                       number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
+            else:
+                Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                   number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
         else:
-            Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price, number_of_child_tickets=number_of_child_tickets,number_of_student_tickets=number_of_student_tickets )
+            Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                   number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
 
         return redirect('home')
     else:
         form = BookingForm()
-    
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity})
+
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity, 'discount': discount, 'subtotal': subtotal})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
