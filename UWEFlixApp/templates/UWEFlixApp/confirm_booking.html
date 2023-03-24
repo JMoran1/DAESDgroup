@@ -18,6 +18,10 @@
                 <h2> Screening :  {{Screening.movie}} </h2>
                 <h2> Showing time:  {{Screening.showing_at}} </h2>
                 <h2> Quanity of Tickets: {{ total_ticket_quantity }}</h2>
+                <h2> Subtotal: {{subtotal}}</h2>
+                {% if discount %}
+                <h2> Discount: {{ discount }}</h2>
+                {% endif %}
                 <h2> Total Price: £{{ total_price }}</h2>
             <button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button>
             <button type="cancel" class="btn btn-outline-danger"><a href="{% url 'home' %}">{{ button_texttwo }}</a></button>

@@ -18,7 +18,9 @@
                 {{ form.as_p }}
                 <div class="text-center">
             
-            {{ warning }}
+            {% if warning %}
+            {{ warning }}  
+            {% endif %}
             <button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button>
             </div>
             </form>
