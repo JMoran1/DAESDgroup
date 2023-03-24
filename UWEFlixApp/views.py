@@ -293,8 +293,6 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
-@login_required()
-@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def create_booking(request, pk):
     user = request.user
     screening = Screening.objects.get(pk=pk)
@@ -350,6 +348,8 @@ def confirm_booking(request):
     
     return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity})
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
     club = Club.objects.get(pk=1)
