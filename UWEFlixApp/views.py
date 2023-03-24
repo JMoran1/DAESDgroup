@@ -329,12 +329,19 @@ def create_booking(request, pk):
             total_tickets = int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get(
                 'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
             request.session['total_tickets_number'] = total_tickets
-            if total_tickets > 9:
-                warning = "Too many tickets, no more than 9 in one booking"
-            elif total_tickets == 0:
-                warning = "No tickets selected"
+            if screening.seats_remaining < total_tickets:
+                warning = "Not enough seats available"
+                form = BookingForm()
+                return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+
+
             else:
-                return redirect('confirm_booking')
+                if total_tickets > 9:
+                    warning = "Too many tickets, no more than 9 in one booking"
+                elif total_tickets == 0:
+                    warning = "No tickets selected"
+                else:
+                    return redirect('confirm_booking')
         else:
             request.session['number_of_student_tickets'] = request.POST.get(
                 'number_of_student_tickets')
@@ -345,12 +352,18 @@ def create_booking(request, pk):
             total_tickets = int(request.POST.get('number_of_student_tickets'))
             print(total_tickets)
             request.session['total_tickets_number'] = total_tickets
-            if total_tickets < 9:
-                warning = "A club booking requirement is 10 tickets or more"
+            if screening.seats_remaining < total_tickets:
+                warning = "Not enough seats available"
                 form = ClubRepBookingForm()
                 return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+
             else:
-                return redirect('confirm_booking')
+                if total_tickets < 9:
+                    warning = "A club booking requirement is 10 tickets or more"
+                    form = ClubRepBookingForm()
+                    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+                else:
+                    return redirect('confirm_booking')
 
     form = BookingForm()
 
@@ -363,8 +376,9 @@ def confirm_booking(request):
 
     user = request.user
     # TODO: Change club to be based on the user's club
-    club = Club.objects.get(pk=2)
-    discount_rate = club.discount_rate
+    if not request.user.is_anonymous and request.user.role == User.Role.CLUB_REP:
+        club = Club.objects.get(pk=2)
+        discount_rate = club.discount_rate
     discount = None
     number_of_adult_tickets = request.session['number_of_adult_tickets']
     number_of_child_tickets = request.session['number_of_child_tickets']
