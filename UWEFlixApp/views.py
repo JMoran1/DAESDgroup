@@ -1,14 +1,15 @@
+from datetime import datetime
 import random
 import secrets
-from datetime import datetime
 from string import ascii_letters, digits
 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
+from django.db.models import Sum
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 
@@ -18,8 +19,6 @@ from .forms import (BookingForm, ClubForm, ClubRepBookingForm, ClubTopUpForm,
 from .models import (Booking, Club, MonthlyStatement, Movie, Screen, Screening,
                      User)
 
-from django.db.models import Sum
-from django.shortcuts import get_object_or_404
 
 class UserRoleCheck:
     """
@@ -483,9 +482,9 @@ def club_top_up(request):
 
     return render(request, "UWEFlixApp/club_top_up.html", {"form": form})
 
-def register_customer(request):
-    """Allows a customer to register for an account"""
-    form = CustomerRegistrationForm(request.POST or None)
+def register_student(request):
+    """Allows a student to register for an account"""
+    form = StudentRegistrationForm(request.POST or None)
 
     if request.method == "POST":
         if form.is_valid():
@@ -498,7 +497,7 @@ def register_customer(request):
                 if User.objects.filter(username=form.cleaned_data["username"]).exists():
                     return render(request, "UWEFlixApp/register.html", {"error": "Username already taken", "form": form})
                 else:
-                    User.objects.create_user(username=form.cleaned_data["username"], password=password1, role=User.Role.CUSTOMER)
+                    User.objects.create_user(username=form.cleaned_data["username"], password=password1, role=User.Role.STUDENT)
                     return redirect('login')
 
     return render(request, "UWEFlixApp/register.html", {"form": form})

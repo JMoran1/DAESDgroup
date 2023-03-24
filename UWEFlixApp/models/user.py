@@ -7,12 +7,18 @@ class User(AbstractUser):
         CINEMA_MANAGER = 'M', 'Cinema Manager'
         ACCOUNT_MANAGER = 'A', 'Account Manager'
         CLUB_REP = 'R', 'Club Representative'
-        CUSTOMER = 'C', 'Customer'
+        STUDENT = 'S', 'Student'
 
     role = models.CharField(
         max_length=1,
         choices=Role.choices,
-        default=Role.CUSTOMER
+        default=Role.STUDENT
+    )
+    club = models.ForeignKey(
+        'club',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL  # deleting a Club unlinks any Users from it
     )
 
     @classmethod

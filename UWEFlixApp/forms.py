@@ -125,8 +125,7 @@ class ClubTopUpForm(forms.Form):
             raise forms.ValidationError("Amount must be greater than 0")
         return amount
 
-
-class CustomerRegistrationForm(forms.Form):
+class StudentRegistrationForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
