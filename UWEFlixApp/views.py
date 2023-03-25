@@ -33,7 +33,7 @@ class UserRoleCheck:
         return hasattr(user, 'role') and user.role in self._roles_to_check
 
 def home(request):
-    return render(request, "UWEFlixApp/base.html")
+    return render(request, "UWEFlixApp/homepage.html")
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
