@@ -28,7 +28,8 @@ class ClubForm(forms.ModelForm):
     
     def clean_card_expiry(self):
         expiry = self.cleaned_data['card_expiry']
-        if expiry < datetime.datetime.now():
+        expiry = datetime.combine(expiry, datetime.min.time())
+        if expiry < datetime.now():
             raise forms.ValidationError("Card has expired")
         return expiry
 
