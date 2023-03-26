@@ -262,6 +262,8 @@ def delete_screening(request, pk):
     screening.delete()
     return redirect("show_all_screening")
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def edit_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
 
