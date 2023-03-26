@@ -16,7 +16,7 @@
     <div class="container mx-auto flex justify-between items-center">
       <div>
         <a href="#">
-          <img class="h-8" src="logo.png" alt="Logo" />
+          <img class="h-10" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/UWE_Bristol_logo.svg/2560px-UWE_Bristol_logo.svg.png" alt="Logo" />
         </a>
       </div>
       <nav class="flex">
@@ -33,8 +33,8 @@
         <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'logout' %}">Logout</a>
         {% else %}
         <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'login' %}">Login</a>
-        {% endif %}
         <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'register_customer' %}">Register</a>
+        {% endif %}
       </nav>
     </div>
   </header>
