@@ -1,13 +1,18 @@
 from django.contrib.auth.models import AbstractUser, Group
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
+
+
+class Role(models.TextChoices):
+    CINEMA_MANAGER = 'M', 'Cinema Manager'
+    ACCOUNT_MANAGER = 'A', 'Account Manager'
+    CLUB_REP = 'R', 'Club Representative'
+    STUDENT = 'S', 'Student'
 
 
 class User(AbstractUser):
-    class Role(models.TextChoices):
-        CINEMA_MANAGER = 'M', 'Cinema Manager'
-        ACCOUNT_MANAGER = 'A', 'Account Manager'
-        CLUB_REP = 'R', 'Club Representative'
-        STUDENT = 'S', 'Student'
+    Role = Role
 
     role = models.CharField(
         max_length=1,
@@ -20,6 +25,25 @@ class User(AbstractUser):
         null=True,
         on_delete=models.SET_NULL  # deleting a Club unlinks any Users from it
     )
+
+    class Meta:
+        constraints = (
+            models.CheckConstraint(
+                check=Q(club__isnull=True) ^ Q(role__in=(Role.CLUB_REP, Role.STUDENT)),
+                name='members_have_club',
+                violation_error_message='Only Club Reps and Students must have Clubs'
+            ),
+        )
+
+    # def clean(self):
+    #     needs_to_be_club_member = self.role in (Role.CLUB_REP, Role.STUDENT)
+    #     is_club_member = self.club is not None
+    #     if needs_to_be_club_member != is_club_member:  # "logical XNOR"
+    #         # customise error message dependent on whether should or shouldn't
+    #         if needs_to_be_club_member:
+    #             raise ValidationError('{} users MUST have a Club assigned'.format(self.role))
+    #         else:
+    #             raise ValidationError('Only Club Reps and Students may be members of Clubs')
 
     @classmethod
     def get_role_groups(cls):

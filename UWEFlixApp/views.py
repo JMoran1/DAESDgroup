@@ -461,7 +461,7 @@ def confirm_booking(request):
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
-    club = Club.objects.get(pk=1)
+    club = request.user.club  # TODO: needs a null check for when this isn't set  --maybe we need to ensure club reps always have a club?
     form = ClubTopUpForm(request.POST or None)
 
     if request.method == "POST":
@@ -520,7 +520,8 @@ def register_club_rep(request):
                            for i in range(8))
         if not User.objects.filter(username=username).exists():
             User.objects.create_user(
-                username=username, password=password, role=User.Role.CLUB_REP)
+                username=username, password=password, role=User.Role.CLUB_REP
+            ).full_clean()
             return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
     return render(request, "UWEFlixApp/create_club_rep.html")
 
@@ -530,7 +531,7 @@ def register_club_rep(request):
 def view_transactions(request):
     """Displays all transactions for the club"""
     # TODO: Change to get club from session when club rep is given a club
-    club = Club.objects.get(pk=1)
+    club = request.user.club  # TODO: needs a null check for when this isn't set  --maybe we need to ensure club reps always have a club?
     bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
 
