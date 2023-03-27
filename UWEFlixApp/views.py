@@ -1,4 +1,6 @@
 from django.contrib.auth import logout
+from django import template
+from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
@@ -15,6 +17,8 @@ from string import ascii_letters, digits
 import secrets
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
+
+register = template.Library()
 
 class UserRoleCheck:
     """
@@ -33,7 +37,9 @@ class UserRoleCheck:
         return hasattr(user, 'role') and user.role in self._roles_to_check
 
 def home(request):
-    return render(request, "UWEFlixApp/homepage.html")
+    roles = User.objects.filter(username=request.user).values('role')
+    print(roles)
+    return render(request, "UWEFlixApp/homepage.html", {'roles': roles})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
