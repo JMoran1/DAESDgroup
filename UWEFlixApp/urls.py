@@ -70,4 +70,5 @@ urlpatterns = [
     path('register_club_rep/', views.register_club_rep, name='register_club_rep'),
     path("view_transactions", views.view_transactions, name="view_transactions"),
     path("view_club_transactions/<int:pk>/", views.view_club_transactions, name="view_club_transactions"),
+    path("account_page/", views.account_page, name="account_page"),
 ]

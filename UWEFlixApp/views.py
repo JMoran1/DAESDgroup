@@ -37,9 +37,13 @@ class UserRoleCheck:
         return hasattr(user, 'role') and user.role in self._roles_to_check
 
 def home(request):
-    roles = User.objects.filter(username=request.user).values('role')
-    print(roles)
-    return render(request, "UWEFlixApp/homepage.html", {'roles': roles})
+    if request.user.is_authenticated:
+        roles = User.objects.get(username=request.user)
+        print(roles.role)
+        uType = roles.role
+        return render(request, "UWEFlixApp/homepage.html", {'uType': uType})
+    else:
+        return render(request, "UWEFlixApp/homepage.html")
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
@@ -396,3 +400,17 @@ def view_club_transactions(request, pk):
     # total = Booking.objects.filter(club__pk=pk, date__month=datetime.now()
     #                                .month).aggregate(Sum('total_price'))['total_price__sum'] or 0
     return render(request, "UWEFlixApp/view_club_transactions.html", {"transaction_list": bookings, "club": club, "total": total, "month": datetime.now()})
+
+
+def account_page(request):
+    """Redicted log in users to approprate pages"""
+    if request.user.role == User.Role.CUSTOMER:
+        return redirect("booking_start")
+    elif request.user.role == User.Role.CLUB_REP:
+        return redirect("club_rep_view")
+    elif request.user.role == User.Role.ACCOUNT_MANAGER:
+        return redirect("account_manager")
+    elif request.user.role == User.Role.CINEMA_MANAGER:
+        return redirect("cinema_manager_view")
+    else:
+        return redirect("home")

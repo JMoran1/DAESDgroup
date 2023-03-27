@@ -19,22 +19,14 @@
           <img class="h-10" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/UWE_Bristol_logo.svg/2560px-UWE_Bristol_logo.svg.png" alt="Logo" />
         </a>
       </div>
-      <nav class="flex">
+      <nav class="flex">  
         {% if user.is_authenticated %}
         <p>Welcome, User {{ user.get_username }}.</p>
-        {% else %}
-        <p>Welcome, Stranger. Please log in!</p>
         {% endif %}
         <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'home' %}">Home</a>
         <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'booking_start' %}">Book</a>
-        {{ roles }}
-        {% if roles == "<QuerySet [{'role': 'M'}]>" %}
-        <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'cinema_manager_view' %} ">C-Manager View</a>
-        {% endif %}
-        {% if roles == "A" %}
-        <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'cinema_manager_view' %} ">A-Manager View</a>
-        {% endif %}
         {% if user.is_authenticated %}
+        <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'account_page' %}">Account</a>
         <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'logout' %}">Logout</a>
         {% else %}
         <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'login' %}">Login</a>
