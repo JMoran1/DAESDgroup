@@ -1,0 +1,31 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+<div class="w-3/4 mx-auto">
+  <h1 class="text-2xl text-center">Edit Screening</h1>
+  <form method="post">
+    {% csrf_token %}
+    <div class="mb-4">
+      <label for="movie" class="block text-gray-700 font-bold mb-2">Movie:</label>
+      <select class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" id="movie" name="movie">
+        {% for movie in movies %}
+          <option value="{{ movie.id }}" {% if movie.id == form.instance.movie.id %}selected{% endif %}>{{ movie.name}}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-4">               
+      <label for="screen" class="block text-gray-700 font-bold mb-2">Screen:</label>
+      <select class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" id="screen" name="screen">
+        {% for screen in screens %}
+          <option value="{{ screen.id }}" {% if screen.id == form.instance.screen.id %}selected{% endif %}>{{ screen.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-6">
+      <label for="showing_at" class="block text-gray-700 font-bold mb-2">Showing At:</label>
+      <input type="datetime-local" class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" id="showing_at" name="showing_at" value="{{ form.instance.showing_at|date:'Y-m-d\TH:i' }}" required>
+    </div>
+    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Save</button>
+  </form>
+</div>
+{% endblock %}

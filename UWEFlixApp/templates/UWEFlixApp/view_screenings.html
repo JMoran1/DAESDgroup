@@ -27,7 +27,7 @@
                 <td> {{ Screening.movie }} </td> 
                 <td> {{ Screening.showing_at }} </td>
                 <td>  </td>
-                <td><a href="#"><button class="btn btn-outline-success"> Edit </button></a> <td>
+                <td><a href="{% url 'edit_screening' Screening.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
                 <td><a href="{% url 'delete_screening' Screening.id %}"><button class="btn btn-danger">Delete</button></a>
             </tr>
             {% endfor %}

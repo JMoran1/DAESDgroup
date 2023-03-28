@@ -267,6 +267,28 @@ def delete_screening(request, pk):
     return redirect("show_all_screening")
 
 @login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def edit_screening(request, pk):
+    screening = Screening.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        form = ScreeningForm(request.POST, instance=screening)
+        if form.is_valid():
+            form.save()
+            return redirect('show_all_screening')
+    else:
+        form = ScreeningForm(instance=screening)
+        movies = Movie.objects.all()
+        screens = Screen.objects.all()
+
+    context = {
+        'form': form,
+        'movies': movies,
+        'screens': screens,
+    }
+    return render(request, 'UWEFlixApp/edit_screening.html', context)
+
+@login_required()
 @user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
 def create_monthly_statements(request):
     """Creates a monthly statement for each club in the database"""
