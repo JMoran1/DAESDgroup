@@ -2,6 +2,7 @@ from django import forms
 from django.contrib import admin
 from UWEFlixApp.models import Club, Movie, Screen, User, Screening
 from django.contrib.auth.forms import AuthenticationForm
+from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
 from .check_luhn import check_luhn
 from datetime import datetime
 
@@ -100,6 +101,19 @@ class LoginForm(AuthenticationForm):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}))
 
+class BookingForm(forms.ModelForm):
+    class Meta:
+        model = Booking
+        fields = ('number_of_student_tickets','number_of_child_tickets','number_of_adult_tickets')
+
+    TICKET_OPTIONS = (('0','0'), ('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8'), ('9','9'))
+    number_of_student_tickets = forms.CharField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=TICKET_OPTIONS)) 
+    
+    number_of_child_tickets = forms.CharField(label='Number of Child Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=TICKET_OPTIONS)) 
+    
+    number_of_adult_tickets = forms.CharField(label='Number of Adult Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=TICKET_OPTIONS)) 
+
+    
 class ClubTopUpForm(forms.Form):
     amount = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
     card_number = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -128,4 +142,6 @@ class CustomerRegistrationForm(forms.Form):
         if User.objects.filter(username=self.cleaned_data["username"]).exists():
             raise forms.ValidationError("Username already exists")
         return self.cleaned_data["username"]
-
+    
+class ClubRepBookingForm(forms.Form):
+    number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.TextInput(attrs={'class': 'form-control'}))
