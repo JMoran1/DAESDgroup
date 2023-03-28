@@ -1,5 +1,4 @@
 from django.contrib.auth import logout
-from django import template
 from django.contrib.auth.models import Group
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -17,8 +16,6 @@ from string import ascii_letters, digits
 import secrets
 from django.db.models import Sum
 from django.shortcuts import get_object_or_404
-
-register = template.Library()
 
 class UserRoleCheck:
     """
