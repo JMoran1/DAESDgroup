@@ -35,7 +35,6 @@ class UserRoleCheck:
 def home(request):
     if request.user.is_authenticated:
         roles = User.objects.get(username=request.user)
-        print(roles.role)
         uType = roles.role
         return render(request, "UWEFlixApp/homepage.html", {'uType': uType})
     else:
