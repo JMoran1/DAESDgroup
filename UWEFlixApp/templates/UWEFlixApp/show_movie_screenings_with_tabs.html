@@ -64,7 +64,7 @@
     {% for day, times in screening_dict.items %}
     <div id="{{day}}" class="tabcontent">
         {% for time in times %}
-        <p>{{time.showing_at |date:'H:i'}}</p>
+        <a href="{% url 'create_booking' time.id %}"><p>{{time.showing_at |date:'H:i'}}</p></a>
         {% endfor %}
     </div>
     {% endfor %}
