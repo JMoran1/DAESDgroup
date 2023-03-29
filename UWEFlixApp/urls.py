@@ -56,6 +56,7 @@ urlpatterns = [
     path("booking_start/", movie_list_booking, name="booking_start"),
     path('update_screen/<int:pk>/    ', views.update_screen, name="update_screen"),
     path('delete_screen/<int:pk>/', views.delete_screen, name="delete_screen"),
+    path('edit_screening/<int:pk>/', views.edit_screening, name='edit_screening'),
     path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
     path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
@@ -72,4 +73,5 @@ urlpatterns = [
     path('register_club_rep/', views.register_club_rep, name='register_club_rep'),
     path("view_transactions", views.view_transactions, name="view_transactions"),
     path("view_club_transactions/<int:pk>/", views.view_club_transactions, name="view_club_transactions"),
+    path("account_page/", views.account_page, name="account_page"),
 ]

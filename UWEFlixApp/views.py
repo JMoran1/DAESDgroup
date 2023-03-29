@@ -38,7 +38,12 @@ class UserRoleCheck:
         return hasattr(user, 'role') and user.role in self._roles_to_check
 
 def home(request):
-    return render(request, "UWEFlixApp/homepage.html")
+    if request.user.is_authenticated:
+        roles = User.objects.get(username=request.user)
+        uType = roles.role
+        return render(request, "UWEFlixApp/homepage.html", {'uType': uType})
+    else:
+        return render(request, "UWEFlixApp/homepage.html")
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
@@ -265,6 +270,28 @@ def delete_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
     screening.delete()
     return redirect("show_all_screening")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def edit_screening(request, pk):
+    screening = Screening.objects.get(pk=pk)
+
+    if request.method == 'POST':
+        form = ScreeningForm(request.POST, instance=screening)
+        if form.is_valid():
+            form.save()
+            return redirect('show_all_screening')
+    else:
+        form = ScreeningForm(instance=screening)
+        movies = Movie.objects.all()
+        screens = Screen.objects.all()
+
+    context = {
+        'form': form,
+        'movies': movies,
+        'screens': screens,
+    }
+    return render(request, 'UWEFlixApp/edit_screening.html', context)
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.ACCOUNT_MANAGER), redirect_field_name=None)
@@ -524,3 +551,17 @@ def view_club_transactions(request, pk):
     # total = Booking.objects.filter(club__pk=pk, date__month=datetime.now()
     #                                .month).aggregate(Sum('total_price'))['total_price__sum'] or 0
     return render(request, "UWEFlixApp/view_club_transactions.html", {"transaction_list": bookings, "club": club, "total": total, "month": datetime.now()})
+
+
+def account_page(request):
+    """Redicted log in users to approprate pages"""
+    if request.user.role == User.Role.CUSTOMER:
+        return redirect("booking_start")
+    elif request.user.role == User.Role.CLUB_REP:
+        return redirect("club_rep_view")
+    elif request.user.role == User.Role.ACCOUNT_MANAGER:
+        return redirect("account_manager")
+    elif request.user.role == User.Role.CINEMA_MANAGER:
+        return redirect("cinema_manager_view")
+    else:
+        return redirect("home")
