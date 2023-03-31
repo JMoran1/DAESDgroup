@@ -12,10 +12,10 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 
-from .forms import (BookingForm, ClubForm, ClubRepBookingForm, ClubTopUpForm,
+from UWEFlixApp.forms import (BookingForm, ClubForm, ClubRepBookingForm, ClubTopUpForm,
                     CustomerRegistrationForm, LoginForm, MovieForm, ScreenForm,
                     ScreeningForm, UserForm)
-from .models import (Booking, Club, MonthlyStatement, Movie, Screen, Screening,
+from UWEFlixApp.models import (Booking, Club, MonthlyStatement, Movie, Screen, Screening,
                      User)
 
 from django.db.models import Sum
