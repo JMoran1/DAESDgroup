@@ -23,6 +23,10 @@ from django.shortcuts import get_object_or_404
 
 from .auth import UserRoleCheck
 from .booking import create_booking, confirm_booking
+from .screening import (
+    create_screening, show_screening, show_all_screening, delete_screening,
+    edit_screening
+)
 
 
 def home(request):
