@@ -35,16 +35,6 @@ class User(AbstractUser):
             ),
         )
 
-    # def clean(self):
-    #     needs_to_be_club_member = self.role in (Role.CLUB_REP, Role.STUDENT)
-    #     is_club_member = self.club is not None
-    #     if needs_to_be_club_member != is_club_member:  # "logical XNOR"
-    #         # customise error message dependent on whether should or shouldn't
-    #         if needs_to_be_club_member:
-    #             raise ValidationError('{} users MUST have a Club assigned'.format(self.role))
-    #         else:
-    #             raise ValidationError('Only Club Reps and Students may be members of Clubs')
-
     @classmethod
     def get_role_groups(cls):
         """

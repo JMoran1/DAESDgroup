@@ -461,7 +461,7 @@ def confirm_booking(request):
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
-    club = request.user.club  # TODO: needs a null check for when this isn't set  --maybe we need to ensure club reps always have a club?
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     form = ClubTopUpForm(request.POST or None)
 
     if request.method == "POST":
@@ -485,6 +485,7 @@ def club_top_up(request):
 def register_student(request):
     """Allows a student to register for an account"""
     form = StudentRegistrationForm(request.POST or None)
+    # TODO: specify User Club!
 
     if request.method == "POST":
         if form.is_valid():
@@ -514,6 +515,7 @@ def club_rep_view(request):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def register_club_rep(request):
     """Allows a cinema manager register a club rep"""
+    # TODO: specify User Club!
     if request.method == 'POST':
         username = random.randint(100000, 999999)
         password = ''.join(secrets.choice(ascii_letters + digits)
@@ -531,7 +533,7 @@ def register_club_rep(request):
 def view_transactions(request):
     """Displays all transactions for the club"""
     # TODO: Change to get club from session when club rep is given a club
-    club = request.user.club  # TODO: needs a null check for when this isn't set  --maybe we need to ensure club reps always have a club?
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
 
