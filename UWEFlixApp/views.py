@@ -151,7 +151,6 @@ class ViewMovie(ListView):
         context = super(ViewMovie, self).get_context_data(**kwargs)
         return context
 
-
 class ViewScreen(UserPassesTestMixin, ListView):
     model = Screen
 
@@ -577,3 +576,7 @@ def payment_page(request):
 
         return redirect('confirm_booking')
     return render(request, "UWEFlixApp/paymentform.html", {"form": form, "button_text": "Continue"})
+
+def show_all_bookings(request):
+    all_booking = Booking.objects.all()
+    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
