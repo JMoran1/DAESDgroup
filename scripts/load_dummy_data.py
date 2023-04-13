@@ -35,10 +35,10 @@ def create_random_monthly_statement(club):
 def create_random_movie():
     name = create_random_string()
     # Create a timedelta between 1 and 3 hours
-    minutes_long = 60 * randint(1, 3)
+    running_time = 60 * randint(1, 3)
     description = create_random_string()
     rating = randint(0, 10)
-    movie = Movie.objects.create(name=name, minutes_long=minutes_long, description=description, rating=rating)
+    movie = Movie.objects.create(name=name, running_time=running_time, description=description, rating=rating)
     return movie
 
 def create_random_screen():

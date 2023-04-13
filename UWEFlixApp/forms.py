@@ -38,11 +38,11 @@ class ClubForm(forms.ModelForm):
 class MovieForm(forms.ModelForm):
     class Meta:
         model = Movie
-        fields = ('name', 'minutes_long', 'rating', 'image')
+        fields = ('name', 'running_time', 'rating', 'image')
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'minutes_long': forms.TextInput(attrs={'class': 'form-control'}),
+            'running_time': forms.TextInput(attrs={'class': 'form-control'}),
             'rating': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
@@ -85,8 +85,8 @@ class UserForm(forms.ModelForm):
 
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
-class ScreeningForm(forms.ModelForm):
 
+class ScreeningForm(forms.ModelForm):
     class Meta:
         model = Screening
         fields = ('movie', 'screen', 'showing_at')
