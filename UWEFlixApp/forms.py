@@ -145,3 +145,22 @@ class CustomerRegistrationForm(forms.Form):
     
 class ClubRepBookingForm(forms.Form):
     number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+class SimplePaymentForm(forms.Form): #This form will not actually capture any payment information, it will just be used to display the form to the user and to validate the data
+    holder_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_number = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_expiry = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}))
+    card_cvv = forms.CharField(max_length=3, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean_card_number(self):
+        card_number = self.cleaned_data[card_number]
+        if not check_luhn(card_number):
+            raise forms.ValidationError("Card number is not valid")
+        return card_number
+    
+    def clean_card_expiry(self):
+        expiry = self.cleaned_data['card_expiry']
+        expiry = datetime.combine(expiry, datetime.min.time())
+        if expiry < datetime.now():
+            raise forms.ValidationError("Card has expired")
+        return expiry

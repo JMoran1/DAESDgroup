@@ -14,7 +14,7 @@ from django.views.generic import ListView
 
 from .forms import (BookingForm, ClubForm, ClubRepBookingForm, ClubTopUpForm,
                     CustomerRegistrationForm, LoginForm, MovieForm, ScreenForm,
-                    ScreeningForm, UserForm)
+                    ScreeningForm, UserForm, SimplePaymentForm)
 from .models import (Booking, Club, MonthlyStatement, Movie, Screen, Screening,
                      User)
 
@@ -368,7 +368,7 @@ def create_booking(request, pk):
                 elif total_tickets == 0:
                     warning = "No tickets selected"
                 else:
-                    return redirect('confirm_booking')
+                    return redirect('payment_page')
         else:
             request.session['number_of_student_tickets'] = request.POST.get(
                 'number_of_student_tickets')
@@ -393,7 +393,6 @@ def create_booking(request, pk):
                     return redirect('confirm_booking')
 
     form = BookingForm()
-
     return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
 
@@ -402,6 +401,7 @@ def confirm_booking(request):
     screening = Screening.objects.get(id=request.session['selected_screening'])
 
     user = request.user
+    paymentform = SimplePaymentForm()
     # TODO: Change club to be based on the user's club
     if not request.user.is_anonymous and request.user.role == User.Role.CLUB_REP:
         club = Club.objects.get(pk=2)
@@ -456,7 +456,7 @@ def confirm_booking(request):
     else:
         form = BookingForm()
 
-    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity, 'discount': discount, 'subtotal': subtotal})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"paymentform": paymentform, "user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity, 'discount': discount, 'subtotal': subtotal})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
@@ -565,3 +565,15 @@ def account_page(request):
         return redirect("cinema_manager_view")
     else:
         return redirect("home")
+
+def payment_page(request):
+    """Displays the payment page"""
+    form = SimplePaymentForm()
+
+    if request.method == "POST":
+        if form.is_valid():
+            card_number = form.cleaned_data["card_number"]
+            expiry_date = form.cleaned_data["card_expiry"]
+
+        return redirect('confirm_booking')
+    return render(request, "UWEFlixApp/paymentform.html", {"form": form, "button_text": "Continue"})
