@@ -13,12 +13,14 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 
-from .forms import (BookingForm, ClubForm, ClubRepBookingForm, ClubTopUpForm,
-                    CustomerRegistrationForm, LoginForm, MovieForm, ScreenForm,
-                    ScreeningForm, UserForm)
-from .models import (Booking, Club, MonthlyStatement, Movie, Screen, Screening,
-                     User)
-
+from .forms import (
+    BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
+    ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
+    StudentRegistrationForm
+)
+from .models import (
+    Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
+)
 
 class UserRoleCheck:
     """
@@ -520,24 +522,29 @@ def club_rep_view(request):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def register_club_rep(request):
     """Allows a cinema manager register a club rep"""
-    # TODO: specify User Club!
-    if request.method == 'POST':
-        username = random.randint(100000, 999999)
-        password = ''.join(secrets.choice(ascii_letters + digits)
-                           for i in range(8))
-        if not User.objects.filter(username=username).exists():
-            User.objects.create_user(
-                username=username, password=password, role=User.Role.CLUB_REP
-            ).full_clean()
+    form = ClubRepRegistrationForm(request.POST or None)  # or None?
+
+    if request.method == "POST":
+        if form.is_valid():
+            # form.save()
+            username = random.randint(100000, 999999)
+            password = ''.join(secrets.choice(ascii_letters + digits)
+                               for i in range(8))
+            if not User.objects.filter(username=username).exists():
+                User.objects.create_user(
+                    username=username, password=password,
+                    role=User.Role.CLUB_REP,
+                    club=form.cleaned_data['club']
+                ).full_clean()
+
             return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
-    return render(request, "UWEFlixApp/create_club_rep.html")
+    return render(request, "UWEFlixApp/create_club_rep.html",  {"form": form, "button_text": "Create Club Rep"})
 
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def view_transactions(request):
     """Displays all transactions for the club"""
-    # TODO: Change to get club from session when club rep is given a club
     club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})

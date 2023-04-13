@@ -21,8 +21,9 @@
         <div class="col">
             <form method="POST" class="log-form">
                 {% csrf_token %}
+                {{ form.as_p }}
                 <div class="text-center">
-                    <button type="submit" class="btn btn-outline-secondary">Create Club Rep</button>
+                    <button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button>
                 </div>
             </form>
         </div>

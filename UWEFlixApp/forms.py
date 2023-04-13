@@ -142,6 +142,11 @@ class StudentRegistrationForm(forms.Form):
         if User.objects.filter(username=self.cleaned_data["username"]).exists():
             raise forms.ValidationError("Username already exists")
         return self.cleaned_data["username"]
-    
+
 class ClubRepBookingForm(forms.Form):
     number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+class ClubRepRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('club',)
