@@ -153,7 +153,7 @@ class SimplePaymentForm(forms.Form): #This form will not actually capture any pa
     card_cvv = forms.CharField(max_length=3, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     def clean_card_number(self):
-        card_number = self.cleaned_data[card_number]
+        card_number = self.cleaned_data['card_number']
         if not check_luhn(card_number):
             raise forms.ValidationError("Card number is not valid")
         return card_number

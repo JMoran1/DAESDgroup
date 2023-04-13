@@ -567,16 +567,19 @@ def account_page(request):
 
 def payment_page(request):
     """Displays the payment page"""
-    form = SimplePaymentForm()
+    form = SimplePaymentForm(request.POST or None)
+
 
     if request.method == "POST":
         if form.is_valid():
-            card_number = form.cleaned_data["card_number"]
-            expiry_date = form.cleaned_data["card_expiry"]
 
-        return redirect('confirm_booking')
+            return redirect('confirm_booking')
     return render(request, "UWEFlixApp/paymentform.html", {"form": form, "button_text": "Continue"})
 
 def show_all_bookings(request):
     all_booking = Booking.objects.all()
     return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
+
+def show_club_bookings(request):
+    club_booking = Booking.objects.get(pk=1)
+    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": club_booking})
