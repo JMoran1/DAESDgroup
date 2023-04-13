@@ -229,8 +229,8 @@ def delete_screen(request, pk):
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def update_screen(request, pk):
-    club = Screen.objects.get(pk=pk)
-    form = ScreenForm(request.POST or None, instance=club)
+    screen = Screen.objects.get(pk=pk)
+    form = ScreenForm(request.POST or None, instance=screen)
 
     if request.method == "POST":
         if form.is_valid():
