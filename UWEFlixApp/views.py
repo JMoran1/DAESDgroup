@@ -526,7 +526,6 @@ def register_club_rep(request):
 
     if request.method == "POST":
         if form.is_valid():
-            # form.save()
             username = random.randint(100000, 999999)
             password = ''.join(secrets.choice(ascii_letters + digits)
                                for i in range(8))
@@ -537,8 +536,16 @@ def register_club_rep(request):
                     club=form.cleaned_data['club']
                 ).full_clean()
 
-            return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
-    return render(request, "UWEFlixApp/create_club_rep.html",  {"form": form, "button_text": "Create Club Rep"})
+            return render(
+                request,
+                "UWEFlixApp/create_club_rep_success.html",
+                {"username": username, "password": password}
+            )
+    return render(
+        request,
+        "UWEFlixApp/create_club_rep.html",
+        {"form": form, "button_text": "Create Club Rep"}
+    )
 
 
 @login_required()

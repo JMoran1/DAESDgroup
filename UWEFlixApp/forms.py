@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from UWEFlixApp.models import Club, Movie, Screen, User, Screening
 from django.contrib.auth.forms import AuthenticationForm
 from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
@@ -150,3 +151,9 @@ class ClubRepRegistrationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('club',)
+
+    def clean_club(self):
+        if self.cleaned_data['club']:  # truthy, so not blank, fine
+            return self.cleaned_data['club']
+        else:  # problem, club is mandatory
+            raise ValidationError('Club must be specified!')
