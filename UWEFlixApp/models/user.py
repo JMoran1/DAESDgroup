@@ -72,6 +72,9 @@ class User(AbstractUser):
         for its Role type set, and none of the other Groups for other Role types
         (note that other Groups which are not assigned to Roles are left as-is).
         """
+        # if creating a new superuser, make them a CINEMA_MANAGER
+        if self.id is None and self.is_superuser:
+            self.role = User.Role.CINEMA_MANAGER
         super().save(*args, **kwargs)  # call super first to get an ID
         # enforce correct group membership
         self.set_correct_groups_for_role()
