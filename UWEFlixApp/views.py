@@ -1,6 +1,7 @@
 import random
 import secrets
 from datetime import datetime
+from decimal import Decimal
 from string import ascii_letters, digits
 
 from django.contrib.auth import logout
@@ -407,23 +408,19 @@ def confirm_booking(request):
         club = Club.objects.get(pk=2)
         discount_rate = club.discount_rate
     discount = None
-    number_of_adult_tickets = request.session['number_of_adult_tickets']
-    number_of_child_tickets = request.session['number_of_child_tickets']
-    number_of_student_tickets = request.session['number_of_student_tickets']
-    # screening.seats_remaining = screening.seats_remaining - \
-    #     int(number_of_adult_tickets) - int(number_of_child_tickets) - \
-    #     int(number_of_student_tickets)
-    total_price = int(number_of_adult_tickets) * 4.99 + \
-        int(number_of_child_tickets) * 2.99 + \
-        int(number_of_student_tickets) * 3.99
+    number_of_adult_tickets = int(request.session['number_of_adult_tickets'])
+    number_of_child_tickets = int(request.session['number_of_child_tickets'])
+    number_of_student_tickets = int(request.session['number_of_student_tickets'])
+    total_price = number_of_adult_tickets * Decimal('4.99') + \
+        number_of_child_tickets * Decimal('2.99') + \
+        number_of_student_tickets * Decimal('3.99')
     subtotal = total_price
     if not request.user.is_anonymous:
         if user.role == User.Role.CLUB_REP:
-            discount = total_price * float(discount_rate)
-            total_price = total_price - discount
+            total_price *= (1 - discount_rate)
 
-    total_ticket_quantity = int(number_of_adult_tickets) + \
-        int(number_of_child_tickets) + int(number_of_student_tickets)
+    total_ticket_quantity = number_of_adult_tickets + \
+        number_of_child_tickets + number_of_student_tickets
     
     if request.method == 'POST':
         form = BookingForm(request.POST)
