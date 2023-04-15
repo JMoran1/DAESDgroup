@@ -434,7 +434,7 @@ def confirm_booking(request):
                     else:
                         Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                             number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
-                        club.balance = float(club.balance) - total_price
+                        club.balance = club.balance - total_price
                         club.save()
                         screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
                         screening.save()
