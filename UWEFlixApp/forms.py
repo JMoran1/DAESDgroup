@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 from django import forms
 from django.contrib import admin
 from UWEFlixApp.models import Club, Movie, Screen, User, Screening
@@ -45,6 +47,10 @@ class MovieForm(forms.ModelForm):
             'running_time': forms.TextInput(attrs={'class': 'form-control'}),
             'rating': forms.TextInput(attrs={'class': 'form-control'}),
         }
+
+    def clean_running_time(self):
+        minutes_long = int(self.cleaned_data['running_time'])
+        return timedelta(minutes=minutes_long)
 
 
 class ScreenForm(forms.ModelForm):
