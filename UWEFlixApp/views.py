@@ -403,9 +403,8 @@ def confirm_booking(request):
     screening = Screening.objects.get(id=request.session['selected_screening'])
 
     user = request.user
-    # TODO: Change club to be based on the user's club
     if not request.user.is_anonymous and request.user.role == User.Role.CLUB_REP:
-        club = Club.objects.get(pk=2)
+        club = user.club
         discount_rate = club.discount_rate
     discount = None
     number_of_adult_tickets = request.session['number_of_adult_tickets']
@@ -575,14 +574,15 @@ def view_club_transactions(request, pk):
 
 
 def account_page(request):
-    """Redicted log in users to approprate pages"""
-    if request.user.role == User.Role.CUSTOMER:
-        return redirect("booking_start")
-    elif request.user.role == User.Role.CLUB_REP:
-        return redirect("club_rep_view")
-    elif request.user.role == User.Role.ACCOUNT_MANAGER:
-        return redirect("account_manager")
-    elif request.user.role == User.Role.CINEMA_MANAGER:
-        return redirect("cinema_manager_view")
-    else:
-        return redirect("home")
+    """
+    Redirect logged-in users to approprate pages
+    """
+    if request.user.is_anonymous:
+        return redirect('home')  # not logged in
+    PAGES_PER_USER_ROLE = {  # the most Pythonic way to emulate switch-case! ;)
+        User.Role.STUDENT: 'booking_start',
+        User.Role.CLUB_REP: 'club_rep_view',
+        User.Role.ACCOUNT_MANAGER: 'account_manager',
+        User.Role.CINEMA_MANAGER: 'cinema_manager_view',
+    }
+    return redirect(PAGES_PER_USER_ROLE[request.user.role])
