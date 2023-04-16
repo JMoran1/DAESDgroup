@@ -1,4 +1,5 @@
 from django.db import models
+from .user import User
 
 
 class Club(models.Model):
@@ -12,6 +13,21 @@ class Club(models.Model):
     discount_rate = models.DecimalField(decimal_places=2, max_digits=4)
     address = models.CharField(max_length=500)
     balance = models.DecimalField(decimal_places=2, max_digits=10, default=0.00)
+
+    @property
+    def members(self):
+        """
+        Returns a QuerySet of all Users who belong to this Club, regardless of
+        User type.
+        """
+        return self.user_set.all()  # you could just user user_set directly, but this is more idiomatic
+
+    @property
+    def reps(self):
+        """
+        Returns a QuerySet of all Users who are representatives of this Club
+        """
+        return self.members.filter(role=User.Role.CLUB_REP)
 
     # clubContact = 
     def __str__(self):
