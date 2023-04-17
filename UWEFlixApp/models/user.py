@@ -29,9 +29,11 @@ class User(AbstractUser):
     class Meta:
         constraints = (
             models.CheckConstraint(
-                check=Q(club__isnull=True) ^ Q(role__in=(Role.CLUB_REP, Role.STUDENT)),
-                name='members_have_club',
-                violation_error_message='Only Club Reps and Students must have Clubs'
+                # Logically: (Role EQUALS Club Rep) IMPLIES (Club EXISTS)
+                # AKA: (NOT CLUB_REP) OR CLUB EXISTS
+                check= ~Q(role=Role.CLUB_REP) | Q(club__isnull=True),
+                name='club_reps_have_club',
+                violation_error_message='Club Rep must have a Club!'
             ),
         )
 
