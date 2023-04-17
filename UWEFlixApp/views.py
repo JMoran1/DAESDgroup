@@ -612,3 +612,9 @@ def waiting_approval(request):
     """displays all users where is_active is false"""
     all_users = User.objects.filter(is_active=False)
     return render(request, "UWEFlixApp/waiting_approval.html", {"all_users": all_users})
+
+def approve_account(request, pk):
+    Userr = User.objects.get(pk=pk)
+    Userr.is_active = True
+    Userr.save()  
+    return redirect("home")
