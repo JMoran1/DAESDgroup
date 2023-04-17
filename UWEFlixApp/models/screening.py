@@ -15,20 +15,21 @@ class Screening(models.Model):
     '''
     seats_remaining = models.IntegerField(default=0)
 
-    class Meta:
-        ordering = ('showing_at',)
-        # constraints = (
-        #     models.CheckConstraint(
-        #         # check=Q(club__isnull=True) ^ Q(role__in=(Role.CLUB_REP, Role.STUDENT)),
-        #         check=models.Q(showing_at__gt=Screen.objects.get(id=models.F('screen'))),
-        #         name='members_have_club',
-        #         violation_error_message='Only Club Reps and Students must have Clubs'
-        #     ),
-        # )
-        pass
-
     def __str__(self):
          return f"{self.movie} - {self.showing_at}"
+
+    @classmethod
+    def objects_with_finish_times(cls):
+        """
+        Ideally, we'd turn this into a custom Manager, alas!
+        """
+        return cls.objects.prefetch_related('movie').annotate(
+            _finishing_at=(models.F('showing_at') + models.F('movie__running_time'))
+        )
+
+    @property
+    def finishing_at(self):
+        return self.showing_at + self.movie.running_time
 
     def clashes_with_others(self):
         """
@@ -36,15 +37,24 @@ class Screening(models.Model):
         there is at least one other Screening for the same Screen as this one,
         whose time period of showing overlaps with this one's
         """
-        return True
+        return Screening.objects_with_finish_times().filter(screen=self.screen).filter(
+            # Screenings clash if they end after we start and before we end
+            models.Q(_finishing_at__gte=self.showing_at, _finishing_at__lt=self.finishing_at) |  # OR
+            # start after we do and before we end
+            models.Q(showing_at__gte=self.showing_at, showing_at__lt=self.finishing_at)
+        )
+
+    def clean(self, *args, **kwargs):
+        """
+        Override .clean() to force validation to make sure Screenings do not clash
+        """
+        print('Clashes with others?')
+        if self.clashes_with_others():
+            print('YES!')
+            raise ValidationError('Screening would clash with other Screenings')
+        print('NO!')
+        return super().clean(*args, **kwargs)
 
     def save(self, *args, **kwargs):
-        """
-        Override .save() to force validation to make sure Screenings do not clash
-        """
-        if self.clashes_with_others():
-            raise ValidationError('Screening would clash with other Screenings')
+        self.full_clean()
         return super().save(*args, **kwargs)
-
-def screenings_with_finish_times():
-    return Screening.objects.annotate(finishing_at=models.F('showing_at') + models.F('movie__running_time'))
