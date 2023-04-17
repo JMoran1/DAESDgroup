@@ -1,25 +1,26 @@
+from datetime import datetime
 import random
 import secrets
-from datetime import datetime
 from string import ascii_letters, digits
 
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
+from django.db.models import Sum
 from django.http import HttpResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView
 
-from .forms import (BookingForm, ClubForm, ClubRepBookingForm, ClubTopUpForm,
-                    CustomerRegistrationForm, LoginForm, MovieForm, ScreenForm,
-                    ScreeningForm, UserForm)
-from .models import (Booking, Club, MonthlyStatement, Movie, Screen, Screening,
-                     User)
-
-from django.db.models import Sum
-from django.shortcuts import get_object_or_404
+from .forms import (
+    BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
+    ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
+    StudentRegistrationForm
+)
+from .models import (
+    Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
+)
 
 class UserRoleCheck:
     """
@@ -230,8 +231,8 @@ def delete_screen(request, pk):
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def update_screen(request, pk):
-    club = Screen.objects.get(pk=pk)
-    form = ScreenForm(request.POST or None, instance=club)
+    screen = Screen.objects.get(pk=pk)
+    form = ScreenForm(request.POST or None, instance=screen)
 
     if request.method == "POST":
         if form.is_valid():
@@ -402,9 +403,8 @@ def confirm_booking(request):
     screening = Screening.objects.get(id=request.session['selected_screening'])
 
     user = request.user
-    # TODO: Change club to be based on the user's club
     if not request.user.is_anonymous and request.user.role == User.Role.CLUB_REP:
-        club = Club.objects.get(pk=2)
+        club = user.club
         discount_rate = club.discount_rate
     discount = None
     number_of_adult_tickets = request.session['number_of_adult_tickets']
@@ -462,7 +462,7 @@ def confirm_booking(request):
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
-    club = Club.objects.get(pk=1)
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     form = ClubTopUpForm(request.POST or None)
 
     if request.method == "POST":
@@ -483,22 +483,28 @@ def club_top_up(request):
 
     return render(request, "UWEFlixApp/club_top_up.html", {"form": form})
 
-def register_customer(request):
-    """Allows a customer to register for an account"""
-    form = CustomerRegistrationForm(request.POST or None)
+def register_student(request):
+    """Allows a student to register for an account"""
+    form = StudentRegistrationForm(request.POST or None)
 
     if request.method == "POST":
         if form.is_valid():
             password1 = form.cleaned_data["password1"]
             password2 = form.cleaned_data["password2"]
-
+            club = form.cleaned_data["club"]
+            # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
                 return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
             else:
                 if User.objects.filter(username=form.cleaned_data["username"]).exists():
                     return render(request, "UWEFlixApp/register.html", {"error": "Username already taken", "form": form})
                 else:
-                    User.objects.create_user(username=form.cleaned_data["username"], password=password1, role=User.Role.CUSTOMER)
+                    u = User.objects.create_user(
+                        username=form.cleaned_data["username"],
+                        password=password1,
+                        role=User.Role.STUDENT,
+                        club=club
+                    )
                     return redirect('login')
 
     return render(request, "UWEFlixApp/register.html", {"form": form})
@@ -515,23 +521,37 @@ def club_rep_view(request):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def register_club_rep(request):
     """Allows a cinema manager register a club rep"""
-    if request.method == 'POST':
-        username = random.randint(100000, 999999)
-        password = ''.join(secrets.choice(ascii_letters + digits)
-                           for i in range(8))
-        if not User.objects.filter(username=username).exists():
-            User.objects.create_user(
-                username=username, password=password, role=User.Role.CLUB_REP)
-            return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
-    return render(request, "UWEFlixApp/create_club_rep.html")
+    form = ClubRepRegistrationForm(request.POST or None)  # or None?
+
+    if request.method == "POST":
+        if form.is_valid():
+            username = random.randint(100000, 999999)
+            password = ''.join(secrets.choice(ascii_letters + digits)
+                               for i in range(8))
+            if not User.objects.filter(username=username).exists():
+                User.objects.create_user(
+                    username=username, password=password,
+                    role=User.Role.CLUB_REP,
+                    club=form.cleaned_data['club']
+                ).full_clean()
+
+            return render(
+                request,
+                "UWEFlixApp/create_club_rep_success.html",
+                {"username": username, "password": password}
+            )
+    return render(
+        request,
+        "UWEFlixApp/create_club_rep.html",
+        {"form": form, "button_text": "Create Club Rep"}
+    )
 
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def view_transactions(request):
     """Displays all transactions for the club"""
-    # TODO: Change to get club from session when club rep is given a club
-    club = Club.objects.get(pk=1)
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
 
@@ -554,14 +574,15 @@ def view_club_transactions(request, pk):
 
 
 def account_page(request):
-    """Redicted log in users to approprate pages"""
-    if request.user.role == User.Role.CUSTOMER:
-        return redirect("booking_start")
-    elif request.user.role == User.Role.CLUB_REP:
-        return redirect("club_rep_view")
-    elif request.user.role == User.Role.ACCOUNT_MANAGER:
-        return redirect("account_manager")
-    elif request.user.role == User.Role.CINEMA_MANAGER:
-        return redirect("cinema_manager_view")
-    else:
-        return redirect("home")
+    """
+    Redirect logged-in users to approprate pages
+    """
+    if request.user.is_anonymous:
+        return redirect('home')  # not logged in
+    PAGES_PER_USER_ROLE = {  # the most Pythonic way to emulate switch-case! ;)
+        User.Role.STUDENT: 'booking_start',
+        User.Role.CLUB_REP: 'club_rep_view',
+        User.Role.ACCOUNT_MANAGER: 'account_manager',
+        User.Role.CINEMA_MANAGER: 'cinema_manager_view',
+    }
+    return redirect(PAGES_PER_USER_ROLE[request.user.role])
