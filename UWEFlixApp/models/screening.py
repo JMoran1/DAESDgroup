@@ -1,4 +1,6 @@
+from django.core.exceptions import ValidationError
 from django.db import models
+
 from UWEFlixApp.models import Movie, Screen
 
 
@@ -28,6 +30,21 @@ class Screening(models.Model):
     def __str__(self):
          return f"{self.movie} - {self.showing_at}"
 
+    def clashes_with_others(self):
+        """
+        Returns True if this Screening clashes with others, that is to say, if
+        there is at least one other Screening for the same Screen as this one,
+        whose time period of showing overlaps with this one's
+        """
+        return True
+
+    def save(self, *args, **kwargs):
+        """
+        Override .save() to force validation to make sure Screenings do not clash
+        """
+        if self.clashes_with_others():
+            raise ValidationError('Screening would clash with other Screenings')
+        return super().save(*args, **kwargs)
 
 def screenings_with_finish_times():
     return Screening.objects.annotate(finishing_at=models.F('showing_at') + models.F('movie__running_time'))

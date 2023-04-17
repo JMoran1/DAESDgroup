@@ -16,3 +16,7 @@ class Movie(models.Model):
 
     def __str__(self):
         return self.name
+
+    @property
+    def minutes_long(self):
+        return str(ceil(self.running_time.total_seconds() / 60))

@@ -23,13 +23,13 @@
             </tr>
         </thead>
         <tbody>
-            {% for Movie in movie_list %}
+            {% for movie in movie_list %}
             <tr>
-                <td> {{ Movie.name }} </td> 
-                <td> {{ Movie.rating }} </td>
-                <td> {{ Movie.running_time }} mins </td>
-                <td><a href="{% url 'update_movie' Movie.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
-                <td><a href="{% url 'delete_movie' Movie.id %}"><button class="btn btn-danger">Delete</button></a></td>
+                <td> {{ movie.name }} </td>
+                <td> {{ movie.rating }} </td>
+                <td> {{ movie.minutes_long }} mins </td>
+                <td><a href="{% url 'update_movie' movie.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
+                <td><a href="{% url 'delete_movie' movie.id %}"><button class="btn btn-danger">Delete</button></a></td>
             </tr>
             {% endfor %}
         </tbody>

@@ -1,7 +1,10 @@
 from datetime import timedelta
+from math import ceil
 
 from django import forms
 from django.contrib import admin
+from django.core.validators import MinValueValidator
+
 from UWEFlixApp.models import Club, Movie, Screen, User, Screening
 from django.contrib.auth.forms import AuthenticationForm
 from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
@@ -37,20 +40,34 @@ class ClubForm(forms.ModelForm):
         return expiry
 
 
+class MinutesDurationField(forms.DurationField):
+    def to_python(self, value):
+        # current value should be int-like count of minutes, turn it into a timedelta
+        return timedelta(minutes=int(value))
+
+    def prepare_value(self, value):
+        if isinstance(value, str):  # invalid value, it's now a string --leave as-is
+            return value
+        # otherwise, it's a timedelta, so format it
+        # turns timedelta back into count of minutes
+        return str(ceil(value.total_seconds() / 60))  # in unlikely event of seconds, rounds up
+
+
 class MovieForm(forms.ModelForm):
+    running_time = MinutesDurationField(
+        initial=timedelta(minutes=1),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Minutes Long',
+        validators=[MinValueValidator(limit_value=timedelta(minutes=1))]
+    )
     class Meta:
         model = Movie
         fields = ('name', 'running_time', 'rating', 'image')
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'running_time': forms.TextInput(attrs={'class': 'form-control'}),
             'rating': forms.TextInput(attrs={'class': 'form-control'}),
         }
-
-    def clean_running_time(self):
-        minutes_long = int(self.cleaned_data['running_time'])
-        return timedelta(minutes=minutes_long)
 
 
 class ScreenForm(forms.ModelForm):
