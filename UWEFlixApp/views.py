@@ -455,7 +455,7 @@ def confirm_booking(request):
     else:
         form = BookingForm()
 
-    return render(request, "UWEFlixApp/confirm_booking.html", {"paymentform": paymentform, "user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity, 'discount': discount, 'subtotal': subtotal})
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity, 'discount': discount, 'subtotal': subtotal})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
@@ -603,5 +603,7 @@ def show_all_bookings(request):
     return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
 
 def show_club_bookings(request):
-    club_booking = Booking.objects.get(pk=1) #will need to change this to get the club id
-    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": club_booking})
+    """Displays all transactions for the club"""
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
+    all_bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_bookings})

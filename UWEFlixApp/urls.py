@@ -73,5 +73,6 @@ urlpatterns = [
     path("view_club_transactions/<int:pk>/", views.view_club_transactions, name="view_club_transactions"),
     path("account_page/", views.account_page, name="account_page"),
     path("payment_page/", views.payment_page, name="payment_page"),
-    path("show_all_bookings/", views.show_all_bookings, name="show_all_bookings")
+    path("show_all_bookings/", views.show_all_bookings, name="show_all_bookings"),
+    path("show_club_bookings", views.show_club_bookings, name="show_club_bookings")
 ]
