@@ -603,5 +603,5 @@ def show_all_bookings(request):
     return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
 
 def show_club_bookings(request):
-    club_booking = Booking.objects.get(pk=1)
+    club_booking = Booking.objects.get(pk=1) #will need to change this to get the club id
     return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": club_booking})
