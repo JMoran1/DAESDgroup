@@ -26,7 +26,8 @@
                 <td> {{ user.username }} </td> 
                 <td> {{ user.club }} </td>
                 
-                <td><a href="{% url 'approve_account' user.id %}" button class="btn btn-outline-success"> Active </button></a> <td>
+                <td><a href="{% url 'approve_account' user.id %}" button class="btn btn-outline-success"> Approve </button></a> <td>
+``` Maybe change the wording to approve as it makes more sense than Active
                 <td><a href="{% url 'reject_account' user.id %}"><button class="btn btn-danger">Reject</button></a>
             </tr>
             {% endfor %}
