@@ -1,7 +1,7 @@
 {% extends 'UWEFlixApp/base.html' %}
 {% block content %}
 <div class="w-full max-w-md mx-auto">
-  <h1 class="text-3xl font-bold mb-6 text-center">Create a New Showing</h1>
+  <h1 class="text-3xl font-bold mb-6 text-center">Create a New Screening</h1>
   <form method="POST" action = "{% url 'create_screening' %}">
     {% csrf_token %}
     <div class="mb-4">
