@@ -25,7 +25,6 @@ class User(AbstractUser):
         null=True,
         on_delete=models.SET_NULL  # deleting a Club unlinks any Users from it
     )
-    is_active = models.BooleanField(default=False)
     class Meta:
         constraints = (
             models.CheckConstraint(

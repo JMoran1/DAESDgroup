@@ -502,7 +502,8 @@ def register_student(request):
                         username=form.cleaned_data["username"],
                         password=password1,
                         role=User.Role.STUDENT,
-                        club=club
+                        club=club,
+                        is_active=False
                     )
                     return redirect('login')
 
@@ -623,3 +624,9 @@ def reject_account(request, pk):
     Userr = User.objects.get(pk=pk)
     Userr.delete()
     return redirect("home")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def student_view(request):
+    """Displays the student profile page"""
+    return render(request, "UWEFlixApp/studentpage.html")
