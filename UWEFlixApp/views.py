@@ -607,3 +607,8 @@ def show_club_bookings(request):
     club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_bookings})
+
+def waiting_approval(request):
+    """displays all users where is_active is false"""
+    all_users = User.objects.filter(is_active=False)
+    return render(request, "UWEFlixApp/waiting_approval.html", {"all_users": all_users})
