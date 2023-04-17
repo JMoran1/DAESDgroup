@@ -76,5 +76,6 @@ urlpatterns = [
     path("show_all_bookings/", views.show_all_bookings, name="show_all_bookings"),
     path("show_club_bookings", views.show_club_bookings, name="show_club_bookings"),
     path("waiting_approval", views.waiting_approval, name="waiting_approval"),
-    path("approve_account/<int:pk>", views.approve_account, name="approve_account")
+    path("approve_account/<int:pk>", views.approve_account, name="approve_account"),
+    path("reject_account/<int:pk>", views.reject_account, name="reject_account")
 ]

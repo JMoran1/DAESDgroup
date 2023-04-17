@@ -618,3 +618,8 @@ def approve_account(request, pk):
     Userr.is_active = True
     Userr.save()  
     return redirect("home")
+
+def reject_account(request, pk):
+    Userr = User.objects.get(pk=pk)
+    Userr.delete()
+    return redirect("home")

@@ -26,9 +26,8 @@
                 <td> {{ user.username }} </td> 
                 <td> {{ user.club }} </td>
                 
-                <td><a href="#"><button class="btn btn-outline-success"> Edit </button></a> <td>
                 <td><a href="{% url 'approve_account' user.id %}" button class="btn btn-outline-success"> Active </button></a> <td>
-                <td><a href="#"><button class="btn btn-danger">Decline</button></a>
+                <td><a href="{% url 'reject_account' user.id %}"><button class="btn btn-danger">Reject</button></a>
             </tr>
             {% endfor %}
         </tbody>
