@@ -338,3 +338,8 @@ $RECYCLE.BIN/
 
 # XXX: just because Josh is currently using sqlite3 right now and doesn't want to commit his DB file
 *.sqlite3*
+
+# media directory
+media/images/*
+# BUT NOT the placeholder not-found image!
+!media/images/no_image_available.png

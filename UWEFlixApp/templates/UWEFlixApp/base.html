@@ -18,9 +18,6 @@
           <a href="{% url 'home' %}"><img class="h-10" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/UWE_Bristol_logo.svg/2560px-UWE_Bristol_logo.svg.png" alt="Logo" href="{% url 'home' %}" ></a>  
       </div>
       <nav class="flex">  
-        {% if user.is_authenticated %}
-        <p>Welcome, User {{ user.get_username }}.</p>
-        {% endif %}
         <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'home' %}">Home</a>
         <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'booking_start' %}">Book</a>
         {% if user.is_authenticated %}
@@ -28,7 +25,7 @@
         <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'logout' %}">Logout</a>
         {% else %}
         <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'login' %}">Login</a>
-        <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'register_customer' %}">Register</a>
+        <a class="px-3 py-2 text-gray-500 hover:text-black" href="{% url 'register_student' %}">Register</a>
         {% endif %}
       </nav>
     </div>

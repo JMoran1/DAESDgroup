@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib import admin
+from django.core.exceptions import ValidationError
 from UWEFlixApp.models import Club, Movie, Screen, User, Screening
 from django.contrib.auth.forms import AuthenticationForm
 from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
@@ -125,11 +126,11 @@ class ClubTopUpForm(forms.Form):
             raise forms.ValidationError("Amount must be greater than 0")
         return amount
 
-
-class CustomerRegistrationForm(forms.Form):
+class StudentRegistrationForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
+    club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False)
 
     def clean_password2(self):
         password1 = self.cleaned_data['password1']
@@ -142,7 +143,7 @@ class CustomerRegistrationForm(forms.Form):
         if User.objects.filter(username=self.cleaned_data["username"]).exists():
             raise forms.ValidationError("Username already exists")
         return self.cleaned_data["username"]
-    
+
 class ClubRepBookingForm(forms.Form):
     number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
@@ -164,3 +165,14 @@ class SimplePaymentForm(forms.Form): #This form will not actually capture any pa
         if expiry < datetime.now():
             raise forms.ValidationError("Card has expired")
         return expiry
+    
+class ClubRepRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('club',)
+
+    def clean_club(self):
+        if self.cleaned_data['club']:  # truthy, so not blank, fine
+            return self.cleaned_data['club']
+        else:  # problem, club is mandatory
+            raise ValidationError('Club must be specified!')
