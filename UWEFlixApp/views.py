@@ -600,7 +600,6 @@ def join_club(request):
 def accept_join_request(request, pk):
     """Allows a club rep to accept a join request"""
     user = get_object_or_404(User, pk=pk)
-    print(user.username)
     user.club = user.requested_club
     user.requested_club = None
     user.save()
