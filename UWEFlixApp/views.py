@@ -22,6 +22,7 @@ from .forms import (
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
 )
+import hashlib
 
 class UserRoleCheck:
     """
@@ -467,7 +468,7 @@ def club_top_up(request):
             card_number = form.cleaned_data["card_number"]
             expiry_date = form.cleaned_data["card_expiry"]
 
-            if card_number != club.card_number:
+            if not club.check_card(card_number):
                 return render(request, "UWEFlixApp/club_top_up.html", {"club": club, "error": "Card number does not match", "form": form})
             
             if expiry_date != club.card_expiry:
