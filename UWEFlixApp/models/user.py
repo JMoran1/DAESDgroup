@@ -25,6 +25,13 @@ class User(AbstractUser):
         null=True,
         on_delete=models.SET_NULL  # deleting a Club unlinks any Users from it
     )
+    requested_club = models.ForeignKey(
+        'club',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,  # deleting a Club unlinks any Users from it,
+        related_name='requested_club'
+    )
 
     class Meta:
         constraints = (
