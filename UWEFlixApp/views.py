@@ -607,8 +607,7 @@ def accept_join_request(request, pk):
     user.requested_club = None
     user.save()
     print(user.requested_club)
-    # TODO: change this when to the view pending requests page
-    return redirect('club_rep_view')
+    return redirect('view_pending_club_requests')
 
 
 @login_required()
@@ -618,14 +617,12 @@ def reject_join_request(request, pk):
     user = get_object_or_404(User, pk=pk)
     user.requested_club = None
     user.save()
-    # TODO: change this when to the view pending requests page
-    return redirect('club_rep_view')
+    return redirect('view_pending_club_requests')
     
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def view_pending_requests(request):
     """Allows a club rep to view pending requests"""
-    # Change to club rep club when club rep is working
-    club = Club.objects.get(pk=1)
+    club = Club.objects.get(pk=request.user.club.pk)
     users = User.objects.filter(requested_club=club)
     return render(request, "UWEFlixApp/view_requested_club_requests.html", {"users": users})
