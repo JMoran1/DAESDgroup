@@ -33,16 +33,16 @@ class User(AbstractUser):
         related_name='requested_club'
     )
 
-    class Meta:
-        constraints = (
-            models.CheckConstraint(
-                # Logically: (Role EQUALS Club Rep) IMPLIES (Club EXISTS)
-                # AKA: (NOT CLUB_REP) OR CLUB EXISTS
-                check= ~Q(role=Role.CLUB_REP) | Q(club__isnull=True),
-                name='club_reps_have_club',
-                violation_error_message='Club Rep must have a Club!'
-            ),
-        )
+    # class Meta:
+    #     constraints = (
+    #         models.CheckConstraint(
+    #             # Logically: (Role EQUALS Club Rep) IMPLIES (Club EXISTS)
+    #             # AKA: (NOT CLUB_REP) OR CLUB EXISTS
+    #             check= ~Q(role=Role.CLUB_REP) | Q(club__isnull=True),
+    #             name='club_reps_have_club',
+    #             violation_error_message='Club Rep must have a Club!'
+    #         ),
+    #     )
 
     @classmethod
     def get_role_groups(cls):
