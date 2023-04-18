@@ -9,11 +9,11 @@
 
 
 <div class="w-75 m-auto" >    
-    <h1 class="text-2xl text-center">View Users awaiting approval</h1>
+    <h1 class="text-2xl text-center">View Users Awaiting Approval</h1>
     <table class="table table-hover">
         <thead>
             <tr>
-              <th> Users Name </th>
+              <th> Username </th>
               <th> Users Club</th>
               <th> </th>
               <th> </th>
@@ -26,8 +26,7 @@
                 <td> {{ user.username }} </td> 
                 <td> {{ user.club }} </td>
                 
-                <td><a href="{% url 'approve_account' user.id %}" button class="btn btn-outline-success"> Approve </button></a> <td>
-``` Maybe change the wording to approve as it makes more sense than Active
+                <td><a href="{% url 'approve_account' user.id %}" button class="btn btn-outline-success"> Approve  </button></a> <td>
                 <td><a href="{% url 'reject_account' user.id %}"><button class="btn btn-danger">Reject</button></a>
             </tr>
             {% endfor %}
