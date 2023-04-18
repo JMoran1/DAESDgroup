@@ -619,7 +619,7 @@ def reject_join_request(request, pk):
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def view_pending_requests(request):
     """Allows a club rep to view pending requests"""
-    club = Club.objects.get(pk=request.user.club.pk)
+    club = request.user.club
     users = User.objects.filter(requested_club=club)
     return render(request, "UWEFlixApp/view_requested_club_requests.html", {"users": users})
 
