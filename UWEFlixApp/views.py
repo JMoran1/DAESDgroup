@@ -603,7 +603,6 @@ def accept_join_request(request, pk):
     user.club = user.requested_club
     user.requested_club = None
     user.save()
-    print(user.requested_club)
     return redirect('view_pending_club_requests')
 
 
