@@ -159,7 +159,7 @@ class ClubRepRegistrationForm(forms.ModelForm):
             raise ValidationError('Club must be specified!')
         
 class JoinClubForm(forms.Form):
-    club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False)
+    club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False, widget=forms.Select(attrs={'class': 'form-control'}))
 
     def clean_club(self):
         if self.cleaned_data['club']: 
