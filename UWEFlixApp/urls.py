@@ -74,4 +74,5 @@ urlpatterns = [
     path("view_transactions", views.view_transactions, name="view_transactions"),
     path("view_club_transactions/<int:pk>/", views.view_club_transactions, name="view_club_transactions"),
     path("account_page/", views.account_page, name="account_page"),
+    path("join_club/", views.join_club, name="join_club"),
 ]
