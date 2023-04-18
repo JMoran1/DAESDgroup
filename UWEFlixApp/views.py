@@ -488,7 +488,6 @@ def register_student(request):
         if form.is_valid():
             password1 = form.cleaned_data["password1"]
             password2 = form.cleaned_data["password2"]
-            club = form.cleaned_data["club"]
             # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
                 return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
@@ -500,7 +499,6 @@ def register_student(request):
                         username=form.cleaned_data["username"],
                         password=password1,
                         role=User.Role.STUDENT,
-                        club=club
                     )
                     return redirect('login')
 

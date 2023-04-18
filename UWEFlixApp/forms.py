@@ -130,7 +130,6 @@ class StudentRegistrationForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
-    club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False)
 
     def clean_password2(self):
         password1 = self.cleaned_data['password1']
