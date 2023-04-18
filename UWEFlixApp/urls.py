@@ -78,4 +78,5 @@ urlpatterns = [
     path("accept_club/<int:pk>/", views.accept_join_request, name="accept_club"),
     path("reject_club/<int:pk>/", views.reject_join_request, name="reject_club"),
     path("view_pending_club_requests/", views.view_pending_requests, name="view_pending_club_requests"),
+    path("student_view", views.student_view, name="student_view"),
 ]

@@ -577,7 +577,7 @@ def account_page(request):
     if request.user.is_anonymous:
         return redirect('home')  # not logged in
     PAGES_PER_USER_ROLE = {  # the most Pythonic way to emulate switch-case! ;)
-        User.Role.STUDENT: 'booking_start',
+        User.Role.STUDENT: 'student_view',
         User.Role.CLUB_REP: 'club_rep_view',
         User.Role.ACCOUNT_MANAGER: 'account_manager',
         User.Role.CINEMA_MANAGER: 'cinema_manager_view',
@@ -626,3 +626,9 @@ def view_pending_requests(request):
     club = Club.objects.get(pk=request.user.club.pk)
     users = User.objects.filter(requested_club=club)
     return render(request, "UWEFlixApp/view_requested_club_requests.html", {"users": users})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def student_view(request):
+    """Displays the student page"""
+    return render(request, "UWEFlixApp/student_view.html")
