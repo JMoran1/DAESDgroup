@@ -35,7 +35,7 @@ class Club(models.Model):
         return str(self.name)
     
     def save(self, *args, **kwargs):
-        if not self.check_card(self.card_number):
+        if self.card_number is None:
             self.card_number = hashlib.sha256(self.card_number.encode()).hexdigest()
         super().save(*args, **kwargs)
 
