@@ -17,7 +17,7 @@ from django.views.generic import ListView
 from .forms import (
     BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
-    StudentRegistrationForm
+    StudentRegistrationForm, JoinClubForm
 )
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
@@ -583,3 +583,49 @@ def account_page(request):
         User.Role.CINEMA_MANAGER: 'cinema_manager_view',
     }
     return redirect(PAGES_PER_USER_ROLE[request.user.role])
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def join_club(request):
+    """Allows a student to join a club"""
+    form = JoinClubForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            club = form.cleaned_data["club"]
+            request.user.requested_club = club
+            request.user.save()
+            return redirect('home')
+    return render(request, "UWEFlixApp/join_club.html", {"form": form})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def accept_join_request(request, pk):
+    """Allows a club rep to accept a join request"""
+    user = get_object_or_404(User, pk=pk)
+    print(user.username)
+    user.club = user.requested_club
+    user.requested_club = None
+    user.save()
+    print(user.requested_club)
+    # TODO: change this when to the view pending requests page
+    return redirect('club_rep_view')
+
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def reject_join_request(request, pk):
+    """Allows a club rep to reject a join request"""
+    user = get_object_or_404(User, pk=pk)
+    user.requested_club = None
+    user.save()
+    # TODO: change this when to the view pending requests page
+    return redirect('club_rep_view')
+    
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def view_pending_requests(request):
+    """Allows a club rep to view pending requests"""
+    # Change to club rep club when club rep is working
+    club = Club.objects.get(pk=1)
+    users = User.objects.filter(requested_club=club)
+    return render(request, "UWEFlixApp/view_requested_club_requests.html", {"users": users})
