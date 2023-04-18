@@ -17,7 +17,7 @@ from django.views.generic import ListView
 from .forms import (
     BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
-    StudentRegistrationForm
+    StudentRegistrationForm, JoinClubForm
 )
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
@@ -488,7 +488,6 @@ def register_student(request):
         if form.is_valid():
             password1 = form.cleaned_data["password1"]
             password2 = form.cleaned_data["password2"]
-            club = form.cleaned_data["club"]
             # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
                 return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
@@ -500,7 +499,6 @@ def register_student(request):
                         username=form.cleaned_data["username"],
                         password=password1,
                         role=User.Role.STUDENT,
-                        club=club
                     )
                     return redirect('login')
 
@@ -577,9 +575,56 @@ def account_page(request):
     if request.user.is_anonymous:
         return redirect('home')  # not logged in
     PAGES_PER_USER_ROLE = {  # the most Pythonic way to emulate switch-case! ;)
-        User.Role.STUDENT: 'booking_start',
+        User.Role.STUDENT: 'student_view',
         User.Role.CLUB_REP: 'club_rep_view',
         User.Role.ACCOUNT_MANAGER: 'account_manager',
         User.Role.CINEMA_MANAGER: 'cinema_manager_view',
     }
     return redirect(PAGES_PER_USER_ROLE[request.user.role])
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def join_club(request):
+    """Allows a student to join a club"""
+    form = JoinClubForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            club = form.cleaned_data["club"]
+            request.user.requested_club = club
+            request.user.save()
+            return redirect('home')
+    return render(request, "UWEFlixApp/join_club.html", {"form": form})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def accept_join_request(request, pk):
+    """Allows a club rep to accept a join request"""
+    user = get_object_or_404(User, pk=pk)
+    user.club = user.requested_club
+    user.requested_club = None
+    user.save()
+    return redirect('view_pending_club_requests')
+
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def reject_join_request(request, pk):
+    """Allows a club rep to reject a join request"""
+    user = get_object_or_404(User, pk=pk)
+    user.requested_club = None
+    user.save()
+    return redirect('view_pending_club_requests')
+    
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def view_pending_requests(request):
+    """Allows a club rep to view pending requests"""
+    club = request.user.club
+    users = User.objects.filter(requested_club=club)
+    return render(request, "UWEFlixApp/view_requested_club_requests.html", {"users": users})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def student_view(request):
+    """Displays the student page"""
+    return render(request, "UWEFlixApp/student_view.html")

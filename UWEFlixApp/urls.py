@@ -74,4 +74,9 @@ urlpatterns = [
     path("view_transactions", views.view_transactions, name="view_transactions"),
     path("view_club_transactions/<int:pk>/", views.view_club_transactions, name="view_club_transactions"),
     path("account_page/", views.account_page, name="account_page"),
+    path("join_club/", views.join_club, name="join_club"),
+    path("accept_club/<int:pk>/", views.accept_join_request, name="accept_club"),
+    path("reject_club/<int:pk>/", views.reject_join_request, name="reject_club"),
+    path("view_pending_club_requests/", views.view_pending_requests, name="view_pending_club_requests"),
+    path("student_view", views.student_view, name="student_view"),
 ]
