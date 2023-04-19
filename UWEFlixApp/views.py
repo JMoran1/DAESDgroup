@@ -696,3 +696,9 @@ def register_staff(request):
                     return redirect('login')
 
     return render(request, "UWEFlixApp/register_staff.html", {"form": form})
+
+def show_user_bookings(request):
+    """Displays all transactions for the user"""
+    user = request.user.id  # WARN: assumes constraints set in the User model have been validated
+    all_bookings = Booking.objects.filter(user=user, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_student_booking.html", {"all_bookings": all_bookings})

@@ -83,5 +83,6 @@ urlpatterns = [
     path("reject_club/<int:pk>/", views.reject_join_request, name="reject_club"),
     path("view_pending_club_requests/", views.view_pending_requests, name="view_pending_club_requests"),
     path("student_view", views.student_view, name="student_view"),
-    path('register_staff/', views.register_staff, name='register_staff')
+    path('register_staff/', views.register_staff, name='register_staff'),
+    path('show_user_bookings/', views.show_user_bookings, name='show_user_bookings'),
 ]
