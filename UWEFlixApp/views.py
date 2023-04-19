@@ -682,10 +682,10 @@ def register_staff(request):
             role = form.cleaned_data["role"]
             # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
-                return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
+                return render(request, "UWEFlixApp/register_staff.html", {"error": "Passwords do not match", "form": form})
             else:
                 if User.objects.filter(username=form.cleaned_data["username"]).exists():
-                    return render(request, "UWEFlixApp/register.html", {"error": "Username already taken", "form": form})
+                    return render(request, "UWEFlixApp/register_staff.html", {"error": "Username already taken", "form": form})
                 else:
                     u = User.objects.create_user(
                         username=form.cleaned_data["username"],
@@ -695,4 +695,4 @@ def register_staff(request):
                     )
                     return redirect('login')
 
-    return render(request, "UWEFlixApp/register.html", {"form": form})
+    return render(request, "UWEFlixApp/register_staff.html", {"form": form})
