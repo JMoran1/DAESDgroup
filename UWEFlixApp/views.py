@@ -702,3 +702,10 @@ def show_user_bookings(request):
     user = request.user.id  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(user=user, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_student_booking.html", {"all_bookings": all_bookings})
+
+def request_cancel(request, pk):
+    """Allow student users to request cancelling a ticket"""
+    booking = Booking.objects.get(pk=pk)
+    booking.cancel_requested = "True"
+    booking.save()
+    return redirect("home")

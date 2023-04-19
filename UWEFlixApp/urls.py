@@ -85,4 +85,5 @@ urlpatterns = [
     path("student_view", views.student_view, name="student_view"),
     path('register_staff/', views.register_staff, name='register_staff'),
     path('show_user_bookings/', views.show_user_bookings, name='show_user_bookings'),
+    path('request_cancel/<int:pk>', views.request_cancel, name='request_cancel'),
 ]

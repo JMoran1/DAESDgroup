@@ -28,7 +28,7 @@
                 <td> {{ Booking.screening.showing_at }} </td>
                 <td> £{{ Booking.total_price }} </td>
                 <td> {{ Booking.club }}</td>
-                <td><a href="#"><button class="btn btn-danger">Request Cancellation</button></a></td>
+                <td><a href="{% url 'request_cancel' Booking.id %}"><button class="btn btn-danger">Request Cancellation</button></a></td>
             </tr>
             {% endfor %}
         </tbody>
