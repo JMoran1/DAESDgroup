@@ -130,7 +130,6 @@ class StudentRegistrationForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
-    club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False)
 
     def clean_password2(self):
         password1 = self.cleaned_data['password1']
@@ -176,3 +175,6 @@ class ClubRepRegistrationForm(forms.ModelForm):
             return self.cleaned_data['club']
         else:  # problem, club is mandatory
             raise ValidationError('Club must be specified!')
+        
+class JoinClubForm(forms.Form):
+    club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False, widget=forms.Select(attrs={'class': 'form-control'}))

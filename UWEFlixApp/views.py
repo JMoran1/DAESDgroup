@@ -1,4 +1,5 @@
 from datetime import datetime
+from decimal import Decimal
 import random
 import secrets
 from string import ascii_letters, digits
@@ -16,7 +17,7 @@ from django.views.generic import ListView
 from .forms import (
     BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
-    StudentRegistrationForm
+    StudentRegistrationForm, JoinClubForm
 , SimplePaymentForm)
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
@@ -406,23 +407,19 @@ def confirm_booking(request):
         club = user.club
         discount_rate = club.discount_rate
     discount = None
-    number_of_adult_tickets = request.session['number_of_adult_tickets']
-    number_of_child_tickets = request.session['number_of_child_tickets']
-    number_of_student_tickets = request.session['number_of_student_tickets']
-    # screening.seats_remaining = screening.seats_remaining - \
-    #     int(number_of_adult_tickets) - int(number_of_child_tickets) - \
-    #     int(number_of_student_tickets)
-    total_price = int(number_of_adult_tickets) * 4.99 + \
-        int(number_of_child_tickets) * 2.99 + \
-        int(number_of_student_tickets) * 3.99
+    number_of_adult_tickets = int(request.session['number_of_adult_tickets'])
+    number_of_child_tickets = int(request.session['number_of_child_tickets'])
+    number_of_student_tickets = int(request.session['number_of_student_tickets'])
+    total_price = number_of_adult_tickets * Decimal('4.99') + \
+        number_of_child_tickets * Decimal('2.99') + \
+        number_of_student_tickets * Decimal('3.99')
     subtotal = total_price
     if not request.user.is_anonymous:
         if user.role == User.Role.CLUB_REP:
-            discount = total_price * float(discount_rate)
-            total_price = total_price - discount
+            total_price *= (1 - discount_rate)
 
-    total_ticket_quantity = int(number_of_adult_tickets) + \
-        int(number_of_child_tickets) + int(number_of_student_tickets)
+    total_ticket_quantity = number_of_adult_tickets + \
+        number_of_child_tickets + number_of_student_tickets
     
     if request.method == 'POST':
         form = BookingForm(request.POST)
@@ -436,7 +433,7 @@ def confirm_booking(request):
                     else:
                         Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                             number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
-                        club.balance = float(club.balance) - total_price
+                        club.balance = club.balance - total_price
                         club.save()
                         screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
                         screening.save()
@@ -490,7 +487,6 @@ def register_student(request):
         if form.is_valid():
             password1 = form.cleaned_data["password1"]
             password2 = form.cleaned_data["password2"]
-            club = form.cleaned_data["club"]
             # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
                 return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
@@ -502,8 +498,7 @@ def register_student(request):
                         username=form.cleaned_data["username"],
                         password=password1,
                         role=User.Role.STUDENT,
-                        club=club,
-                        is_active=False
+                        club=club
                     )
                     return redirect('login')
 
@@ -580,13 +575,59 @@ def account_page(request):
     if request.user.is_anonymous:
         return redirect('home')  # not logged in
     PAGES_PER_USER_ROLE = {  # the most Pythonic way to emulate switch-case! ;)
-        User.Role.STUDENT: 'booking_start',
+        User.Role.STUDENT: 'student_view',
         User.Role.CLUB_REP: 'club_rep_view',
         User.Role.ACCOUNT_MANAGER: 'account_manager',
         User.Role.CINEMA_MANAGER: 'cinema_manager_view',
     }
     return redirect(PAGES_PER_USER_ROLE[request.user.role])
 
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def join_club(request):
+    """Allows a student to join a club"""
+    form = JoinClubForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            club = form.cleaned_data["club"]
+            request.user.requested_club = club
+            request.user.save()
+            return redirect('home')
+    return render(request, "UWEFlixApp/join_club.html", {"form": form})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def accept_join_request(request, pk):
+    """Allows a club rep to accept a join request"""
+    user = get_object_or_404(User, pk=pk)
+    user.club = user.requested_club
+    user.requested_club = None
+    user.save()
+    return redirect('view_pending_club_requests')
+
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def reject_join_request(request, pk):
+    """Allows a club rep to reject a join request"""
+    user = get_object_or_404(User, pk=pk)
+    user.requested_club = None
+    user.save()
+    return redirect('view_pending_club_requests')
+    
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def view_pending_requests(request):
+    """Allows a club rep to view pending requests"""
+    club = request.user.club
+    users = User.objects.filter(requested_club=club)
+    return render(request, "UWEFlixApp/view_requested_club_requests.html", {"users": users})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def student_view(request):
+    """Displays the student page"""
+    return render(request, "UWEFlixApp/student_view.html")
 
 def payment_page(request):
     """Displays the payment page"""

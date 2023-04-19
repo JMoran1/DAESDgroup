@@ -78,5 +78,9 @@ urlpatterns = [
     path("waiting_approval", views.waiting_approval, name="waiting_approval"),
     path("approve_account/<int:pk>", views.approve_account, name="approve_account"),
     path("reject_account/<int:pk>", views.reject_account, name="reject_account"),
-    path("student_view", views.student_view, name="student_view"),
+    path("join_club/", views.join_club, name="join_club"),
+    path("accept_club/<int:pk>/", views.accept_join_request, name="accept_club"),
+    path("reject_club/<int:pk>/", views.reject_join_request, name="reject_club"),
+    path("view_pending_club_requests/", views.view_pending_requests, name="view_pending_club_requests"),
+    path("student_view", views.student_view, name="student_view")
 ]
