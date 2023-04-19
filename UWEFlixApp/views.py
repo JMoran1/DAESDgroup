@@ -84,7 +84,13 @@ def create_club(request):
 
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            name = form.cleaned_data['name']
+            card_num = form.cleaned_data['card_number']
+            card_exp = form.cleaned_data['card_expiry']
+            discount_rate = form.cleaned_data['discount_rate']
+            address = form.cleaned_data['address']
+            hashed_card = hashlib.sha3_512(card_num.encode()).hexdigest()
+            Club.objects.create(name = name, card_number = hashed_card, card_expiry = card_exp, discount_rate = discount_rate, address = address)
             return redirect('home')
     return render(request, "UWEFlixApp/create_club_form.html", {"form": form, "button_text": "Create Club"})
 

@@ -34,10 +34,5 @@ class Club(models.Model):
     def __str__(self):
         return str(self.name)
     
-    def save(self, *args, **kwargs):
-        if self.card_number is None:
-            self.card_number = hashlib.sha256(self.card_number.encode()).hexdigest()
-        super().save(*args, **kwargs)
-
     def check_card(self, card_number):
-        return self.card_number == hashlib.sha256(card_number.encode()).hexdigest()
+        return self.card_number == hashlib.sha3_512(card_number.encode()).hexdigest()
