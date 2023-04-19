@@ -669,7 +669,7 @@ def reject_account(request, pk):
 @user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
 def student_view(request):
     """Displays the student profile page"""
-    return render(request, "UWEFlixApp/studentpage.html")
+    return render(request, "UWEFlixApp/student_view.html")
 
 def register_staff(request):
     """Allows a staff member to register for an account"""
