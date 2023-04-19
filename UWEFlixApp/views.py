@@ -709,3 +709,15 @@ def request_cancel(request, pk):
     booking.cancel_requested = "True"
     booking.save()
     return redirect("home")
+
+def show_requested_bookings(request):
+    """Displays all transactions for the user"""
+    all_bookings = Booking.objects.filter(cancel_requested=1, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_student_requests.html", {"all_bookings": all_bookings})
+
+def cancel_booking(request, pk):
+    """Allow CM users to approve cancelling a ticket"""
+    booking = Booking.objects.get(pk=pk)
+    booking.delete()
+    
+    return redirect("home")

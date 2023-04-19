@@ -86,4 +86,6 @@ urlpatterns = [
     path('register_staff/', views.register_staff, name='register_staff'),
     path('show_user_bookings/', views.show_user_bookings, name='show_user_bookings'),
     path('request_cancel/<int:pk>', views.request_cancel, name='request_cancel'),
+    path('show_requested_bookings', views.show_requested_bookings, name='show_requested_bookings'),
+    path('cancel_booking/<int:pk>/', views.cancel_booking, name='cancel_booking'),
 ]
