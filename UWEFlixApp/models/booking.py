@@ -3,7 +3,7 @@ from django.db import models
 
 class Booking(models.Model):
     # to be added once authentication is completed
-    user = models.ForeignKey('User', on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE, null=True, blank=True)
     screening = models.ForeignKey('Screening', on_delete=models.CASCADE)
     number_of_adult_tickets = models.IntegerField()
     number_of_child_tickets = models.IntegerField()

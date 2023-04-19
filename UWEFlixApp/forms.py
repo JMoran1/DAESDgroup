@@ -1,9 +1,10 @@
 from django import forms
-from django.contrib import admin
+
 from django.core.exceptions import ValidationError
-from UWEFlixApp.models import Club, Movie, Screen, User, Screening
+from UWEFlixApp.models import Club, Movie, Screen, Screening
 from django.contrib.auth.forms import AuthenticationForm
-from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
+from UWEFlixApp.models import Club, Movie, Screen, Booking, Screening
+from auth.models import User
 from .check_luhn import check_luhn
 from datetime import datetime
 
@@ -71,21 +72,6 @@ class ScreenForm(forms.ModelForm):
         return capacity
 
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        exclude = ['password']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        cleaned_data['groups'] = User.sanitise_groups(
-            cleaned_data['groups'],
-            User.Role(cleaned_data['role'])
-        )
-
-
-class UserAdmin(admin.ModelAdmin):
-    form = UserForm
 class ScreeningForm(forms.ModelForm):
 
     class Meta:
