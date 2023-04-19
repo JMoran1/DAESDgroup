@@ -9,7 +9,7 @@ class Club(models.Model):
     TODO: using a third party model field type for credit card details or better
     yet, something like Stripe for payments would be even better, but this'll do
     '''
-    card_number = models.CharField(max_length=256)
+    card_number = models.CharField(max_length=128)
     card_expiry = models.DateField()
     discount_rate = models.DecimalField(decimal_places=2, max_digits=4)
     address = models.CharField(max_length=500)
