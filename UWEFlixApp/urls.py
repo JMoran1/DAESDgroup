@@ -24,7 +24,7 @@ movie_list_view = views.ViewMovie.as_view(
 
 
 movie_list_booking = views.ViewMovie.as_view(
-    queryset=Movie.objects.order_by("id")[:5],
+    queryset=Movie.objects.order_by("id"),
     context_object_name="movie_list",
     template_name="UWEFlixApp/cust_pick_film.html",
 ) # This was linking to booking.html
