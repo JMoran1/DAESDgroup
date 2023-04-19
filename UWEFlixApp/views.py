@@ -498,7 +498,6 @@ def register_student(request):
                         username=form.cleaned_data["username"],
                         password=password1,
                         role=User.Role.STUDENT,
-                        club=club
                     )
                     return redirect('login')
 
@@ -671,3 +670,28 @@ def reject_account(request, pk):
 def student_view(request):
     """Displays the student profile page"""
     return render(request, "UWEFlixApp/studentpage.html")
+
+def register_staff(request):
+    """Allows a staff member to register for an account"""
+    form = StudentRegistrationForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            password1 = form.cleaned_data["password1"]
+            password2 = form.cleaned_data["password2"]
+            # FIXME: Django user password policy isn't applied here as it is in the admin
+            if password1 != password2:
+                return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
+            else:
+                if User.objects.filter(username=form.cleaned_data["username"]).exists():
+                    return render(request, "UWEFlixApp/register.html", {"error": "Username already taken", "form": form})
+                else:
+                    u = User.objects.create_user(
+                        username=form.cleaned_data["username"],
+                        password=password1,
+                        role=User.Role.ACCOUNT_MANAGER,
+                        is_active = False
+                    )
+                    return redirect('login')
+
+    return render(request, "UWEFlixApp/register.html", {"form": form})
