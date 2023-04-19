@@ -18,10 +18,7 @@ class Movie(models.Model):
         return self.name
     
     def save(self, *args, **kwargs):
-        # Check if the image field is empty
         if not self.image:
-            # Set the image field back to its default value
-            default_image_path = os.path.join(settings.MEDIA_ROOT, 'images', 'no_image_available.png')
-            self.image.save('no_image_available.png', File(open(default_image_path, 'rb')))
+            self.image.name = 'images/no_image_available.png'
 
         super(Movie, self).save(*args, **kwargs)
