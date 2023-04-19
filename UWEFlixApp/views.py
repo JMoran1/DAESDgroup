@@ -18,7 +18,7 @@ from .forms import (
     BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
     StudentRegistrationForm, JoinClubForm
-, SimplePaymentForm)
+, SimplePaymentForm, StaffRegistrationForm)
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
 )
@@ -673,12 +673,13 @@ def student_view(request):
 
 def register_staff(request):
     """Allows a staff member to register for an account"""
-    form = StudentRegistrationForm(request.POST or None)
+    form = StaffRegistrationForm(request.POST or None)
 
     if request.method == "POST":
         if form.is_valid():
             password1 = form.cleaned_data["password1"]
             password2 = form.cleaned_data["password2"]
+            role = form.cleaned_data["role"]
             # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
                 return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
@@ -689,7 +690,7 @@ def register_staff(request):
                     u = User.objects.create_user(
                         username=form.cleaned_data["username"],
                         password=password1,
-                        role=User.Role.ACCOUNT_MANAGER,
+                        role=role,
                         is_active = False
                     )
                     return redirect('login')

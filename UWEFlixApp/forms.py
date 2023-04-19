@@ -178,3 +178,26 @@ class ClubRepRegistrationForm(forms.ModelForm):
         
 class JoinClubForm(forms.Form):
     club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False, widget=forms.Select(attrs={'class': 'form-control'}))
+
+class StaffRegistrationForm(forms.ModelForm):
+    
+    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
+
+    class Meta:
+        model = User
+        fields = ('role',)
+        
+
+    def clean_password2(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+        if password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
+        return password2
+
+    def clean_username(self):
+        if User.objects.filter(username=self.cleaned_data["username"]).exists():
+            raise forms.ValidationError("Username already exists")
+        return self.cleaned_data["username"]
