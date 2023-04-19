@@ -12,8 +12,9 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>User ID</th>
+                <th>Username</th>
                 <th>Screening</th>
+                <th>Screening Time</th>
                 <th>Total Price</th>
                 <th>Club</th>
             </tr>
@@ -22,7 +23,8 @@
             {% for Booking in all_bookings %}
             <tr>
                 <td> {{ Booking.user }} </td> 
-                <td> {{ Booking.screening }} </td>
+                <td> {{ Booking.screening.movie }} </td>
+                <td> {{ Booking.screening.showing_at }} </td>
                 <td> £{{ Booking.total_price }} </td>
                 <td> {{ Booking.club }}</td>
             </tr>
