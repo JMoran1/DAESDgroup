@@ -187,8 +187,11 @@ class StaffRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('role','club')
-        
+        fields = ('role',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['role'].choices = [('M', 'Cinema Manager'), ('A', 'Account Manager')]
 
     def clean_password2(self):
         password1 = self.cleaned_data['password1']
@@ -201,3 +204,4 @@ class StaffRegistrationForm(forms.ModelForm):
         if User.objects.filter(username=self.cleaned_data["username"]).exists():
             raise forms.ValidationError("Username already exists")
         return self.cleaned_data["username"]
+    
