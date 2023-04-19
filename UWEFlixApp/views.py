@@ -680,6 +680,7 @@ def register_staff(request):
             password1 = form.cleaned_data["password1"]
             password2 = form.cleaned_data["password2"]
             role = form.cleaned_data["role"]
+            club = form.cleaned_data["club"]
             # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
                 return render(request, "UWEFlixApp/register_staff.html", {"error": "Passwords do not match", "form": form})
@@ -691,7 +692,8 @@ def register_staff(request):
                         username=form.cleaned_data["username"],
                         password=password1,
                         role=role,
-                        is_active = False
+                        is_active = False,
+                        club=club
                     )
                     return redirect('login')
 

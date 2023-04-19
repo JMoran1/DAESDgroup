@@ -187,7 +187,7 @@ class StaffRegistrationForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('role',)
+        fields = ('role','club')
         
 
     def clean_password2(self):
