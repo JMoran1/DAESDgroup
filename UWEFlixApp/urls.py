@@ -4,20 +4,20 @@ from .models import MonthlyStatement, Club, Movie, Screen, Screening
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
-    queryset=MonthlyStatement.objects.order_by("id"),  
+    queryset=MonthlyStatement.objects.order_by("-id"),  
     context_object_name="monthly_statement_list",
     template_name="UWEFlixApp/view_monthly_statement.html",
 )
 
 club_list_view = views.ViewClubs.as_view(
-    queryset=Club.objects.order_by("id")[:5],
+    queryset=Club.objects.order_by("id"),
     context_object_name="club_list",
     template_name="UWEFlixApp/view_clubs.html",
 )
 
 
 movie_list_view = views.ViewMovie.as_view(
-    queryset=Movie.objects.order_by("id")[:5],
+    queryset=Movie.objects.order_by("id"),
     context_object_name="movie_list",
     template_name="UWEFlixApp/view_movies.html",
 )
@@ -31,7 +31,7 @@ movie_list_booking = views.ViewMovie.as_view(
 
 
 screen_list_view = views.ViewMovie.as_view(
-    queryset=Screen.objects.order_by("id")[:5],
+    queryset=Screen.objects.order_by("id"),
     context_object_name="screen_list",
     template_name="UWEFlixApp/view_screens.html",
 )
