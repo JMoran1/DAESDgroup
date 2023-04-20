@@ -17,7 +17,7 @@ from django.views.generic import ListView
 from .forms import (
     BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
-    StudentRegistrationForm, JoinClubForm
+    StudentRegistrationForm, JoinClubForm, TicketPriceForm
 )
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User, Ticket
@@ -643,3 +643,18 @@ def student_view(request):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def change_ticket_price(request):
     """Allows a cinema manager to change the ticket price"""
+    form = TicketPriceForm(request.POST or None, initial={"adult_ticket_price": Ticket.objects.get(pk=1).price,
+                                                          "child_ticket_price": Ticket.objects.get(pk=2).price,
+                                                          "student_ticket_price": Ticket.objects.get(pk=3).price,})
+    if request.method == "POST":
+        if form.is_valid():
+            adult_ticket_price = form.cleaned_data["adult_ticket_price"]
+            child_ticket_price = form.cleaned_data["child_ticket_price"]
+            student_ticket_price = form.cleaned_data["student_ticket_price"]
+
+            Ticket.objects.filter(pk=1).update(price=adult_ticket_price)
+            Ticket.objects.filter(pk=2).update(price=child_ticket_price)
+            Ticket.objects.filter(pk=3).update(price=student_ticket_price)
+
+            return redirect('cinema_manager_view')
+    return render(request, "UWEFlixApp/change_ticket_price.html", {"form": form})
