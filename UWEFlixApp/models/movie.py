@@ -4,6 +4,8 @@ from django.db import models
 
 
 class Movie(models.Model):
+    DEFAULT_IMAGE = 'images/no_image_available.png'
+
     name = models.CharField(max_length=50)
     minutes_long = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(limit_value=1)]
@@ -17,6 +19,6 @@ class Movie(models.Model):
     
     def save(self, *args, **kwargs):
         if not self.image:
-            self.image.name = 'images/no_image_available.png'
+            self.image.name = self.DEFAULT_IMAGE
 
         super(Movie, self).save(*args, **kwargs)
