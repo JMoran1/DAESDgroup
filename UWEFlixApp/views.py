@@ -157,7 +157,7 @@ class ViewMonthlyStatement(UserPassesTestMixin, ListView):
 
 class ViewMovie(ListView):
     model = Movie
-    paginate_by = 6
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewMovie, self).get_context_data(**kwargs)
@@ -166,6 +166,7 @@ class ViewMovie(ListView):
 
 class ViewScreen(UserPassesTestMixin, ListView):
     model = Screen
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewScreen, self).get_context_data(**kwargs)
