@@ -20,7 +20,7 @@ from .forms import (
     StudentRegistrationForm, JoinClubForm
 )
 from .models import (
-    Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
+    Booking, Club, MonthlyStatement, Movie, Screen, Screening, User, Ticket
 )
 import hashlib
 
@@ -418,9 +418,12 @@ def confirm_booking(request):
     number_of_adult_tickets = int(request.session['number_of_adult_tickets'])
     number_of_child_tickets = int(request.session['number_of_child_tickets'])
     number_of_student_tickets = int(request.session['number_of_student_tickets'])
-    total_price = number_of_adult_tickets * Decimal('4.99') + \
-        number_of_child_tickets * Decimal('2.99') + \
-        number_of_student_tickets * Decimal('3.99')
+    adult_ticket_price = Ticket.objects.get(id=1).price
+    child_ticket_price = Ticket.objects.get(id=2).price
+    student_ticket_price = Ticket.objects.get(id=3).price
+    total_price = number_of_adult_tickets * adult_ticket_price + \
+        number_of_child_tickets * child_ticket_price + \
+        number_of_student_tickets * student_ticket_price
     subtotal = total_price
     if not request.user.is_anonymous:
         if user.role == User.Role.CLUB_REP:
@@ -635,3 +638,8 @@ def view_pending_requests(request):
 def student_view(request):
     """Displays the student page"""
     return render(request, "UWEFlixApp/student_view.html")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def change_ticket_price(request):
+    """Allows a cinema manager to change the ticket price"""
