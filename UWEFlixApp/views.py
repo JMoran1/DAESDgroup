@@ -128,6 +128,7 @@ def delete_club(request, pk):
 
 class ViewClubs(UserPassesTestMixin, ListView):
     model = Club
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewClubs, self).get_context_data(**kwargs)
