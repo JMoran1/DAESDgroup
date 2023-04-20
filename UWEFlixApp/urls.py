@@ -36,6 +36,11 @@ screen_list_view = views.ViewMovie.as_view(
     template_name="UWEFlixApp/view_screens.html",
 )
 
+screening_list_view = views.ViewMovie.as_view(
+    queryset=Screening.objects.order_by("id"),
+    context_object_name="screen_list",
+    template_name="UWEFlixApp/view_screenings.html",
+)
 
 
 
@@ -58,7 +63,7 @@ urlpatterns = [
     path('delete_screen/<int:pk>/', views.delete_screen, name="delete_screen"),
     path('edit_screening/<int:pk>/', views.edit_screening, name='edit_screening'),
     path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
-    path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
+    path("show_all_screening/", screening_list_view, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
     path('create_screening/', views.create_screening, name='create_screening'),
     path('create_monthly_statement/', views.create_monthly_statements, name='create_monthly_statement'),

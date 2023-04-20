@@ -13,6 +13,7 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView
+from django.core.paginator import Paginator
 
 from .forms import (
     BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
@@ -273,9 +274,19 @@ def show_screening(request, pk):
     return render(request, "UWEFlixApp/show_movie_screenings_with_tabs.html", {"showing_list": screening, "movie": movie, "screening_dict": screening_dict})
 
 
-def show_all_screening(request):
-    all_screening = Screening.objects.all()
-    return render(request, "UWEFlixApp/view_screenings.html", {"all_showings": all_screening})
+class ViewScreenings(UserPassesTestMixin, ListView):
+    model = Screening
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super(ViewScreenings, self).get_context_data(**kwargs)
+        return context
+
+    def test_func(self):
+        return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
+    
+    def handle_no_permission(self):
+        return redirect('home')
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
