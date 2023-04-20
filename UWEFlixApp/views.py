@@ -143,6 +143,7 @@ class ViewClubs(UserPassesTestMixin, ListView):
 
 class ViewMonthlyStatement(UserPassesTestMixin, ListView):
     model = MonthlyStatement
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewMonthlyStatement, self).get_context_data(**kwargs)
