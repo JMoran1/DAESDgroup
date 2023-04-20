@@ -1,8 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.conf import settings
-import os
-from django.core.files import File
+
 
 
 class Movie(models.Model):
