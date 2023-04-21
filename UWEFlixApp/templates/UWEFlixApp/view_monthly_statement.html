@@ -28,7 +28,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for statement in monthly_statement_list %}
+            {% for statement in page_obj %}
             <tr>
                 <td> {{ statement.club }}</td>
                 <td> {{ statement.date }}</td>
@@ -41,6 +41,24 @@
         </tbody>
     </table>
 </div>
+
+<div class="row justify-content-center">
+    <div class="col-4 m-auto text-center">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
+          {% endif %}
+
+          <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
 {% else %}
 <p class="text-center">No monthly statements have been created. </p>
 {% endif %}
