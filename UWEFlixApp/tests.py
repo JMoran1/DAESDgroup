@@ -194,10 +194,9 @@ class ClashingScreeningsTest(TestCase):
     full coverage!
     """
     @staticmethod
-    def make_screenings_for_date_ranges(
-        a: tuple[str, str], b: tuple[str, str]
-    ):
+    def make_screenings_for_date_ranges(a, b):
         """
+        NOTE: both a and b should be two 2-tuples of datetime strings
         Helper method, will produce two Screenings for the same Screen which are
         guaranteed to start and end at the given tuples of (start, end) times.
 
