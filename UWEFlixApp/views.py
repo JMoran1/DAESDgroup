@@ -639,27 +639,34 @@ def payment_page(request):
             return redirect('confirm_booking')
     return render(request, "UWEFlixApp/paymentform.html", {"form": form, "button_text": "Continue"})
 
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def show_all_bookings(request):
     all_booking = Booking.objects.all()
     return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
 
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def show_club_bookings(request):
     """Displays all transactions for the club"""
     club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_bookings})
 
+
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def waiting_approval(request):
     """displays all users where is_active is false"""
     all_users = User.objects.filter(is_active=False)
     return render(request, "UWEFlixApp/waiting_approval.html", {"all_users": all_users})
 
+
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def approve_account(request, pk):
     Userr = User.objects.get(pk=pk)
     Userr.is_active = True
     Userr.save()  
     return redirect("home")
 
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def reject_account(request, pk):
     Userr = User.objects.get(pk=pk)
     Userr.delete()
@@ -710,11 +717,13 @@ def request_cancel(request, pk):
     booking.save()
     return redirect("home")
 
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def show_requested_bookings(request):
     """Displays all transactions for the user"""
     all_bookings = Booking.objects.filter(cancel_requested=1, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_student_requests.html", {"all_bookings": all_bookings})
 
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def cancel_booking(request, pk):
     """Allow CM users to approve cancelling a ticket"""
     booking = Booking.objects.get(pk=pk)
