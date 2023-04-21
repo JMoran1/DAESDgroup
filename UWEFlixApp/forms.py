@@ -1,15 +1,16 @@
-from datetime import timedelta
+from datetime import datetime, timedelta
 from math import ceil
 
 from django import forms
 from django.contrib import admin
+from django.contrib.auth.forms import AuthenticationForm
+from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 
-from UWEFlixApp.models import Club, Movie, Screen, User, Screening
-from django.contrib.auth.forms import AuthenticationForm
-from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
+from UWEFlixApp.models import Booking, Club, Movie, Screen, Screening, User
+
 from .check_luhn import check_luhn
-from datetime import datetime
+
 
 class ClubForm(forms.ModelForm):
     class Meta:
@@ -148,8 +149,7 @@ class ClubTopUpForm(forms.Form):
             raise forms.ValidationError("Amount must be greater than 0")
         return amount
 
-
-class CustomerRegistrationForm(forms.Form):
+class StudentRegistrationForm(forms.Form):
     username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
     password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
     password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
@@ -165,6 +165,43 @@ class CustomerRegistrationForm(forms.Form):
         if User.objects.filter(username=self.cleaned_data["username"]).exists():
             raise forms.ValidationError("Username already exists")
         return self.cleaned_data["username"]
-    
+
 class ClubRepBookingForm(forms.Form):
     number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+class ClubRepRegistrationForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('club',)
+
+    def clean_club(self):
+        if self.cleaned_data['club']:  # truthy, so not blank, fine
+            return self.cleaned_data['club']
+        else:  # problem, club is mandatory
+            raise ValidationError('Club must be specified!')
+        
+class JoinClubForm(forms.Form):
+    club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False, widget=forms.Select(attrs={'class': 'form-control'}))
+
+class TicketPriceForm(forms.Form):
+    adult_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    child_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    student_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean_adult_ticket_price(self):
+        adult_ticket_price = self.cleaned_data['adult_ticket_price']
+        if adult_ticket_price < 0:
+            raise forms.ValidationError("Adult ticket price must be greater than 0")
+        return adult_ticket_price
+    
+    def clean_child_ticket_price(self):
+        child_ticket_price = self.cleaned_data['child_ticket_price']
+        if child_ticket_price < 0:
+            raise forms.ValidationError("Child ticket price must be greater than 0")
+        return child_ticket_price
+    
+    def clean_student_ticket_price(self):
+        student_ticket_price = self.cleaned_data['student_ticket_price']
+        if student_ticket_price < 0:
+            raise forms.ValidationError("Student ticket price must be greater than 0")
+        return student_ticket_price

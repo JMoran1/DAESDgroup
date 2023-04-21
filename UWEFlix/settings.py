@@ -143,3 +143,6 @@ LOGIN_REDIRECT_URL = '/'
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# Ends the sessions after 20 minutes (20 * 60 seconds)
+SESSION_COOKIE_AGE = 60 * 20
