@@ -205,3 +205,25 @@ class StaffRegistrationForm(forms.ModelForm):
             raise forms.ValidationError("Username already exists")
         return self.cleaned_data["username"]
     
+class TicketPriceForm(forms.Form):
+    adult_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    child_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    student_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean_adult_ticket_price(self):
+        adult_ticket_price = self.cleaned_data['adult_ticket_price']
+        if adult_ticket_price < 0:
+            raise forms.ValidationError("Adult ticket price must be greater than 0")
+        return adult_ticket_price
+    
+    def clean_child_ticket_price(self):
+        child_ticket_price = self.cleaned_data['child_ticket_price']
+        if child_ticket_price < 0:
+            raise forms.ValidationError("Child ticket price must be greater than 0")
+        return child_ticket_price
+    
+    def clean_student_ticket_price(self):
+        student_ticket_price = self.cleaned_data['student_ticket_price']
+        if student_ticket_price < 0:
+            raise forms.ValidationError("Student ticket price must be greater than 0")
+        return student_ticket_price

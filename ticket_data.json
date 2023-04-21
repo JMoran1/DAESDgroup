@@ -1,0 +1,23 @@
+[
+    {
+        "model": "UWEFlixApp.Ticket",
+        "fields": {
+            "ticket_type": "Adult Ticket",
+            "price": "4.99"
+        }
+    },
+    {
+        "model": "UWEFlixApp.Ticket",
+        "fields": {
+            "ticket_type": "Child Ticket",
+            "price": "2.99"
+        }
+    },
+    {
+        "model": "UWEFlixApp.Ticket",
+        "fields": {
+            "ticket_type": "Student Ticket",
+            "price": "3.99"
+        }
+    }
+]

@@ -4,38 +4,43 @@ from .models import MonthlyStatement, Club, Movie, Screen, Screening, Booking
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
-    queryset=MonthlyStatement.objects.order_by("id"),  
+    queryset=MonthlyStatement.objects.order_by("-id"),  
     context_object_name="monthly_statement_list",
     template_name="UWEFlixApp/view_monthly_statement.html",
 )
 
 club_list_view = views.ViewClubs.as_view(
-    queryset=Club.objects.order_by("id")[:5],
+    queryset=Club.objects.order_by("id"),
     context_object_name="club_list",
     template_name="UWEFlixApp/view_clubs.html",
 )
 
 
 movie_list_view = views.ViewMovie.as_view(
-    queryset=Movie.objects.order_by("id")[:5],
+    queryset=Movie.objects.order_by("id"),
     context_object_name="movie_list",
     template_name="UWEFlixApp/view_movies.html",
 )
 
 
 movie_list_booking = views.ViewMovie.as_view(
-    queryset=Movie.objects.order_by("id")[:5],
+    queryset=Movie.objects.order_by("id"),
     context_object_name="movie_list",
     template_name="UWEFlixApp/cust_pick_film.html",
 ) # This was linking to booking.html
 
 
 screen_list_view = views.ViewMovie.as_view(
-    queryset=Screen.objects.order_by("id")[:5],
+    queryset=Screen.objects.order_by("id"),
     context_object_name="screen_list",
     template_name="UWEFlixApp/view_screens.html",
 )
 
+screening_list_view = views.ViewMovie.as_view(
+    queryset=Screening.objects.order_by("id"),
+    context_object_name="screen_list",
+    template_name="UWEFlixApp/view_screenings.html",
+)
 
 urlpatterns = [
     path("", views.home, name="home"),
@@ -56,7 +61,7 @@ urlpatterns = [
     path('delete_screen/<int:pk>/', views.delete_screen, name="delete_screen"),
     path('edit_screening/<int:pk>/', views.edit_screening, name='edit_screening'),
     path('show_screenings/<int:pk>/', views.show_screening, name="show_screenings"),
-    path("show_all_screening/", views.show_all_screening, name="show_all_screening"),
+    path("show_all_screening/", screening_list_view, name="show_all_screening"),
     path('delete_screening/<int:pk>/', views.delete_screening, name="delete_screening"),
     path('create_screening/', views.create_screening, name='create_screening'),
     path('create_monthly_statement/', views.create_monthly_statements, name='create_monthly_statement'),
@@ -88,4 +93,5 @@ urlpatterns = [
     path('request_cancel/<int:pk>', views.request_cancel, name='request_cancel'),
     path('show_requested_bookings', views.show_requested_bookings, name='show_requested_bookings'),
     path('cancel_booking/<int:pk>/', views.cancel_booking, name='cancel_booking'),
+    path("change_ticket_price/", views.change_ticket_price, name="change_ticket_price"),
 ]
