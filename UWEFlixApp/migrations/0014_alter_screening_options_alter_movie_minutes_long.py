@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('UWEFlixApp', '0008_remove_booking_number_of_tickets_and_more'),
+        ('UWEFlixApp', '0013_ticket'),
     ]
 
     operations = [

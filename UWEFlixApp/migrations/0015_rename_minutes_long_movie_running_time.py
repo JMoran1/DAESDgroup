@@ -6,7 +6,7 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('UWEFlixApp', '0009_alter_screening_options_alter_movie_minutes_long'),
+        ('UWEFlixApp', '0014_alter_screening_options_alter_movie_minutes_long'),
     ]
 
     operations = [

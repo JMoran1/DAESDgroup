@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('UWEFlixApp', '0010_rename_minutes_long_movie_running_time'),
+        ('UWEFlixApp', '0015_rename_minutes_long_movie_running_time'),
     ]
 
     operations = [

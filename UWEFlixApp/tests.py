@@ -181,3 +181,10 @@ class DeleteClubTest(TestCase):
 
     def tearDown(self):
         self.user.delete()
+
+class ClashingScreeningsTest(TestCase):
+    def setUp(self):
+        pass
+
+    def tearDown(self):
+        pass
