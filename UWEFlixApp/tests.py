@@ -325,6 +325,51 @@ class ClashingScreeningsTest(TestCase):
             # THEN an error is raised
             b.save()
 
+    def test_tiny_overlap(self):
+        # B starts one minute later than A and their films are of equal duration
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T16:33', '2019-08-07T20:21')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+    def test_start_at_same_time(self):
+        # two Screenings that start at the same time but end at different ones
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T16:32', '2019-08-07T20:21')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+    def test_end_at_same_time(self):
+        # two Screenings that start at different times but end at the same
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T16:33', '2019-08-07T20:20')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
     def tearDown(self):
         """
         Delete anything we might have inadvertently created
