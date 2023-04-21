@@ -716,7 +716,7 @@ def show_user_bookings(request):
 def request_cancel(request, pk):
     """Allow student users to request cancelling a ticket"""
     booking = Booking.objects.get(pk=pk)
-    booking.cancel_requested = "Cancellation Requested"
+    booking.status = Booking.Status.CANCELLATION_REQUESTED
     booking.save()
     return redirect("home")
 
@@ -724,7 +724,7 @@ def request_cancel(request, pk):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def show_requested_bookings(request):
     """Displays all transactions for the user"""
-    all_bookings = Booking.objects.filter(cancel_requested='Cancellation Requested', date__month=datetime.now().month)
+    all_bookings = Booking.objects.filter(status=Booking.Status.CANCELLATION_REQUESTED, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_student_requests.html", {"all_bookings": all_bookings})
 
 @login_required()
@@ -732,6 +732,6 @@ def show_requested_bookings(request):
 def cancel_booking(request, pk):
     """Allow CM users to approve cancelling a ticket"""
     booking = Booking.objects.get(pk=pk)
-    booking.cancel_requested = "Cancelled"
+    booking.status = Booking.Status.CANCELLED
     booking.save()
     return redirect("home")
