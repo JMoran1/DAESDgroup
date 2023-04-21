@@ -22,6 +22,7 @@ from .forms import (
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User,
 )
+import hashlib
 
 class UserRoleCheck:
     """
@@ -83,7 +84,13 @@ def create_club(request):
 
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            name = form.cleaned_data['name']
+            card_num = form.cleaned_data['card_number']
+            card_exp = form.cleaned_data['card_expiry']
+            discount_rate = form.cleaned_data['discount_rate']
+            address = form.cleaned_data['address']
+            hashed_card = hashlib.sha3_512(card_num.encode()).hexdigest()
+            Club.objects.create(name = name, card_number = hashed_card, card_expiry = card_exp, discount_rate = discount_rate, address = address)
             return redirect('home')
     return render(request, "UWEFlixApp/create_club_form.html", {"form": form, "button_text": "Create Club"})
 
@@ -466,7 +473,7 @@ def club_top_up(request):
             card_number = form.cleaned_data["card_number"]
             expiry_date = form.cleaned_data["card_expiry"]
 
-            if card_number != club.card_number:
+            if not club.check_card(card_number):
                 return render(request, "UWEFlixApp/club_top_up.html", {"club": club, "error": "Card number does not match", "form": form})
             
             if expiry_date != club.card_expiry:

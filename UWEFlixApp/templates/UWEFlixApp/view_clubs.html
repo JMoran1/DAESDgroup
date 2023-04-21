@@ -16,8 +16,6 @@
             <tr>
                 <th>Club ID</th>
                 <th>Name</th>
-                <th>Card Num</th>
-                <th>Exp date</th>
                 <th>Discount rate</th>
                 <th>Address</th>
                 <th></th>
@@ -30,8 +28,6 @@
             <tr>
                 <td> {{ club.id }}</td>
                 <td> {{ club.name }}</td>
-                <td> {{ club.card_number }}</td>
-                <td> {{ club.card_expiry }}</td>
                 <td> {{ club.discount_rate }}</td>
                 <td> {{ club.address }}</td>
                 <td><a href="{% url 'view_club_transactions' club.id %}" class="btn btn-outline-primary">View Club Transactions</a></td>
