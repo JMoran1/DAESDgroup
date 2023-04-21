@@ -38,43 +38,13 @@ class Screening(models.Model):
         there is at least one other Screening for the same Screen as this one,
         whose time period of showing overlaps with this one's
         """
-        # return Screening.objects_with_finish_times().filter(screen=self.screen).filter(
-        #     # Screenings clash if they end after we start and before we end
-        #     models.Q(_finishing_at__gte=self.showing_at, _finishing_at__lt=self.finishing_at) |  # OR
-        #     # start after we do and before we end
-        #     models.Q(showing_at__gte=self.showing_at, showing_at__lt=self.finishing_at)
-        # )
         return Screening.objects_with_finish_times().filter(screen=self.screen).filter(
-            # # |   A   |
-            # #     |   B   |
-            # ...
-            # # |   A   |
-            # # |   B   |
-            # ...
-            # #   | A |
-            # # |   B   |
-            # ...
-            # # |   A   |
-            # #   | B |
-            # ...
-            # # |   A   |
-            # # | B |
-            # ...
-            # # | A |
-            # # |   B   |
-            # ...
-            # #     | A |
-            # # |   B   |
-            # ...
-            # # |   A   |
-            # #     | B |
-            # ...
-            # # |   B   |
-            # #     |   A   |
-            # ...
-            # OR....
-            Q(showing_at__lte=self.showing_at, _finishing_at__gt=self.showing_at) | 
-            Q(showing_at__lt=self.finishing_at, _finishing_at__gte=self.finishing_at)
+            # these queries take care of "inside" and "front" or "back" overlaps
+            (~Q(_finishing_at__lte=self.showing_at) & Q(_finishing_at__lte=self.finishing_at)) |
+            (~Q(showing_at__gte=self.finishing_at) & Q(showing_at__gte=self.showing_at)) |
+            # this query takes care of "outside" overlaps
+            Q(showing_at__lte=self.showing_at, _finishing_at__gte=self.finishing_at)
+            # TODO: not sure if we need to provide the inverse of the first two terms in the orientation of the last one?
         )
 
     def clean(self, *args, **kwargs):

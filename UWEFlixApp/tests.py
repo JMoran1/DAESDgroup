@@ -265,6 +265,15 @@ class ClashingScreeningsTest(TestCase):
             # THEN an error is raised
             b.save()
 
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            a.save()
+
     def test_overlap_front(self):
         # the end of A overlaps the front of B
         a, b = self.make_screenings_for_date_ranges(
@@ -279,6 +288,15 @@ class ClashingScreeningsTest(TestCase):
         with self.assertRaises(ValidationError):
             # THEN an error is raised
             b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
 
     def test_overlap_inside(self):
         # A is wholly "inside" B
@@ -295,6 +313,15 @@ class ClashingScreeningsTest(TestCase):
             # THEN an error is raised
             b.save()
 
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
     def test_overlap_back(self):
         # the front of A overlaps the end of B
         a, b = self.make_screenings_for_date_ranges(
@@ -309,6 +336,15 @@ class ClashingScreeningsTest(TestCase):
         with self.assertRaises(ValidationError):
             # THEN an error is raised
             b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
 
     def test_overlap_outside(self):
         # B is wholly "inside" A
@@ -325,6 +361,15 @@ class ClashingScreeningsTest(TestCase):
             # THEN an error is raised
             b.save()
 
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
     def test_tiny_overlap(self):
         # B starts one minute later than A and their films are of equal duration
         a, b = self.make_screenings_for_date_ranges(
@@ -339,6 +384,15 @@ class ClashingScreeningsTest(TestCase):
         with self.assertRaises(ValidationError):
             # THEN an error is raised
             b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
 
     def test_start_at_same_time(self):
         # two Screenings that start at the same time but end at different ones
@@ -355,6 +409,15 @@ class ClashingScreeningsTest(TestCase):
             # THEN an error is raised
             b.save()
 
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
     def test_end_at_same_time(self):
         # two Screenings that start at different times but end at the same
         a, b = self.make_screenings_for_date_ranges(
@@ -369,6 +432,15 @@ class ClashingScreeningsTest(TestCase):
         with self.assertRaises(ValidationError):
             # THEN an error is raised
             b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
 
     def tearDown(self):
         """
