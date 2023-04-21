@@ -230,6 +230,24 @@ class ClashingScreeningsTest(TestCase):
         )
         return a_screening, b_screening
 
+    def test_non_clashing_screenings(self):
+        """
+        It should be possible to create two Screenings for the same Screen that
+        do not clash, without an error. We should be able to create block
+        bookings (i.e. a Screening that starts at precisely the time that the
+        one before it ended) without issue.
+        """
+        start = '2029-08-07T12:52'
+        middle = '2029-08-07T14:19'
+        end = '2029-08-07T18:54'
+        first, second = self.make_screenings_for_date_ranges(
+            (start, middle),
+            (middle, end)
+        )
+
+        first.save()
+        second.save()
+
     def test_coincident_screenings(self):
         """
         coincident: like two lines which happen to be exactly the same, i.e. two
