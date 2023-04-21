@@ -12,7 +12,7 @@ class Movie(models.Model):
     )
     description = models.TextField()
     rating = models.CharField(max_length=3)
-    image = models.ImageField(upload_to='images/', blank=True, null=True, default='images/no_image_available.png')
+    image = models.ImageField(upload_to='images/', blank=True, null=True, default=DEFAULT_IMAGE)
 
     def __str__(self):
         return self.name
