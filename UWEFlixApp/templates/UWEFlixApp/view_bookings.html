@@ -17,6 +17,7 @@
                 <th>Screening Time</th>
                 <th>Total Price</th>
                 <th>Club</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -27,6 +28,7 @@
                 <td> {{ Booking.screening.showing_at }} </td>
                 <td> £{{ Booking.total_price }} </td>
                 <td> {{ Booking.club }}</td>
+                <td> {{ Booking.status   }} </td>
             </tr>
             {% endfor %}
         </tbody>
