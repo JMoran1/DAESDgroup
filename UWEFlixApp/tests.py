@@ -1,6 +1,10 @@
+from datetime import datetime
+
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
-from .models import MonthlyStatement, Club, User
+
+from .models import Club, MonthlyStatement, Movie, Screen, Screening, User
 
 class HomePageTests(TestCase):
     def test_home_page_status_code(self):
@@ -183,8 +187,69 @@ class DeleteClubTest(TestCase):
         self.user.delete()
 
 class ClashingScreeningsTest(TestCase):
-    def setUp(self):
-        pass
+    """
+    Successfully detecting all the possible situations in which two events may
+    overlap is tricky as the "orientation" of said overlaps can be in one of
+    many different possible configurations. Test them all to make sure we have
+    full coverage!
+    """
+    @staticmethod
+    def make_screenings_for_date_ranges(
+        a: tuple[str, str], b: tuple[str, str]
+    ):
+        """
+        Helper method, will produce two Screenings for the same Screen which are
+        guaranteed to start and end at the given tuples of (start, end) times.
+
+        NOTE: pass datetimes in as ISO-8601 string, because making datetime
+        objects is faffy.
+
+        Screenings aren't saved, but returned as objects that can then be saved
+        to the db if desired.
+        """
+        überskrün = Screen.objects.create(name='DAS ÜBERSKRÜN', capacity=9001)
+        a_start = datetime.fromisoformat(a[0])
+        a_end = datetime.fromisoformat(a[1])
+        b_start = datetime.fromisoformat(b[0])
+        b_end = datetime.fromisoformat(b[1])
+        a_screening = Screening(
+            screen=überskrün,
+            showing_at=a_start,
+            movie=Movie.objects.create(
+                name='Bandusshels die Wudhandlen',
+                running_time=(a_end - a_start)
+            )
+        )
+        b_screening = Screening(
+            screen=überskrün,
+            showing_at=b_start,
+            movie=Movie.objects.create(
+                name='Der Whuffen der Neaph?',
+                running_time=(b_end - b_start)
+            )
+        )
+        return a_screening, b_screening
+
+    def test_coincident_screenings(self):
+        """
+        coincident: like two lines which happen to be exactly the same, i.e. two
+        Screenings that start and end at the exact same time.
+        """
+        start = '2011-12-12T13:33'
+        end = '2011-12-12T14:52'
+        a, b = self.make_screenings_for_date_ranges((start, end), (start, end))
+
+        # GIVEN an existing Screening with this start and end times
+        a.save()
+
+        # WHEN another with identical start and end times is attempted to be created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
 
     def tearDown(self):
-        pass
+        """
+        Delete anything we might have inadvertently created
+        """
+        for model in (Screening, Screen, Movie):  # delete in correct order for db constraints
+            model.objects.all().delete()
