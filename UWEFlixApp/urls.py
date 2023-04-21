@@ -37,8 +37,6 @@ screen_list_view = views.ViewMovie.as_view(
 )
 
 
-
-
 urlpatterns = [
     path("", views.home, name="home"),
     path("cinema_manager_view", views.cinema_manager_view, name="cinema_manager_view"),
