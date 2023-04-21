@@ -265,6 +265,66 @@ class ClashingScreeningsTest(TestCase):
             # THEN an error is raised
             b.save()
 
+    def test_overlap_front(self):
+        # the end of A overlaps the front of B
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T19:32'),
+            ('2019-08-07T18:19', '2019-08-07T20:20')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+    def test_overlap_inside(self):
+        # A is wholly "inside" B
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T18:19', '2019-08-07T19:32'),
+            ('2019-08-07T16:32', '2019-08-07T20:20')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+    def test_overlap_back(self):
+        # the front of A overlaps the end of B
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T18:19', '2019-08-07T20:20'),
+            ('2019-08-07T16:32', '2019-08-07T19:32')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+    def test_overlap_outside(self):
+        # B is wholly "inside" A
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T18:19', '2019-08-07T19:32')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
     def tearDown(self):
         """
         Delete anything we might have inadvertently created
