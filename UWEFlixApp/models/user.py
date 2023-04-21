@@ -1,19 +1,48 @@
 from django.contrib.auth.models import AbstractUser, Group
+from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
+
+
+class Role(models.TextChoices):
+    CINEMA_MANAGER = 'M', 'Cinema Manager'
+    ACCOUNT_MANAGER = 'A', 'Account Manager'
+    CLUB_REP = 'R', 'Club Representative'
+    STUDENT = 'S', 'Student'
 
 
 class User(AbstractUser):
-    class Role(models.TextChoices):
-        CINEMA_MANAGER = 'M', 'Cinema Manager'
-        ACCOUNT_MANAGER = 'A', 'Account Manager'
-        CLUB_REP = 'R', 'Club Representative'
-        CUSTOMER = 'C', 'Customer'
+    Role = Role
 
     role = models.CharField(
         max_length=1,
         choices=Role.choices,
-        default=Role.CUSTOMER
+        default=Role.STUDENT
     )
+    club = models.ForeignKey(
+        'club',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL  # deleting a Club unlinks any Users from it
+    )
+    requested_club = models.ForeignKey(
+        'club',
+        blank=True,
+        null=True,
+        on_delete=models.SET_NULL,  # deleting a Club unlinks any Users from it,
+        related_name='requested_club'
+    )
+
+    class Meta:
+        constraints = (
+            models.CheckConstraint(
+                # Logically: (Role EQUALS Club Rep) IMPLIES (Club EXISTS)
+                # AKA: (NOT CLUB_REP) OR CLUB EXISTS
+                check= ~Q(role=Role.CLUB_REP) | Q(club__isnull=False),
+                name='club_reps_have_club',
+                violation_error_message='Club Rep must have a Club!'
+            ),
+        )
 
     @classmethod
     def get_role_groups(cls):
@@ -52,6 +81,9 @@ class User(AbstractUser):
         for its Role type set, and none of the other Groups for other Role types
         (note that other Groups which are not assigned to Roles are left as-is).
         """
+        # if creating a new superuser, make them a CINEMA_MANAGER
+        if self.id is None and self.is_superuser:
+            self.role = User.Role.CINEMA_MANAGER
         super().save(*args, **kwargs)  # call super first to get an ID
         # enforce correct group membership
         self.set_correct_groups_for_role()

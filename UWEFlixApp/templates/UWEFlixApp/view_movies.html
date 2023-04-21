@@ -23,18 +23,39 @@
             </tr>
         </thead>
         <tbody>
-            {% for Movie in movie_list %}
+            {% for Movie in page_obj %}
             <tr>
                 <td> {{ Movie.name }} </td> 
                 <td> {{ Movie.rating }} </td>
                 <td> {{ Movie.minutes_long }} mins </td>
                 <td><a href="{% url 'update_movie' Movie.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
-                <td><a href="{% url 'delete_movie' Movie.id %}"><button class="btn btn-danger">Delete</button></a>
+                <td><a href="{% url 'delete_movie' Movie.id %}"><button class="btn btn-danger">Delete</button></a></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+{% if is_paginated %}
+<div class="row justify-content-center">
+    <div class="col-4 m-auto text-center">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
+          {% endif %}
+
+          <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+    {% endif %}
+
 <a href="{% url 'create_movie' %}" class="float-right mr-64"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Create new movie</button></a>
         
 

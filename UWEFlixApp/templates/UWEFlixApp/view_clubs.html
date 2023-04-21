@@ -7,7 +7,7 @@
     integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
     crossorigin="anonymous"></script>
 
-<h2>Clubs</h2>
+<h2 class="text-center">Clubs</h2>
 
 {% if club_list %}
 <div class="w-75 m-auto">
@@ -16,8 +16,6 @@
             <tr>
                 <th>Club ID</th>
                 <th>Name</th>
-                <th>Card Num</th>
-                <th>Exp date</th>
                 <th>Discount rate</th>
                 <th>Address</th>
                 <th></th>
@@ -26,12 +24,10 @@
             </tr>
         </thead>
         <tbody>
-            {% for club in club_list %}
+            {% for club in page_obj %}
             <tr>
                 <td> {{ club.id }}</td>
                 <td> {{ club.name }}</td>
-                <td> {{ club.card_number }}</td>
-                <td> {{ club.card_expiry }}</td>
                 <td> {{ club.discount_rate }}</td>
                 <td> {{ club.address }}</td>
                 <td><a href="{% url 'view_club_transactions' club.id %}" class="btn btn-outline-primary">View Club Transactions</a></td>
@@ -43,6 +39,23 @@
         </tbody>
     </table>
 </div>
+<div class="row justify-content-center">
+    <div class="col-4 m-auto text-center">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
+          {% endif %}
+
+          <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
 {% else %}
 <p>No clubs have been created. </p>
 {% endif %}

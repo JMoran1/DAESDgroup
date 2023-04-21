@@ -14,4 +14,4 @@ class Screening(models.Model):
     seats_remaining = models.IntegerField(default=0)
 
     def __str__(self):
-        return f"{self.movie.name} - {self.screen.name} - {self.showing_at}"
+         return f"{self.movie} - {self.showing_at}"

@@ -1,20 +1,29 @@
+from datetime import datetime
+from decimal import Decimal
+import random
+import secrets
+from string import ascii_letters, digits
+
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
-from django.http import HttpResponse
-from django.shortcuts import render, redirect
-from django.views.generic import ListView
-from django.urls import reverse_lazy
-from .models import MonthlyStatement, Club, Movie, Screen, Screening, User, Booking
-from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm , ScreeningForm
-from .forms import ClubForm, MovieForm, ScreenForm, LoginForm, ClubTopUpForm, CustomerRegistrationForm
-from datetime import datetime
-import random
-from string import ascii_letters, digits
-import secrets
 from django.db.models import Sum
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import ListView
+from django.core.paginator import Paginator
+
+from .forms import (
+    BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
+    ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
+    StudentRegistrationForm, JoinClubForm, TicketPriceForm
+)
+from .models import (
+    Booking, Club, MonthlyStatement, Movie, Screen, Screening, User, Ticket
+)
+import hashlib
 
 class UserRoleCheck:
     """
@@ -33,7 +42,12 @@ class UserRoleCheck:
         return hasattr(user, 'role') and user.role in self._roles_to_check
 
 def home(request):
-    return render(request, "UWEFlixApp/homepage.html")
+    if request.user.is_authenticated:
+        roles = User.objects.get(username=request.user)
+        uType = roles.role
+        return render(request, "UWEFlixApp/homepage.html", {'uType': uType})
+    else:
+        return render(request, "UWEFlixApp/homepage.html")
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
@@ -71,7 +85,13 @@ def create_club(request):
 
     if request.method == "POST":
         if form.is_valid():
-            form.save()
+            name = form.cleaned_data['name']
+            card_num = form.cleaned_data['card_number']
+            card_exp = form.cleaned_data['card_expiry']
+            discount_rate = form.cleaned_data['discount_rate']
+            address = form.cleaned_data['address']
+            hashed_card = hashlib.sha3_512(card_num.encode()).hexdigest()
+            Club.objects.create(name = name, card_number = hashed_card, card_expiry = card_exp, discount_rate = discount_rate, address = address)
             return redirect('home')
     return render(request, "UWEFlixApp/create_club_form.html", {"form": form, "button_text": "Create Club"})
 
@@ -109,6 +129,7 @@ def delete_club(request, pk):
 
 class ViewClubs(UserPassesTestMixin, ListView):
     model = Club
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewClubs, self).get_context_data(**kwargs)
@@ -123,6 +144,7 @@ class ViewClubs(UserPassesTestMixin, ListView):
 
 class ViewMonthlyStatement(UserPassesTestMixin, ListView):
     model = MonthlyStatement
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewMonthlyStatement, self).get_context_data(**kwargs)
@@ -136,6 +158,7 @@ class ViewMonthlyStatement(UserPassesTestMixin, ListView):
 
 class ViewMovie(ListView):
     model = Movie
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewMovie, self).get_context_data(**kwargs)
@@ -144,6 +167,7 @@ class ViewMovie(ListView):
 
 class ViewScreen(UserPassesTestMixin, ListView):
     model = Screen
+    paginate_by = 5
 
     def get_context_data(self, **kwargs):
         context = super(ViewScreen, self).get_context_data(**kwargs)
@@ -223,8 +247,8 @@ def delete_screen(request, pk):
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def update_screen(request, pk):
-    club = Screen.objects.get(pk=pk)
-    form = ScreenForm(request.POST or None, instance=club)
+    screen = Screen.objects.get(pk=pk)
+    form = ScreenForm(request.POST or None, instance=screen)
 
     if request.method == "POST":
         if form.is_valid():
@@ -239,6 +263,7 @@ def show_screening(request, pk):
 
     screening = sorted(screening, key=lambda x: x.showing_at)
 
+
     dates = []
     screening_dict = {}
     for show in screening:
@@ -248,14 +273,23 @@ def show_screening(request, pk):
             dates.append(date)
             screening_dict[date] = []
         screening_dict[date].append(show)
-    print(screening_dict)
 
     return render(request, "UWEFlixApp/show_movie_screenings_with_tabs.html", {"showing_list": screening, "movie": movie, "screening_dict": screening_dict})
 
 
-def show_all_screening(request):
-    all_screening = Screening.objects.all()
-    return render(request, "UWEFlixApp/view_screenings.html", {"all_showings": all_screening})
+class ViewScreenings(UserPassesTestMixin, ListView):
+    model = Screening
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super(ViewScreenings, self).get_context_data(**kwargs)
+        return context
+
+    def test_func(self):
+        return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
+    
+    def handle_no_permission(self):
+        return redirect('home')
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
@@ -321,11 +355,139 @@ def logout_user(request):
     logout(request)
     return redirect('home')
 
+
+def create_booking(request, pk):
+    user = request.user
+    screening = Screening.objects.get(pk=pk)
+    date = Screening.objects.get(pk=pk).showing_at
+
+    screeningtext = screening.id
+    warning = None
+    request.session['selected_screening'] = screeningtext
+
+    if request.method == 'GET':
+        if not user.is_anonymous and user.role == User.Role.CLUB_REP:
+            form = ClubRepBookingForm()
+            return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+
+    if request.method == 'POST':
+        if request.user.is_anonymous or request.user.role != User.Role.CLUB_REP:
+            request.session['number_of_adult_tickets'] = request.POST.get(
+                'number_of_adult_tickets')
+
+            request.session['number_of_child_tickets'] = request.POST.get(
+                'number_of_child_tickets')
+
+            request.session['number_of_student_tickets'] = request.POST.get(
+                'number_of_student_tickets')
+            total_tickets = int(request.POST.get('number_of_adult_tickets')) + int(request.POST.get(
+                'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
+            request.session['total_tickets_number'] = total_tickets
+            if screening.seats_remaining < total_tickets:
+                warning = "Not enough seats available"
+                form = BookingForm()
+                return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+
+
+            else:
+                if total_tickets > 9:
+                    warning = "Too many tickets, no more than 9 in one booking"
+                elif total_tickets == 0:
+                    warning = "No tickets selected"
+                else:
+                    return redirect('confirm_booking')
+        else:
+            request.session['number_of_student_tickets'] = request.POST.get(
+                'number_of_student_tickets')
+            request.session['number_of_adult_tickets'] = 0
+
+            request.session['number_of_child_tickets'] = 0
+
+            total_tickets = int(request.POST.get('number_of_student_tickets'))
+            print(total_tickets)
+            request.session['total_tickets_number'] = total_tickets
+            if screening.seats_remaining < total_tickets:
+                warning = "Not enough seats available"
+                form = ClubRepBookingForm()
+                return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+
+            else:
+                if total_tickets < 9:
+                    warning = "A club booking requirement is 10 tickets or more"
+                    form = ClubRepBookingForm()
+                    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+                else:
+                    return redirect('confirm_booking')
+
+    form = BookingForm()
+
+    return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
+
+
+def confirm_booking(request):
+
+    screening = Screening.objects.get(id=request.session['selected_screening'])
+
+    user = request.user
+    if not request.user.is_anonymous and request.user.role == User.Role.CLUB_REP:
+        club = user.club
+        discount_rate = club.discount_rate
+    discount = None
+    number_of_adult_tickets = int(request.session['number_of_adult_tickets'])
+    number_of_child_tickets = int(request.session['number_of_child_tickets'])
+    number_of_student_tickets = int(request.session['number_of_student_tickets'])
+    adult_ticket_price = Ticket.objects.get(id=1).price
+    child_ticket_price = Ticket.objects.get(id=2).price
+    student_ticket_price = Ticket.objects.get(id=3).price
+    total_price = number_of_adult_tickets * adult_ticket_price + \
+        number_of_child_tickets * child_ticket_price + \
+        number_of_student_tickets * student_ticket_price
+    subtotal = total_price
+    if not request.user.is_anonymous:
+        if user.role == User.Role.CLUB_REP:
+            total_price *= (1 - discount_rate)
+
+    total_ticket_quantity = number_of_adult_tickets + \
+        number_of_child_tickets + number_of_student_tickets
+    
+    if request.method == 'POST':
+        form = BookingForm(request.POST)
+        if screening.seats_remaining < total_ticket_quantity:
+            return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, 'number_of_adult_tickets': number_of_adult_tickets, 'number_of_child_tickets': number_of_child_tickets, 'number_of_student_tickets': number_of_student_tickets, 'total_price': total_price, 'subtotal': subtotal, 'discount': discount, 'total_ticket_quantity': total_ticket_quantity, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'warning': 'Too many tickets selected'})
+        else:
+            if request.user.is_authenticated:
+                if user.role == User.Role.CLUB_REP:
+                    if club.balance < total_price:
+                        return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, 'number_of_adult_tickets': number_of_adult_tickets, 'number_of_child_tickets': number_of_child_tickets, 'number_of_student_tickets': number_of_student_tickets, 'total_price': total_price, 'subtotal': subtotal, 'discount': discount, 'total_ticket_quantity': total_ticket_quantity, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'warning': 'Insufficient funds'})
+                    else:
+                        Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                            number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
+                        club.balance = club.balance - total_price
+                        club.save()
+                        screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
+                        screening.save()
+                else:
+                    Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                    number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
+                    screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
+                    screening.save()
+            else:
+                Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                                    number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
+                screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
+                screening.save()
+
+            return redirect('home')
+    else:
+        form = BookingForm()
+
+    return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, "numtickets": number_of_adult_tickets, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'total_price': total_price, 'total_ticket_quantity': total_ticket_quantity, 'discount': discount, 'subtotal': subtotal})
+
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def club_top_up(request):
     """Allows club rep to top up club account balance"""
-    club = Club.objects.get(pk=1)
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     form = ClubTopUpForm(request.POST or None)
 
     if request.method == "POST":
@@ -333,7 +495,7 @@ def club_top_up(request):
             card_number = form.cleaned_data["card_number"]
             expiry_date = form.cleaned_data["card_expiry"]
 
-            if card_number != club.card_number:
+            if not club.check_card(card_number):
                 return render(request, "UWEFlixApp/club_top_up.html", {"club": club, "error": "Card number does not match", "form": form})
             
             if expiry_date != club.card_expiry:
@@ -346,22 +508,26 @@ def club_top_up(request):
 
     return render(request, "UWEFlixApp/club_top_up.html", {"form": form})
 
-def register_customer(request):
-    """Allows a customer to register for an account"""
-    form = CustomerRegistrationForm(request.POST or None)
+def register_student(request):
+    """Allows a student to register for an account"""
+    form = StudentRegistrationForm(request.POST or None)
 
     if request.method == "POST":
         if form.is_valid():
             password1 = form.cleaned_data["password1"]
             password2 = form.cleaned_data["password2"]
-
+            # FIXME: Django user password policy isn't applied here as it is in the admin
             if password1 != password2:
                 return render(request, "UWEFlixApp/register.html", {"error": "Passwords do not match", "form": form})
             else:
                 if User.objects.filter(username=form.cleaned_data["username"]).exists():
                     return render(request, "UWEFlixApp/register.html", {"error": "Username already taken", "form": form})
                 else:
-                    User.objects.create_user(username=form.cleaned_data["username"], password=password1, role=User.Role.CUSTOMER)
+                    u = User.objects.create_user(
+                        username=form.cleaned_data["username"],
+                        password=password1,
+                        role=User.Role.STUDENT,
+                    )
                     return redirect('login')
 
     return render(request, "UWEFlixApp/register.html", {"form": form})
@@ -378,23 +544,37 @@ def club_rep_view(request):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def register_club_rep(request):
     """Allows a cinema manager register a club rep"""
-    if request.method == 'POST':
-        username = random.randint(100000, 999999)
-        password = ''.join(secrets.choice(ascii_letters + digits)
-                           for i in range(8))
-        if not User.objects.filter(username=username).exists():
-            User.objects.create_user(
-                username=username, password=password, role=User.Role.CLUB_REP)
-            return render(request, "UWEFlixApp/create_club_rep_success.html", {"username": username, "password": password})
-    return render(request, "UWEFlixApp/create_club_rep.html")
+    form = ClubRepRegistrationForm(request.POST or None)  # or None?
+
+    if request.method == "POST":
+        if form.is_valid():
+            username = random.randint(100000, 999999)
+            password = ''.join(secrets.choice(ascii_letters + digits)
+                               for i in range(8))
+            if not User.objects.filter(username=username).exists():
+                User.objects.create_user(
+                    username=username, password=password,
+                    role=User.Role.CLUB_REP,
+                    club=form.cleaned_data['club']
+                ).full_clean()
+
+            return render(
+                request,
+                "UWEFlixApp/create_club_rep_success.html",
+                {"username": username, "password": password}
+            )
+    return render(
+        request,
+        "UWEFlixApp/create_club_rep.html",
+        {"form": form, "button_text": "Create Club Rep"}
+    )
 
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
 def view_transactions(request):
     """Displays all transactions for the club"""
-    # TODO: Change to get club from session when club rep is given a club
-    club = Club.objects.get(pk=1)
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
     return render(request, "UWEFlixApp/view_transactions.html", {"transaction_list": bookings})
 
@@ -414,3 +594,85 @@ def view_club_transactions(request, pk):
     # total = Booking.objects.filter(club__pk=pk, date__month=datetime.now()
     #                                .month).aggregate(Sum('total_price'))['total_price__sum'] or 0
     return render(request, "UWEFlixApp/view_club_transactions.html", {"transaction_list": bookings, "club": club, "total": total, "month": datetime.now()})
+
+
+def account_page(request):
+    """
+    Redirect logged-in users to approprate pages
+    """
+    if request.user.is_anonymous:
+        return redirect('home')  # not logged in
+    PAGES_PER_USER_ROLE = {  # the most Pythonic way to emulate switch-case! ;)
+        User.Role.STUDENT: 'student_view',
+        User.Role.CLUB_REP: 'club_rep_view',
+        User.Role.ACCOUNT_MANAGER: 'account_manager',
+        User.Role.CINEMA_MANAGER: 'cinema_manager_view',
+    }
+    return redirect(PAGES_PER_USER_ROLE[request.user.role])
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def join_club(request):
+    """Allows a student to join a club"""
+    form = JoinClubForm(request.POST or None)
+    if request.method == "POST":
+        if form.is_valid():
+            club = form.cleaned_data["club"]
+            request.user.requested_club = club
+            request.user.save()
+            return redirect('home')
+    return render(request, "UWEFlixApp/join_club.html", {"form": form})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def accept_join_request(request, pk):
+    """Allows a club rep to accept a join request"""
+    user = get_object_or_404(User, pk=pk)
+    user.club = user.requested_club
+    user.requested_club = None
+    user.save()
+    return redirect('view_pending_club_requests')
+
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def reject_join_request(request, pk):
+    """Allows a club rep to reject a join request"""
+    user = get_object_or_404(User, pk=pk)
+    user.requested_club = None
+    user.save()
+    return redirect('view_pending_club_requests')
+    
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def view_pending_requests(request):
+    """Allows a club rep to view pending requests"""
+    club = request.user.club
+    users = User.objects.filter(requested_club=club)
+    return render(request, "UWEFlixApp/view_requested_club_requests.html", {"users": users})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.STUDENT), redirect_field_name=None)
+def student_view(request):
+    """Displays the student page"""
+    return render(request, "UWEFlixApp/student_view.html")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def change_ticket_price(request):
+    """Allows a cinema manager to change the ticket price"""
+    form = TicketPriceForm(request.POST or None, initial={"adult_ticket_price": Ticket.objects.get(pk=1).price,
+                                                          "child_ticket_price": Ticket.objects.get(pk=2).price,
+                                                          "student_ticket_price": Ticket.objects.get(pk=3).price,})
+    if request.method == "POST":
+        if form.is_valid():
+            adult_ticket_price = form.cleaned_data["adult_ticket_price"]
+            child_ticket_price = form.cleaned_data["child_ticket_price"]
+            student_ticket_price = form.cleaned_data["student_ticket_price"]
+
+            Ticket.objects.filter(pk=1).update(price=adult_ticket_price)
+            Ticket.objects.filter(pk=2).update(price=child_ticket_price)
+            Ticket.objects.filter(pk=3).update(price=student_ticket_price)
+
+            return redirect('cinema_manager_view')
+    return render(request, "UWEFlixApp/change_ticket_price.html", {"form": form})

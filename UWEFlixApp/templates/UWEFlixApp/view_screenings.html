@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for Screening in all_showings %}
+            {% for Screening in page_obj %}
             <tr>
                 <td> {{ Screening.movie }} </td> 
                 <td> {{ Screening.showing_at }} </td>
@@ -34,6 +34,26 @@
         </tbody>
         </table>
 </div>
+{% if is_paginated %}
+<div class="row justify-content-center">
+    <div class="col-4 m-auto text-center">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
+          {% endif %}
+
+          <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+    {% endif %}
+    
 <a href="{% url 'create_screening' %}" class="float-right mr-64"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">Create new Screening</button></a>
         
 
