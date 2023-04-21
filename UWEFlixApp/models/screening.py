@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db import models
+from django.db.models import Q
 
 from UWEFlixApp.models import Movie, Screen
 
@@ -37,11 +38,40 @@ class Screening(models.Model):
         there is at least one other Screening for the same Screen as this one,
         whose time period of showing overlaps with this one's
         """
+        # return Screening.objects_with_finish_times().filter(screen=self.screen).filter(
+        #     # Screenings clash if they end after we start and before we end
+        #     models.Q(_finishing_at__gte=self.showing_at, _finishing_at__lt=self.finishing_at) |  # OR
+        #     # start after we do and before we end
+        #     models.Q(showing_at__gte=self.showing_at, showing_at__lt=self.finishing_at)
+        # )
         return Screening.objects_with_finish_times().filter(screen=self.screen).filter(
-            # Screenings clash if they end after we start and before we end
-            models.Q(_finishing_at__gte=self.showing_at, _finishing_at__lt=self.finishing_at) |  # OR
-            # start after we do and before we end
-            models.Q(showing_at__gte=self.showing_at, showing_at__lt=self.finishing_at)
+            # |   A   |
+            #     |   B   |
+            ...
+            # |   A   |
+            # |   B   |
+            ...
+            #   | A |
+            # |   B   |
+            ...
+            # |   A   |
+            #   | B |
+            ...
+            # |   A   |
+            # | B |
+            ...
+            # | A |
+            # |   B   |
+            ...
+            #     | A |
+            # |   B   |
+            ...
+            # |   A   |
+            #     | B |
+            ...
+            # |   B   |
+            #     |   A   |
+            ...
         )
 
     def clean(self, *args, **kwargs):
