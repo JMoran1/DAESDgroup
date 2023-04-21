@@ -45,33 +45,36 @@ class Screening(models.Model):
         #     models.Q(showing_at__gte=self.showing_at, showing_at__lt=self.finishing_at)
         # )
         return Screening.objects_with_finish_times().filter(screen=self.screen).filter(
-            # |   A   |
-            #     |   B   |
-            ...
-            # |   A   |
-            # |   B   |
-            ...
-            #   | A |
-            # |   B   |
-            ...
-            # |   A   |
-            #   | B |
-            ...
-            # |   A   |
-            # | B |
-            ...
-            # | A |
-            # |   B   |
-            ...
-            #     | A |
-            # |   B   |
-            ...
-            # |   A   |
-            #     | B |
-            ...
-            # |   B   |
-            #     |   A   |
-            ...
+            # # |   A   |
+            # #     |   B   |
+            # ...
+            # # |   A   |
+            # # |   B   |
+            # ...
+            # #   | A |
+            # # |   B   |
+            # ...
+            # # |   A   |
+            # #   | B |
+            # ...
+            # # |   A   |
+            # # | B |
+            # ...
+            # # | A |
+            # # |   B   |
+            # ...
+            # #     | A |
+            # # |   B   |
+            # ...
+            # # |   A   |
+            # #     | B |
+            # ...
+            # # |   B   |
+            # #     |   A   |
+            # ...
+            # OR....
+            Q(showing_at__lte=self.showing_at, _finishing_at__gt=self.showing_at) | 
+            Q(showing_at__lt=self.finishing_at, _finishing_at__gte=self.finishing_at)
         )
 
     def clean(self, *args, **kwargs):
