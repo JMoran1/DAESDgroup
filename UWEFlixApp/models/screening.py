@@ -51,11 +51,8 @@ class Screening(models.Model):
         """
         Override .clean() to force validation to make sure Screenings do not clash
         """
-        print('Clashes with others?')
         if self.clashes_with_others():
-            print('YES!')
             raise ValidationError('Screening would clash with other Screenings')
-        print('NO!')
         return super().clean(*args, **kwargs)
 
     def save(self, *args, **kwargs):
