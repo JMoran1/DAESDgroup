@@ -1,6 +1,9 @@
-from django.db import models
-from .user import User
 import hashlib
+
+from django.core.validators import MinValueValidator
+from django.db import models
+
+from .user import User
 
 
 class Club(models.Model):
@@ -11,9 +14,12 @@ class Club(models.Model):
     '''
     card_number = models.CharField(max_length=128)
     card_expiry = models.DateField()
-    discount_rate = models.DecimalField(decimal_places=2, max_digits=4)
+    discount_rate = models.DecimalField(
+        decimal_places=2, max_digits=4,
+        validators=[MinValueValidator(limit_value=0)] # discount can't be negative
+    )
     address = models.CharField(max_length=500)
-    balance = models.DecimalField(decimal_places=2, max_digits=10, default=0.00)
+    balance = models.DecimalField(decimal_places=2, max_digits=10, default=0)
 
     @property
     def members(self):
