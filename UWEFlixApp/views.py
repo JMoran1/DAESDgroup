@@ -256,7 +256,7 @@ def update_screen(request, pk):
 def show_screening(request, pk):
     """Takes the pk of a movie and returns a list of screenings for that movie"""
     movie = Movie.objects.get(pk=pk)
-    screening = Screening.objects_with_seats_remaining().filter(movie=movie, _seats_remaining__gte=1).order_by('-showing_at')
+    screening = Screening.objects_with_seats_remaining().filter(movie=movie, _seats_remaining__gte=1).order_by('showing_at')
 
     dates = []
     screening_dict = {}
