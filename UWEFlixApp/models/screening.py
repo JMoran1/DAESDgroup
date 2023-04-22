@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import F, Sum
+from django.db.models import F, Sum, Q
 from UWEFlixApp.models import Movie, Screen
 
 
@@ -7,6 +7,21 @@ class Screening(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE)
     showing_at = models.DateTimeField(auto_now=False, auto_now_add=False)
+
+    class Meta:
+        constraints = (
+            models.CheckConstraint(
+                # prevent Screenings from being overbooked at the database level
+                check=Q(
+                    screen__capacity__gte=
+                    Sum('booking__number_of_adult_tickets') +
+                    Sum('booking__number_of_child_tickets') +
+                    Sum('booking__number_of_student_tickets')
+                ),
+                name='screenings_are_not_overbooked',
+                violation_error_message='Not enough capacity in Screening!'
+            ),
+        )
 
     @property
     def seats_remaining(self):
