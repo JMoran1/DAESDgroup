@@ -55,7 +55,7 @@ def create_random_screening(movie, screen):
     showing_at = datetime.now() + timedelta(days=randint(0, 365))
     
     seats_available = randint(0, 100)
-    screening = Screening.objects.create(movie=movie, screen=screen, showing_at=showing_at, seats_remaining=seats_available)
+    screening = Screening.objects.create(movie=movie, screen=screen, showing_at=showing_at)
     return screening
 
 def create_random_booking(screening, club):
