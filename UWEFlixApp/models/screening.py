@@ -24,14 +24,11 @@ class Screening(models.Model):
 
     @classmethod
     def objects_with_seats_remaining(cls):
-        return cls.objects.annotate(  # first sum up all allocated ticket types
-            adult_tickets=Coalesce(Sum('booking__number_of_adult_tickets'), 0),
-            child_tickets=Coalesce(Sum('booking__number_of_child_tickets'), 0),
-            student_tickets=Coalesce(Sum('booking__number_of_student_tickets'), 0)
-        ).annotate(  # then subtract them from Screen capacity
+        return cls.objects.annotate(
             _seats_remaining=F('screen__capacity') - (
-                F('adult_tickets') +
-                F('child_tickets') +
-                F('student_tickets')
+                # subtract the sum of each ticket type across all bookings for this screening from the screen capacity
+                Coalesce(Sum('booking__number_of_adult_tickets'), 0) +
+                Coalesce(Sum('booking__number_of_child_tickets'), 0) +
+                Coalesce(Sum('booking__number_of_student_tickets'), 0)
             )
         )
