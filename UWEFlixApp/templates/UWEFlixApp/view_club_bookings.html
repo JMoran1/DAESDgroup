@@ -18,6 +18,7 @@
                 <th>Total Price</th>
                 <th>Club</th>
                 <th>Status</th>
+                <th>Cancel?</th>
             </tr>
         </thead>
         <tbody>
@@ -29,12 +30,12 @@
                 <td> £{{ Booking.total_price }} </td>
                 <td> {{ Booking.club }}</td>
                 <td> {{ Booking.status   }} </td>
+                <td><a href="{% url 'request_cancel' Booking.id %}"><button class="btn btn-danger">Request Cancellation</button></a></td>
             </tr>
             {% endfor %}
         </tbody>
         
     </table>
-    <a href="{% url 'show_requested_bookings' %}" class="float-right mr-64"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View Cancel Requests</button></a>
 </div>   
 {% if is_paginated %}
     <div class="row justify-content-center">

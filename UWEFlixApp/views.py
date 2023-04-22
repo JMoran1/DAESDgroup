@@ -675,7 +675,7 @@ def show_club_bookings(request):
     """Displays all transactions for the club"""
     club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
-    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_bookings})
+    return render(request, "UWEFlixApp/view_club_bookings.html", {"all_bookings": all_bookings})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)

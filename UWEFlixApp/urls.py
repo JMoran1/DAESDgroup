@@ -44,7 +44,7 @@ screening_list_view = views.ViewMovie.as_view(
 
 booking_list_view = views.ViewBooking.as_view(
     queryset=Booking.objects.order_by("id"),
-    context_object_name="booking_list",
+    context_object_name="all_bookings",
     template_name="UWEFlixApp/view_bookings.html",
 )
 
