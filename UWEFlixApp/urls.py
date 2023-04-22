@@ -1,6 +1,6 @@
 from django.urls import path
 from UWEFlixApp import views
-from .models import MonthlyStatement, Club, Movie, Screen, Screening
+from .models import MonthlyStatement, Club, Movie, Screen, Screening, Booking
 
 
 monthly_statement_list_view = views.ViewMonthlyStatement.as_view(
@@ -42,8 +42,6 @@ screening_list_view = views.ViewMovie.as_view(
     template_name="UWEFlixApp/view_screenings.html",
 )
 
-
-
 urlpatterns = [
     path("", views.home, name="home"),
     path("cinema_manager_view", views.cinema_manager_view, name="cinema_manager_view"),
@@ -79,10 +77,21 @@ urlpatterns = [
     path("view_transactions", views.view_transactions, name="view_transactions"),
     path("view_club_transactions/<int:pk>/", views.view_club_transactions, name="view_club_transactions"),
     path("account_page/", views.account_page, name="account_page"),
+    path("payment_page/", views.payment_page, name="payment_page"),
+    path("show_all_bookings/", views.show_all_bookings, name="show_all_bookings"),
+    path("show_club_bookings", views.show_club_bookings, name="show_club_bookings"),
+    path("waiting_approval", views.waiting_approval, name="waiting_approval"),
+    path("approve_account/<int:pk>", views.approve_account, name="approve_account"),
+    path("reject_account/<int:pk>", views.reject_account, name="reject_account"),
     path("join_club/", views.join_club, name="join_club"),
     path("accept_club/<int:pk>/", views.accept_join_request, name="accept_club"),
     path("reject_club/<int:pk>/", views.reject_join_request, name="reject_club"),
     path("view_pending_club_requests/", views.view_pending_requests, name="view_pending_club_requests"),
     path("student_view", views.student_view, name="student_view"),
+    path('register_staff/', views.register_staff, name='register_staff'),
+    path('show_user_bookings/', views.show_user_bookings, name='show_user_bookings'),
+    path('request_cancel/<int:pk>', views.request_cancel, name='request_cancel'),
+    path('show_requested_bookings', views.show_requested_bookings, name='show_requested_bookings'),
+    path('cancel_booking/<int:pk>/', views.cancel_booking, name='cancel_booking'),
     path("change_ticket_price/", views.change_ticket_price, name="change_ticket_price"),
 ]
