@@ -655,11 +655,19 @@ def payment_page(request):
             return redirect('confirm_booking')
     return render(request, "UWEFlixApp/paymentform.html", {"form": form, "button_text": "Continue"})
 
-@login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
-def show_all_bookings(request):
-    all_booking = Booking.objects.all()
-    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
+class ViewBooking(UserPassesTestMixin, ListView):
+    model = Booking
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super(ViewBooking, self).get_context_data(**kwargs)
+        return context
+
+    def test_func(self):
+        return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
+    
+    def handle_no_permission(self):
+        return redirect('home')
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
@@ -683,6 +691,7 @@ def approve_account(request, pk):
     Userr.is_active = True
     Userr.save()  
     return redirect("home")
+
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def reject_account(request, pk):
