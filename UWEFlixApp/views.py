@@ -458,15 +458,12 @@ def confirm_booking(request):
                                             number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
                         club.balance = club.balance - total_price
                         club.save()
-                        screening.save()
                 else:
                     Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                     number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
-                    screening.save()
             else:
                 Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                     number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
-                screening.save()
 
             return redirect('home')
     else:
