@@ -1,6 +1,7 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import Q
+from django.db.models import F, Sum, Q
+from django.db.models.functions import Coalesce
 
 from UWEFlixApp.models import Movie, Screen
 
@@ -9,22 +10,38 @@ class Screening(models.Model):
     movie = models.ForeignKey('Movie', on_delete=models.CASCADE)
     screen = models.ForeignKey('Screen', on_delete=models.CASCADE)
     showing_at = models.DateTimeField(auto_now=False, auto_now_add=False)
-    '''
-    TODO: it might be better to instead create a method which returns the number
-    of seats remaining by querying the total number of seats for the screen and
-    subtracting the total number of places across all bookings for the screening
-    '''
-    seats_remaining = models.IntegerField(default=0)
 
     def __str__(self):
          return f"{self.movie} - {self.showing_at}"
+
+    @classmethod
+    def objects_with_seats_remaining(cls):
+        return cls.objects.annotate(
+            _seats_remaining=F('screen__capacity') - (
+                # subtract the sum of each ticket type across all bookings for this screening from the screen capacity
+                Coalesce(Sum('booking__number_of_adult_tickets'), 0) +
+                Coalesce(Sum('booking__number_of_child_tickets'), 0) +
+                Coalesce(Sum('booking__number_of_student_tickets'), 0)
+            )
+        )
+
+    @property
+    def seats_remaining(self):
+        """
+        Reuse existing queryset wrapper.
+        
+        A bit awkward but less code duplication.
+        """
+        return Screening.objects_with_seats_remaining(
+        ).filter(id=self.id).values_list('_seats_remaining')[0][0]
 
     @classmethod
     def objects_with_finish_times(cls):
         """
         Ideally, we'd turn this into a custom Manager, alas!
         """
-        return cls.objects.prefetch_related('movie').annotate(
+        # return cls.objects.prefetch_related('movie').annotate(
+        return cls.objects.annotate(
             _finishing_at=(models.F('showing_at') + models.F('movie__running_time'))
         )
 

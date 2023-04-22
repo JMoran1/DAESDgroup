@@ -18,8 +18,8 @@ from django.core.paginator import Paginator
 from .forms import (
     BookingForm, ClubForm, ClubRepBookingForm, ClubRepRegistrationForm,
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
-    StudentRegistrationForm, JoinClubForm, TicketPriceForm
-)
+    StudentRegistrationForm, JoinClubForm
+, SimplePaymentForm, StaffRegistrationForm, TicketPriceForm)
 from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, User, Ticket
 )
@@ -164,7 +164,6 @@ class ViewMovie(ListView):
         context = super(ViewMovie, self).get_context_data(**kwargs)
         return context
 
-
 class ViewScreen(UserPassesTestMixin, ListView):
     model = Screen
     paginate_by = 5
@@ -256,10 +255,7 @@ def update_screen(request, pk):
 def show_screening(request, pk):
     """Takes the pk of a movie and returns a list of screenings for that movie"""
     movie = Movie.objects.get(pk=pk)
-    screening = Screening.objects.filter(movie=movie)
-
-    screening = sorted(screening, key=lambda x: x.showing_at)
-
+    screening = Screening.objects_with_seats_remaining().filter(movie=movie, _seats_remaining__gte=1).order_by('showing_at')
 
     dates = []
     screening_dict = {}
@@ -383,7 +379,7 @@ def create_booking(request, pk):
                 'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
             request.session['total_tickets_number'] = total_tickets
             if screening.seats_remaining < total_tickets:
-                warning = "Not enough seats available"
+                warning = "Not enough seats available — there are only {} seats left".format(screening.seats_remaining)
                 form = BookingForm()
                 return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
@@ -394,7 +390,7 @@ def create_booking(request, pk):
                 elif total_tickets == 0:
                     warning = "No tickets selected"
                 else:
-                    return redirect('confirm_booking')
+                    return redirect('payment_page')
         else:
             request.session['number_of_student_tickets'] = request.POST.get(
                 'number_of_student_tickets')
@@ -419,7 +415,6 @@ def create_booking(request, pk):
                     return redirect('confirm_booking')
 
     form = BookingForm()
-
     return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
 
@@ -428,6 +423,7 @@ def confirm_booking(request):
     screening = Screening.objects.get(id=request.session['selected_screening'])
 
     user = request.user
+    # TODO: Change club to be based on the user's club
     if not request.user.is_anonymous and request.user.role == User.Role.CLUB_REP:
         club = user.club
         discount_rate = club.discount_rate
@@ -463,18 +459,12 @@ def confirm_booking(request):
                                             number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
                         club.balance = club.balance - total_price
                         club.save()
-                        screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
-                        screening.save()
                 else:
                     Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                     number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
-                    screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
-                    screening.save()
             else:
                 Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                     number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
-                screening.seats_remaining = screening.seats_remaining - total_ticket_quantity
-                screening.save()
 
             return redirect('home')
     else:
@@ -656,6 +646,106 @@ def student_view(request):
     """Displays the student page"""
     return render(request, "UWEFlixApp/student_view.html")
 
+def payment_page(request):
+    """Displays the payment page"""
+    form = SimplePaymentForm(request.POST or None)
+
+
+    if request.method == "POST":
+        if form.is_valid():
+
+            return redirect('confirm_booking')
+    return render(request, "UWEFlixApp/paymentform.html", {"form": form, "button_text": "Continue"})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def show_all_bookings(request):
+    all_booking = Booking.objects.all()
+    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
+def show_club_bookings(request):
+    """Displays all transactions for the club"""
+    club = request.user.club  # WARN: assumes constraints set in the User model have been validated
+    all_bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_bookings})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def waiting_approval(request):
+    """displays all users where is_active is false"""
+    all_users = User.objects.filter(is_active=False)
+    return render(request, "UWEFlixApp/waiting_approval.html", {"all_users": all_users})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def approve_account(request, pk):
+    Userr = User.objects.get(pk=pk)
+    Userr.is_active = True
+    Userr.save()  
+    return redirect("home")
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def reject_account(request, pk):
+    Userr = User.objects.get(pk=pk)
+    Userr.delete()
+    return redirect("home")
+
+def register_staff(request):
+    """Allows a staff member to register for an account"""
+    form = StaffRegistrationForm(request.POST or None)
+
+    if request.method == "POST":
+        if form.is_valid():
+            password1 = form.cleaned_data["password1"]
+            password2 = form.cleaned_data["password2"]
+            role = form.cleaned_data["role"]
+            # FIXME: Django user password policy isn't applied here as it is in the admin
+            if password1 != password2:
+                return render(request, "UWEFlixApp/register_staff.html", {"error": "Passwords do not match", "form": form})
+            else:
+                if User.objects.filter(username=form.cleaned_data["username"]).exists():
+                    return render(request, "UWEFlixApp/register_staff.html", {"error": "Username already taken", "form": form})
+                else:
+                    u = User.objects.create_user(
+                        username=form.cleaned_data["username"],
+                        password=password1,
+                        role=role,
+                        is_active = False
+                    )
+                    return redirect('login')
+
+    return render(request, "UWEFlixApp/register_staff.html", {"form": form})
+
+def show_user_bookings(request):
+    """Displays all transactions for the user"""
+    user = request.user.id  # WARN: assumes constraints set in the User model have been validated
+    all_bookings = Booking.objects.filter(user=user, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_student_booking.html", {"all_bookings": all_bookings})
+
+def request_cancel(request, pk):
+    """Allow student users to request cancelling a ticket"""
+    booking = Booking.objects.get(pk=pk)
+    booking.status = Booking.Status.CANCELLATION_REQUESTED
+    booking.save()
+    return redirect("home")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def show_requested_bookings(request):
+    """Displays all transactions for the user"""
+    all_bookings = Booking.objects.filter(status=Booking.Status.CANCELLATION_REQUESTED, date__month=datetime.now().month)
+    return render(request, "UWEFlixApp/view_student_requests.html", {"all_bookings": all_bookings})
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def cancel_booking(request, pk):
+    """Allow CM users to approve cancelling a ticket"""
+    booking = Booking.objects.get(pk=pk)
+    booking.status = Booking.Status.CANCELLED
+    booking.save()
+    return redirect("home")
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def change_ticket_price(request):

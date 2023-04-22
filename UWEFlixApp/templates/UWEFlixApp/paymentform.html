@@ -9,22 +9,20 @@
     crossorigin="anonymous"></script>
 
 <div class="container">
-    <a href="{% url 'register_staff' %}" class="btn btn-outline-secondary">Register Staff</a>
-    <h1 class="text-2xl text-center">Register Student Account</h1>
+    <h1 class="text-2xl text-center"> Please enter payment details to complete the booking</h1>
     <div class="row">
         <div class="col"></div>
         <div class="col">
             <form method="POST" class="log-form">
-                <p>{{error}}</p>
                 {% csrf_token %}
                 {{ form.as_p }}
                 <div class="text-center">
-                <button type="submit" class="btn btn-outline-secondary">Register</button>
             </div>
+            
+        <button type="submit" class="btn btn-outline-secondary">{{ button_text }}</button>
             </form>
         </div>
-        <div class="col"></div> 
-        
+        <div class="col"></div>
     </div>
 </div>
 {% endblock %}

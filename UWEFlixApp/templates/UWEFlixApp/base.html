@@ -15,14 +15,9 @@
   <header class="py-4">
     <div class="container mx-auto flex justify-between items-center">
       <div>
-        <a href="#">
-          <img class="h-10" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/UWE_Bristol_logo.svg/2560px-UWE_Bristol_logo.svg.png" alt="Logo" />
-        </a>
+          <a href="{% url 'home' %}"><img class="h-10" src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/UWE_Bristol_logo.svg/2560px-UWE_Bristol_logo.svg.png" alt="Logo" href="{% url 'home' %}" ></a>  
       </div>
       <nav class="flex">  
-        {% if user.is_authenticated %}
-        <p>Welcome, User {{ user.get_username }}.</p>
-        {% endif %}
         <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'home' %}">Home</a>
         <a class="px-12 py-2 text-gray-500 hover:text-black" href="{% url 'booking_start' %}">Book</a>
         {% if user.is_authenticated %}

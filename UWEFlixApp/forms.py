@@ -67,7 +67,10 @@ class MovieForm(forms.ModelForm):
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
-            'rating': forms.TextInput(attrs={'class': 'form-control'}),
+            'minutes_long': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        help_texts = {
+            'rating': 'BBFC Film Rating (E is "Exempt")'
         }
 
 
@@ -169,6 +172,25 @@ class StudentRegistrationForm(forms.Form):
 class ClubRepBookingForm(forms.Form):
     number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
+class SimplePaymentForm(forms.Form): #This form will not actually capture any payment information, it will just be used to display the form to the user and to validate the data
+    holder_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_number = forms.CharField(max_length=16, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    card_expiry = forms.DateField(widget=forms.TextInput(attrs={'class': 'form-control', 'type': 'date'}))
+    card_cvv = forms.CharField(max_length=3, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    def clean_card_number(self):
+        card_number = self.cleaned_data['card_number']
+        if not check_luhn(card_number):
+            raise forms.ValidationError("Card number is not valid")
+        return card_number
+    
+    def clean_card_expiry(self):
+        expiry = self.cleaned_data['card_expiry']
+        expiry = datetime.combine(expiry, datetime.min.time())
+        if expiry < datetime.now():
+            raise forms.ValidationError("Card has expired")
+        return expiry
+    
 class ClubRepRegistrationForm(forms.ModelForm):
     class Meta:
         model = User
@@ -183,6 +205,32 @@ class ClubRepRegistrationForm(forms.ModelForm):
 class JoinClubForm(forms.Form):
     club = forms.ModelChoiceField(queryset=Club.objects.all(), blank=False, widget=forms.Select(attrs={'class': 'form-control'}))
 
+class StaffRegistrationForm(forms.ModelForm):
+    
+    username = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    password1 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Password')
+    password2 = forms.CharField(widget=forms.PasswordInput(attrs={'class': 'form-control'}), label='Confirm Password')
+
+    class Meta:
+        model = User
+        fields = ('role',)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['role'].choices = [('M', 'Cinema Manager'), ('A', 'Account Manager')]
+
+    def clean_password2(self):
+        password1 = self.cleaned_data['password1']
+        password2 = self.cleaned_data['password2']
+        if password1 != password2:
+            raise forms.ValidationError("Passwords do not match")
+        return password2
+
+    def clean_username(self):
+        if User.objects.filter(username=self.cleaned_data["username"]).exists():
+            raise forms.ValidationError("Username already exists")
+        return self.cleaned_data["username"]
+    
 class TicketPriceForm(forms.Form):
     adult_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
     child_ticket_price = forms.DecimalField(max_digits=10, decimal_places=2, widget=forms.TextInput(attrs={'class': 'form-control'}))
