@@ -256,10 +256,7 @@ def update_screen(request, pk):
 def show_screening(request, pk):
     """Takes the pk of a movie and returns a list of screenings for that movie"""
     movie = Movie.objects.get(pk=pk)
-    screening = Screening.objects.filter(movie=movie)
-
-    screening = sorted(screening, key=lambda x: x.showing_at)
-
+    screening = Screening.objects_with_seats_remaining().filter(movie=movie, _seats_remaining__gte=1).order_by('-showing_at')
 
     dates = []
     screening_dict = {}
@@ -381,7 +378,7 @@ def create_booking(request, pk):
                 'number_of_child_tickets')) + int(request.POST.get('number_of_student_tickets'))
             request.session['total_tickets_number'] = total_tickets
             if screening.seats_remaining < total_tickets:
-                warning = "Not enough seats available"
+                warning = "Not enough seats available — there are only {} seats left".format(screening.seats_remaining)
                 form = BookingForm()
                 return render(request, "UWEFlixApp/booking_form.html", {"form": form, "button_text": "Continue booking", "user": user, "Screening": screening, 'date': date, 'warning': warning})
 
