@@ -44,7 +44,9 @@ class MovieForm(forms.ModelForm):
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'minutes_long': forms.TextInput(attrs={'class': 'form-control'}),
-            'rating': forms.TextInput(attrs={'class': 'form-control'}),
+        }
+        help_texts = {
+            'rating': 'BBFC Film Rating (E is "Exempt")'
         }
 
 

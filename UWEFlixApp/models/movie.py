@@ -2,7 +2,6 @@ from django.core.validators import MinValueValidator
 from django.db import models
 
 
-
 class Movie(models.Model):
     DEFAULT_IMAGE = 'images/no_image_available.png'
 
@@ -11,7 +10,13 @@ class Movie(models.Model):
         validators=[MinValueValidator(limit_value=1)]
     )
     description = models.TextField()
-    rating = models.CharField(max_length=3)
+    rating = models.CharField(
+        max_length=3,
+        # these are the BBFC ratings, excluding 12 which is for home video only,
+        # and R18, which is for specially licensed shops only:
+        choices=((v, v) for v in ('E', 'U', 'PG', '12A', '15', '18')),
+        default='E'  # exempt from BBFC classification
+    )
     image = models.ImageField(upload_to='images/', blank=True, null=True, default=DEFAULT_IMAGE)
 
     def __str__(self):
