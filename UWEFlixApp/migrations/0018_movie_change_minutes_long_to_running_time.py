@@ -38,11 +38,11 @@ class Migration(migrations.Migration):
             convert_minutes_long_to_running_time,
             convert_running_time_to_minutes_long
         ),
-        # set old field nullable so it can be un-removed by reverting migration if need be
+        # set old field default value so that if it's reädded by migrating in reverse, it won't cause a NOT NULL constraint failure
         migrations.AlterField(
             model_name='movie',
             name='minutes_long',
-            field=models.PositiveSmallIntegerField(null=True, validators=[django.core.validators.MinValueValidator(limit_value=1)])
+            field=models.PositiveSmallIntegerField(default=1, validators=[django.core.validators.MinValueValidator(limit_value=1)])
         ),
         # remove old field
         migrations.RemoveField(
