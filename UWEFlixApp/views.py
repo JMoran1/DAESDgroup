@@ -675,7 +675,10 @@ def show_club_bookings(request):
     """Displays all transactions for the club"""
     club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
-    return render(request, "UWEFlixApp/view_club_bookings.html", {"all_bookings": all_bookings})
+    paginator = Paginator(all_bookings, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "UWEFlixApp/view_club_bookings.html", {"page_obj": page_obj})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
@@ -729,7 +732,10 @@ def show_user_bookings(request):
     """Displays all transactions for the user"""
     user = request.user.id  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(user=user, date__month=datetime.now().month)
-    return render(request, "UWEFlixApp/view_student_booking.html", {"all_bookings": all_bookings})
+    paginator = Paginator(all_bookings, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "UWEFlixApp/view_student_booking.html", {"page_obj": page_obj})
 
 def request_cancel(request, pk):
     """Allow student users to request cancelling a ticket"""

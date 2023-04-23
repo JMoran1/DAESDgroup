@@ -22,7 +22,7 @@
             </tr>
         </thead>
         <tbody>
-            {% for Booking in all_bookings %}
+            {% for Booking in page_obj %}
             <tr>
                 <td> {{ Booking.user }} </td> 
                 <td> {{ Booking.screening.movie }} </td>
@@ -37,7 +37,7 @@
         
     </table>
 </div>   
-{% if is_paginated %}
+
     <div class="row justify-content-center">
         <div class="col-4 m-auto text-center">
             <span class="step-links">
@@ -55,6 +55,6 @@
             </span>
         </div>
         </div>
-        {% endif %}
+
 
 {% endblock %}
