@@ -213,17 +213,13 @@ def create_screening(request):
         # If the form is submitted, save the form
         form = ScreeningForm(request.POST)
         if form.is_valid():
-            screening = form.save(commit=False)
+            form.save()
             # Retrieve the selected screen id from the form
-            screen_id = form.cleaned_data['screen'].id
-            # Retrieve the capacity of the selected screen from the database
-            screen_capacity = Screen.objects.get(id=screen_id).capacity
-            screening.seats_remaining = screen_capacity
-            screening.save()
-            # Retrieve the selected movie id from the form
             movie_id = form.cleaned_data['movie'].id
             # Redirect to the list of showings for the selected movie
             return redirect('show_all_screening')
+        else :
+            print(form.errors)
     else:
         # If the form is not submitted, create a new form
         form = ScreeningForm()

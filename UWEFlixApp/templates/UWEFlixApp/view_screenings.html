@@ -15,7 +15,7 @@
             <tr>
               <th> Screening movie  </th>
               <th> Screening Time</th>
-              <th> Remaining Seats </th>
+              <th> Seats Remaining</th>
               <th> </th>
               <th> </th>
               <br>
@@ -26,7 +26,7 @@
             <tr>
                 <td> {{ Screening.movie }} </td> 
                 <td> {{ Screening.showing_at }} </td>
-                <td> {{Screening.seats_remaining}} </td>
+                <td> {{ Screening.seats_remaining }} </td>
                 <td><a href="{% url 'edit_screening' Screening.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
                 <td><a href="{% url 'delete_screening' Screening.id %}"><button class="btn btn-danger">Delete</button></a>
             </tr>
