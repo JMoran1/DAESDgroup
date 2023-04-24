@@ -5,4 +5,4 @@ from .movie import Movie
 from .screen import Screen
 from .screening import Screening
 from .user import User
-from .tickets import Ticket
+from .ticket import Ticket

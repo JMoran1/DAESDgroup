@@ -763,18 +763,18 @@ def cancel_booking(request, pk):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def change_ticket_price(request):
     """Allows a cinema manager to change the ticket price"""
-    form = TicketPriceForm(request.POST or None, initial={"adult_ticket_price": Ticket.objects.get(uid='adult').price,
-                                                          "child_ticket_price": Ticket.objects.get(uid='child').price,
-                                                          "student_ticket_price": Ticket.objects.get(uid='student').price,})
+    form = TicketPriceForm(request.POST or None, initial={"adult_ticket_price": Ticket.objects.get(type='adult').price,
+                                                          "child_ticket_price": Ticket.objects.get(type='child').price,
+                                                          "student_ticket_price": Ticket.objects.get(type='student').price,})
     if request.method == "POST":
         if form.is_valid():
             adult_ticket_price = form.cleaned_data["adult_ticket_price"]
             child_ticket_price = form.cleaned_data["child_ticket_price"]
             student_ticket_price = form.cleaned_data["student_ticket_price"]
 
-            Ticket.objects.filter(uid='adult').update(price=adult_ticket_price)
-            Ticket.objects.filter(uid='child').update(price=child_ticket_price)
-            Ticket.objects.filter(uid='student').update(price=student_ticket_price)
+            Ticket.objects.filter(type='adult').update(price=adult_ticket_price)
+            Ticket.objects.filter(type='child').update(price=child_ticket_price)
+            Ticket.objects.filter(type='student').update(price=student_ticket_price)
 
             return redirect('cinema_manager_view')
     return render(request, "UWEFlixApp/change_ticket_price.html", {"form": form})
