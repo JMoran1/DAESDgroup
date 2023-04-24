@@ -25,6 +25,19 @@ from .models import (
 )
 import hashlib
 
+
+def round_up(value, dp):
+    """
+    Rounds up to dp many decimal places.
+
+    Because the bank normally doesn't let you keep the fractional penny and
+    charges you a whole extra penny for it, so do we!
+    """
+    initial = round(value, dp)
+    if initial < value:
+        initial += Decimal(1) / (10 ** dp)
+    return initial
+
 class UserRoleCheck:
     """
     Custom reusable authentication test for checking User role type(s)
@@ -438,7 +451,7 @@ def confirm_booking(request):
     subtotal = total_price
     if not request.user.is_anonymous:
         if user.role == User.Role.CLUB_REP:
-            total_price *= (1 - discount_rate)
+            total_price = round_up(total_price * (1 - discount_rate), 2)
 
     total_ticket_quantity = number_of_adult_tickets + \
         number_of_child_tickets + number_of_student_tickets
