@@ -208,6 +208,7 @@ def create_screening(request):
     # Retrieve all movies and screens from the database
     movies = Movie.objects.all()
     screens = Screen.objects.all()
+    form = ScreeningForm()
 
     context = {
         'movies': movies,
@@ -226,9 +227,6 @@ def create_screening(request):
             return redirect('show_all_screening')
         else:
             return render(request, 'UWEFlixApp/create_screening.html', context)
-    else:
-        # If the form is not submitted, create a new form
-        form = ScreeningForm()
 
     return render(request, 'UWEFlixApp/create_screening.html', context)
 
