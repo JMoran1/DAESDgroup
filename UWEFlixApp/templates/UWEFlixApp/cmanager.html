@@ -30,6 +30,20 @@
             <a href="{% url 'view_clubs' %}" class="btn btn-primary w-100 m-1">View Club</a>
         </div>
     </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-6 d-flex justify-content-center">
+            <a href="{% url 'show_all_bookings' %}" class="btn btn-primary w-100 m-1">View All Bookings</a>
+            <a href="{% url 'waiting_approval' %}" class="btn btn-primary w-100 m-1">Accounts Awaiting Approval</a>
+        </div>
+    </div>
+    
+    <div class="row justify-content-center">
+        <div class="col-6 d-flex justify-content-center">
+            <a href="{% url 'change_ticket_price' %}" class="btn btn-primary w-100 m-1">Change Ticket Price</a>
+        </div>
+    </div>
+    
 </div>
 {% endblock %}
 
