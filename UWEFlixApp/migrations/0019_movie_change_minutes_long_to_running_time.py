@@ -23,7 +23,7 @@ def convert_running_time_to_minutes_long(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('UWEFlixApp', '0017_remove_screening_seats_remaining_and_more'),
+        ('UWEFlixApp', '0018_rename_ticket_type_ticket_type'),
     ]
 
     operations = [
