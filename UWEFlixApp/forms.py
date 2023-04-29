@@ -134,11 +134,11 @@ class BookingForm(forms.ModelForm):
         fields = ('number_of_student_tickets','number_of_child_tickets','number_of_adult_tickets')
 
     TICKET_OPTIONS = (('0','0'), ('1','1'), ('2','2'), ('3','3'), ('4','4'), ('5','5'), ('6','6'), ('7','7'), ('8','8'), ('9','9'))
-    number_of_student_tickets = forms.CharField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=TICKET_OPTIONS)) 
+    number_of_student_tickets = forms.CharField(label='Number of Student Tickets', help_text = '(Number of attendees)', widget=forms.Select(choices=TICKET_OPTIONS)) 
     
-    number_of_child_tickets = forms.CharField(label='Number of Child Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=TICKET_OPTIONS)) 
+    number_of_child_tickets = forms.CharField(label='Number of Child Tickets', help_text = '(Number of attendees)', widget=forms.Select(choices=TICKET_OPTIONS)) 
     
-    number_of_adult_tickets = forms.CharField(label='Number of Adult Tickets', help_text = '(Number of attendies)', widget=forms.Select(choices=TICKET_OPTIONS)) 
+    number_of_adult_tickets = forms.CharField(label='Number of Adult Tickets', help_text = '(Number of attendees)', widget=forms.Select(choices=TICKET_OPTIONS)) 
 
     
 class ClubTopUpForm(forms.Form):
@@ -170,7 +170,7 @@ class StudentRegistrationForm(forms.Form):
         return self.cleaned_data["username"]
 
 class ClubRepBookingForm(forms.Form):
-    number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendies)', widget=forms.TextInput(attrs={'class': 'form-control'}))
+    number_of_student_tickets = forms.IntegerField(label='Number of Student Tickets', help_text = '(Number of attendees)', widget=forms.TextInput(attrs={'class': 'form-control'}))
 
 class SimplePaymentForm(forms.Form): #This form will not actually capture any payment information, it will just be used to display the form to the user and to validate the data
     holder_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={'class': 'form-control'}))

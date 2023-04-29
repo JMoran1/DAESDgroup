@@ -42,6 +42,12 @@ screening_list_view = views.ViewMovie.as_view(
     template_name="UWEFlixApp/view_screenings.html",
 )
 
+booking_list_view = views.ViewBooking.as_view(
+    queryset=Booking.objects.order_by("id"),
+    context_object_name="all_bookings",
+    template_name="UWEFlixApp/view_bookings.html",
+)
+
 urlpatterns = [
     path("", views.home, name="home"),
     path("cinema_manager_view", views.cinema_manager_view, name="cinema_manager_view"),
@@ -78,7 +84,7 @@ urlpatterns = [
     path("view_club_transactions/<int:pk>/", views.view_club_transactions, name="view_club_transactions"),
     path("account_page/", views.account_page, name="account_page"),
     path("payment_page/", views.payment_page, name="payment_page"),
-    path("show_all_bookings/", views.show_all_bookings, name="show_all_bookings"),
+    path("show_all_bookings/", booking_list_view, name="show_all_bookings"),
     path("show_club_bookings", views.show_club_bookings, name="show_club_bookings"),
     path("waiting_approval", views.waiting_approval, name="waiting_approval"),
     path("approve_account/<int:pk>", views.approve_account, name="approve_account"),

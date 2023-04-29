@@ -8,13 +8,15 @@
     crossorigin="anonymous"></script>
 
 <div class="w-75 m-auto">
-    <h1 class="text-2xl text-center">View Student Bookings</h1>
+    <h1 class="text-2xl text-center">View All Bookings</h1>
     <table class="table table-hover">
         <thead>
             <tr>
-                <th>Film</th>
+                <th>Username</th>
+                <th>Screening</th>
                 <th>Screening Time</th>
                 <th>Total Price</th>
+                <th>Club</th>
                 <th>Status</th>
                 <th>Cancel?</th>
             </tr>
@@ -22,34 +24,37 @@
         <tbody>
             {% for Booking in page_obj %}
             <tr>
+                <td> {{ Booking.user }} </td> 
                 <td> {{ Booking.screening.movie }} </td>
                 <td> {{ Booking.screening.showing_at }} </td>
                 <td> £{{ Booking.total_price }} </td>
-                <td> {{Booking.status }} </td>
+                <td> {{ Booking.club }}</td>
+                <td> {{ Booking.status   }} </td>
                 <td><a href="{% url 'request_cancel' Booking.id %}"><button class="btn btn-danger">Request Cancellation</button></a></td>
             </tr>
             {% endfor %}
         </tbody>
+        
     </table>
-    
 </div>   
 
-<div class="row justify-content-center">
-    <div class="col-4 m-auto text-center">
-        <span class="step-links">
-          {% if page_obj.has_previous %}
-          <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
-          {% endif %}
+    <div class="row justify-content-center">
+        <div class="col-4 m-auto text-center">
+            <span class="step-links">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
+            {% endif %}
 
-          <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-          </span>
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
 
-          {% if page_obj.has_next %}
-          <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
-          {% endif %}
-        </span>
-      </div>
-    </div>
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
+            {% endif %}
+            </span>
+        </div>
+        </div>
+
 
 {% endblock %}

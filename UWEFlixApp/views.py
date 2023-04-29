@@ -25,6 +25,19 @@ from .models import (
 )
 import hashlib
 
+
+def round_up(value, dp):
+    """
+    Rounds up to dp many decimal places.
+
+    Because the bank normally doesn't let you keep the fractional penny and
+    charges you a whole extra penny for it, so do we!
+    """
+    initial = round(value, dp)
+    if initial < value:
+        initial += Decimal(1) / (10 ** dp)
+    return initial
+
 class UserRoleCheck:
     """
     Custom reusable authentication test for checking User role type(s)
@@ -438,7 +451,7 @@ def confirm_booking(request):
     subtotal = total_price
     if not request.user.is_anonymous:
         if user.role == User.Role.CLUB_REP:
-            total_price *= (1 - discount_rate)
+            total_price = round_up(total_price * (1 - discount_rate), 2)
 
     total_ticket_quantity = number_of_adult_tickets + \
         number_of_child_tickets + number_of_student_tickets
@@ -655,11 +668,19 @@ def payment_page(request):
             return redirect('confirm_booking')
     return render(request, "UWEFlixApp/paymentform.html", {"form": form, "button_text": "Continue"})
 
-@login_required()
-@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
-def show_all_bookings(request):
-    all_booking = Booking.objects.all()
-    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_booking})
+class ViewBooking(UserPassesTestMixin, ListView):
+    model = Booking
+    paginate_by = 5
+
+    def get_context_data(self, **kwargs):
+        context = super(ViewBooking, self).get_context_data(**kwargs)
+        return context
+
+    def test_func(self):
+        return UserRoleCheck(User.Role.CINEMA_MANAGER)(self.request.user)
+    
+    def handle_no_permission(self):
+        return redirect('home')
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CLUB_REP), redirect_field_name=None)
@@ -667,7 +688,10 @@ def show_club_bookings(request):
     """Displays all transactions for the club"""
     club = request.user.club  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(club=club, date__month=datetime.now().month)
-    return render(request, "UWEFlixApp/view_bookings.html", {"all_bookings": all_bookings})
+    paginator = Paginator(all_bookings, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "UWEFlixApp/view_club_bookings.html", {"page_obj": page_obj})
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
@@ -683,6 +707,7 @@ def approve_account(request, pk):
     Userr.is_active = True
     Userr.save()  
     return redirect("home")
+
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def reject_account(request, pk):
@@ -720,7 +745,10 @@ def show_user_bookings(request):
     """Displays all transactions for the user"""
     user = request.user.id  # WARN: assumes constraints set in the User model have been validated
     all_bookings = Booking.objects.filter(user=user, date__month=datetime.now().month)
-    return render(request, "UWEFlixApp/view_student_booking.html", {"all_bookings": all_bookings})
+    paginator = Paginator(all_bookings, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "UWEFlixApp/view_student_booking.html", {"page_obj": page_obj})
 
 def request_cancel(request, pk):
     """Allow student users to request cancelling a ticket"""
@@ -748,18 +776,18 @@ def cancel_booking(request, pk):
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def change_ticket_price(request):
     """Allows a cinema manager to change the ticket price"""
-    form = TicketPriceForm(request.POST or None, initial={"adult_ticket_price": Ticket.objects.get(pk=1).price,
-                                                          "child_ticket_price": Ticket.objects.get(pk=2).price,
-                                                          "student_ticket_price": Ticket.objects.get(pk=3).price,})
+    form = TicketPriceForm(request.POST or None, initial={"adult_ticket_price": Ticket.objects.get(type='adult').price,
+                                                          "child_ticket_price": Ticket.objects.get(type='child').price,
+                                                          "student_ticket_price": Ticket.objects.get(type='student').price,})
     if request.method == "POST":
         if form.is_valid():
             adult_ticket_price = form.cleaned_data["adult_ticket_price"]
             child_ticket_price = form.cleaned_data["child_ticket_price"]
             student_ticket_price = form.cleaned_data["student_ticket_price"]
 
-            Ticket.objects.filter(pk=1).update(price=adult_ticket_price)
-            Ticket.objects.filter(pk=2).update(price=child_ticket_price)
-            Ticket.objects.filter(pk=3).update(price=student_ticket_price)
+            Ticket.objects.filter(type='adult').update(price=adult_ticket_price)
+            Ticket.objects.filter(type='child').update(price=child_ticket_price)
+            Ticket.objects.filter(type='student').update(price=student_ticket_price)
 
             return redirect('cinema_manager_view')
     return render(request, "UWEFlixApp/change_ticket_price.html", {"form": form})

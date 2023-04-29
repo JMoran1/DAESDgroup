@@ -32,9 +32,28 @@
             </tr>
             {% endfor %}
         </tbody>
+        
     </table>
     <a href="{% url 'show_requested_bookings' %}" class="float-right mr-64"><button class="bg-gray-400 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full">View Cancel Requests</button></a>
-    
 </div>   
+{% if is_paginated %}
+    <div class="row justify-content-center">
+        <div class="col-4 m-auto text-center">
+            <span class="step-links">
+            {% if page_obj.has_previous %}
+            <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
+            {% endif %}
+            </span>
+        </div>
+        </div>
+        {% endif %}
 
 {% endblock %}
