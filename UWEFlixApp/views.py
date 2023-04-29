@@ -210,12 +210,6 @@ def create_screening(request):
     screens = Screen.objects.all()
     form = ScreeningForm()
 
-    context = {
-        'movies': movies,
-        'screens': screens,
-        'form': form,
-    }
-
     if request.method == 'POST':
         # If the form is submitted, save the form
         form = ScreeningForm(request.POST)
@@ -225,9 +219,15 @@ def create_screening(request):
             movie_id = form.cleaned_data['movie'].id
             # Redirect to the list of showings for the selected movie
             return redirect('show_all_screening')
-        else:
-            return render(request, 'UWEFlixApp/create_screening.html', context)
 
+    context = {
+        'movies': movies,
+        'screens': screens,
+        'form': form,
+    }
+    for field in form:
+        print(field.errors)
+    print(form.errors)
     return render(request, 'UWEFlixApp/create_screening.html', context)
 
 

@@ -49,6 +49,7 @@ class Screening(models.Model):
     def finishing_at(self):
         return self.showing_at + self.movie.running_time
 
+    @property
     def clashes_with_others(self):
         """
         Returns True if this Screening clashes with others, that is to say, if
@@ -68,7 +69,7 @@ class Screening(models.Model):
         """
         Override .clean() to force validation to make sure Screenings do not clash
         """
-        if self.clashes_with_others():
+        if self.clashes_with_others:
             raise ValidationError('Screening would clash with other Screenings')
         return super().clean(*args, **kwargs)
 
