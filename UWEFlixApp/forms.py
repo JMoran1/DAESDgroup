@@ -98,22 +98,6 @@ class ScreenForm(forms.ModelForm):
         return capacity
 
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        exclude = ['password']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        cleaned_data['groups'] = User.sanitise_groups(
-            cleaned_data['groups'],
-            User.Role(cleaned_data['role'])
-        )
-
-
-class UserAdmin(admin.ModelAdmin):
-    form = UserForm
-
 class ScreeningForm(forms.ModelForm):
     class Meta:
         model = Screening
