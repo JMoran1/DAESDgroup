@@ -221,7 +221,7 @@ def create_screening(request):
     # Retrieve all movies and screens from the database
     movies = Movie.objects.all()
     screens = Screen.objects.all()
-
+    form = ScreeningForm()
 
     if request.method == 'POST':
         # If the form is submitted, save the form
@@ -232,17 +232,15 @@ def create_screening(request):
             movie_id = form.cleaned_data['movie'].id
             # Redirect to the list of showings for the selected movie
             return redirect('show_all_screening')
-        else:
-            print(form.errors)
-    else:
-        # If the form is not submitted, create a new form
-        form = ScreeningForm()
 
     context = {
         'movies': movies,
         'screens': screens,
         'form': form,
     }
+    for field in form:
+        print(field.errors)
+    print(form.errors)
     return render(request, 'UWEFlixApp/create_screening.html', context)
 
 
@@ -309,21 +307,23 @@ def delete_screening(request, pk):
 def edit_screening(request, pk):
     screening = Screening.objects.get(pk=pk)
 
-    if request.method == 'POST':
-        form = ScreeningForm(request.POST, instance=screening)
-        if form.is_valid():
-            form.save()
-            return redirect('show_all_screening')
-    else:
-        form = ScreeningForm(instance=screening)
-        movies = Movie.objects.all()
-        screens = Screen.objects.all()
-
+    form = ScreeningForm(instance=screening)
+    movies = Movie.objects.all()
+    screens = Screen.objects.all()
     context = {
         'form': form,
         'movies': movies,
         'screens': screens,
     }
+
+    if request.method == 'POST':
+        form = ScreeningForm(request.POST, instance=screening)
+        if form.is_valid():
+            form.save()
+            return redirect('show_all_screening')
+        else:
+            context['form'] = form
+
     return render(request, 'UWEFlixApp/edit_screening.html', context)
 
 @login_required()
