@@ -1,6 +1,10 @@
+from datetime import datetime
+
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
-from .models import MonthlyStatement, Club, User
+
+from .models import Club, MonthlyStatement, Movie, Screen, Screening, User
 
 class HomePageTests(TestCase):
     def test_home_page_status_code(self):
@@ -181,3 +185,265 @@ class DeleteClubTest(TestCase):
 
     def tearDown(self):
         self.user.delete()
+
+class ClashingScreeningsTest(TestCase):
+    """
+    Successfully detecting all the possible situations in which two events may
+    overlap is tricky as the "orientation" of said overlaps can be in one of
+    many different possible configurations. Test them all to make sure we have
+    full coverage!
+    """
+    @staticmethod
+    def make_screenings_for_date_ranges(a, b):
+        """
+        NOTE: both a and b should be two 2-tuples of datetime strings
+        Helper method, will produce two Screenings for the same Screen which are
+        guaranteed to start and end at the given tuples of (start, end) times.
+
+        NOTE: pass datetimes in as ISO-8601 string, because making datetime
+        objects is faffy.
+
+        Screenings aren't saved, but returned as objects that can then be saved
+        to the db if desired.
+        """
+        überskrün = Screen.objects.create(name='DAS ÜBERSKRÜN', capacity=9001)
+        a_start = datetime.fromisoformat(a[0])
+        a_end = datetime.fromisoformat(a[1])
+        b_start = datetime.fromisoformat(b[0])
+        b_end = datetime.fromisoformat(b[1])
+        a_screening = Screening(
+            screen=überskrün,
+            showing_at=a_start,
+            movie=Movie.objects.create(
+                name='Bandusshels die Wudhandlen',
+                running_time=(a_end - a_start)
+            )
+        )
+        b_screening = Screening(
+            screen=überskrün,
+            showing_at=b_start,
+            movie=Movie.objects.create(
+                name='Der Whuffen der Neaph?',
+                running_time=(b_end - b_start)
+            )
+        )
+        return a_screening, b_screening
+
+    def test_non_clashing_screenings(self):
+        """
+        It should be possible to create two Screenings for the same Screen that
+        do not clash, without an error. We should be able to create block
+        bookings (i.e. a Screening that starts at precisely the time that the
+        one before it ended) without issue.
+        """
+        start = '2029-08-07T12:52'
+        middle = '2029-08-07T14:19'
+        end = '2029-08-07T18:54'
+        first, second = self.make_screenings_for_date_ranges(
+            (start, middle),
+            (middle, end)
+        )
+
+        first.save()
+        second.save()
+
+    def test_coincident_screenings(self):
+        """
+        coincident: like two lines which happen to be exactly the same, i.e. two
+        Screenings that start and end at the exact same time.
+        """
+        start = '2011-12-12T13:33'
+        end = '2011-12-12T14:52'
+        a, b = self.make_screenings_for_date_ranges((start, end), (start, end))
+
+        # GIVEN an existing Screening with this start and end times
+        a.save()
+
+        # WHEN another with identical start and end times is attempted to be created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            a.save()
+
+    def test_overlap_front(self):
+        # the end of A overlaps the front of B
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T19:32'),
+            ('2019-08-07T18:19', '2019-08-07T20:20')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
+    def test_overlap_inside(self):
+        # A is wholly "inside" B
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T18:19', '2019-08-07T19:32'),
+            ('2019-08-07T16:32', '2019-08-07T20:20')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
+    def test_overlap_back(self):
+        # the front of A overlaps the end of B
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T18:19', '2019-08-07T20:20'),
+            ('2019-08-07T16:32', '2019-08-07T19:32')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
+    def test_overlap_outside(self):
+        # B is wholly "inside" A
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T18:19', '2019-08-07T19:32')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
+    def test_tiny_overlap(self):
+        # B starts one minute later than A and their films are of equal duration
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T16:33', '2019-08-07T20:21')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
+    def test_start_at_same_time(self):
+        # two Screenings that start at the same time but end at different ones
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T16:32', '2019-08-07T20:21')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
+    def test_end_at_same_time(self):
+        # two Screenings that start at different times but end at the same
+        a, b = self.make_screenings_for_date_ranges(
+            ('2019-08-07T16:32', '2019-08-07T20:20'),
+            ('2019-08-07T16:33', '2019-08-07T20:20')
+        )
+
+        # GIVEN Screening A already exists
+        a.save()
+
+        # WHEN Screening B is created
+        with self.assertRaises(ValidationError):
+            # THEN an error is raised
+            b.save()
+
+        # AND GIVEN the opposite
+        a.delete()
+        b.save()
+
+        # WHEN the opposite way round is tried
+        with self.assertRaises(ValidationError):
+            # THEN an error is
+            a.save()
+
+    def tearDown(self):
+        """
+        Delete anything we might have inadvertently created
+        """
+        for model in (Screening, Screen, Movie):  # delete in correct order for db constraints
+            model.objects.all().delete()

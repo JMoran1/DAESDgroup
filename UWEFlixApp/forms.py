@@ -1,11 +1,16 @@
+from datetime import datetime, timedelta
+from math import ceil
+
 from django import forms
 from django.contrib import admin
-from django.core.exceptions import ValidationError
-from UWEFlixApp.models import Club, Movie, Screen, User, Screening
 from django.contrib.auth.forms import AuthenticationForm
-from UWEFlixApp.models import Club, Movie, Screen, User, Booking, Screening
+from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
+
+from UWEFlixApp.models import Booking, Club, Movie, Screen, Screening, User
+
 from .check_luhn import check_luhn
-from datetime import datetime
+
 
 class ClubForm(forms.ModelForm):
     class Meta:
@@ -36,10 +41,29 @@ class ClubForm(forms.ModelForm):
         return expiry
 
 
+class MinutesDurationField(forms.DurationField):
+    def to_python(self, value):
+        # current value should be int-like count of minutes, turn it into a timedelta
+        return timedelta(minutes=int(value))
+
+    def prepare_value(self, value):
+        if isinstance(value, str):  # invalid value, it's now a string --leave as-is
+            return value
+        # otherwise, it's a timedelta, so format it
+        # turns timedelta back into count of minutes
+        return str(ceil(value.total_seconds() / 60))  # in unlikely event of seconds, rounds up
+
+
 class MovieForm(forms.ModelForm):
+    running_time = MinutesDurationField(
+        initial=timedelta(minutes=1),
+        widget=forms.TextInput(attrs={'class': 'form-control'}),
+        label='Minutes Long',
+        validators=[MinValueValidator(limit_value=timedelta(minutes=1))]
+    )
     class Meta:
         model = Movie
-        fields = ('name', 'minutes_long', 'rating', 'image')
+        fields = ('name', 'running_time', 'rating', 'image')
 
         widgets = {
             'name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -88,8 +112,8 @@ class UserForm(forms.ModelForm):
 
 class UserAdmin(admin.ModelAdmin):
     form = UserForm
-class ScreeningForm(forms.ModelForm):
 
+class ScreeningForm(forms.ModelForm):
     class Meta:
         model = Screening
         fields = ('movie', 'screen', 'showing_at')
