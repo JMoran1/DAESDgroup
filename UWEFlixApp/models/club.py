@@ -3,7 +3,7 @@ import hashlib
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from .user import User
+from UWEAuth.models import User
 
 
 class Club(models.Model):

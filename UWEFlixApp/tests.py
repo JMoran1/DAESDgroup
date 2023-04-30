@@ -4,7 +4,8 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
-from .models import Club, MonthlyStatement, Movie, Screen, Screening, User
+from UWEAuth.models import User
+from .models import Club, MonthlyStatement, Movie, Screen, Screening
 
 class HomePageTests(TestCase):
     def test_home_page_status_code(self):

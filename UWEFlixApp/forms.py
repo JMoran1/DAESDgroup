@@ -7,7 +7,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 
-from UWEFlixApp.models import Booking, Club, Movie, Screen, Screening, User
+from UWEAuth.models import User
+from UWEFlixApp.models import Booking, Club, Movie, Screen, Screening
 
 from .check_luhn import check_luhn
 
