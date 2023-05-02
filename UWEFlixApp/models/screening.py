@@ -1,9 +1,9 @@
 from django.core.exceptions import ValidationError
 from django.db import models
-from django.db.models import F, Sum, Q
+from django.db.models import Case, F, IntegerField, Sum, Q, When
 from django.db.models.functions import Coalesce
 
-from UWEFlixApp.models import Movie, Screen
+from UWEFlixApp.models import Booking, Movie, Screen
 
 
 class Screening(models.Model):
@@ -19,9 +19,30 @@ class Screening(models.Model):
         return cls.objects.annotate(
             _seats_remaining=F('screen__capacity') - (
                 # subtract the sum of each ticket type across all bookings for this screening from the screen capacity
-                Coalesce(Sum('booking__number_of_adult_tickets'), 0) +
-                Coalesce(Sum('booking__number_of_child_tickets'), 0) +
-                Coalesce(Sum('booking__number_of_student_tickets'), 0)
+                Case(
+                    When(
+                        booking__status__in=(Booking.Status.ACTIVE, Booking.Status.CANCELLATION_REQUESTED),
+                        then=Coalesce(Sum('booking__number_of_adult_tickets'), 0)
+                    ),
+                    default=0,
+                    output_field=IntegerField()
+                ) +
+                Case(
+                    When(
+                        booking__status__in=(Booking.Status.ACTIVE, Booking.Status.CANCELLATION_REQUESTED),
+                        then=Coalesce(Sum('booking__number_of_child_tickets'), 0)
+                    ),
+                    default=0,
+                    output_field=IntegerField()
+                ) +
+                Case(
+                    When(
+                        booking__status__in=(Booking.Status.ACTIVE, Booking.Status.CANCELLATION_REQUESTED),
+                        then=Coalesce(Sum('booking__number_of_student_tickets'), 0)
+                    ),
+                    default=0,
+                    output_field=IntegerField()
+                )
             )
         )
 
