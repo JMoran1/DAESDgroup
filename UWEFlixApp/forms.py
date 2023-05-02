@@ -7,7 +7,8 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 
-from UWEFlixApp.models import Booking, Club, Movie, Screen, Screening, User
+from UWEAuth.models import User
+from UWEFlixApp.models import Booking, Club, Movie, Screen, Screening
 
 from .check_luhn import check_luhn
 
@@ -96,22 +97,6 @@ class ScreenForm(forms.ModelForm):
             raise forms.ValidationError("Capacity must be greater than 0")
         return capacity
 
-
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        exclude = ['password']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        cleaned_data['groups'] = User.sanitise_groups(
-            cleaned_data['groups'],
-            User.Role(cleaned_data['role'])
-        )
-
-
-class UserAdmin(admin.ModelAdmin):
-    form = UserForm
 
 class ScreeningForm(forms.ModelForm):
     class Meta:

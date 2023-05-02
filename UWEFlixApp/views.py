@@ -20,8 +20,9 @@ from .forms import (
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
     StudentRegistrationForm, JoinClubForm
 , SimplePaymentForm, StaffRegistrationForm, TicketPriceForm)
+from UWEAuth.models import User
 from .models import (
-    Booking, Club, MonthlyStatement, Movie, Screen, Screening, User, Ticket
+    Booking, Club, MonthlyStatement, Movie, Screen, Screening, Ticket
 )
 import hashlib
 
