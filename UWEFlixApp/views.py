@@ -8,7 +8,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.mixins import UserPassesTestMixin
 from django.contrib.auth.views import LoginView
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse_lazy
@@ -716,16 +716,15 @@ def waiting_approval(request):
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def approve_account(request, pk):
-    Userr = User.objects.get(pk=pk)
-    Userr.is_active = True
-    Userr.save()  
+    user = User.objects.get(pk=pk)
+    user.is_active = True
+    user.save()  
     return redirect("home")
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def reject_account(request, pk):
-    Userr = User.objects.get(pk=pk)
-    Userr.delete()
+    User.objects.get(pk=pk).delete()
     return redirect("home")
 
 def register_staff(request):
@@ -785,6 +784,7 @@ def cancel_booking(request, pk):
     booking.status = Booking.Status.CANCELLED
     booking.save()
     return redirect("home")
+
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def change_ticket_price(request):
@@ -843,3 +843,27 @@ def email_confirmation(request):
         response = requests.post(url, json=data, headers=headers)
         return redirect('home')
     return render(request, "UWEFlixApp/email_confirmation.html")
+
+@login_required()
+@user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
+def view_staff_accounts(request):
+    """Displays all staff accounts"""
+    all_users = User.objects.filter(Q(role=User.Role.CINEMA_MANAGER) | Q(role=User.Role.ACCOUNT_MANAGER) | Q(role=User.Role.CLUB_REP))
+    paginator = Paginator(all_users, 5)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, "UWEFlixApp/view_staff_accounts.html", {"page_obj": page_obj})
+
+def deactivate_account(request, pk):
+    """Allows a cinema manager to deactivate a staff account"""
+    user = User.objects.get(pk=pk)
+    user.is_active = False
+    user.save()  
+    return redirect("view_staff_accounts")
+
+def activate_account(request, pk):
+    """Allows a cinema manager to activate a staff account"""
+    user = User.objects.get(pk=pk)
+    user.is_active = True
+    user.save()  
+    return redirect("view_staff_accounts")

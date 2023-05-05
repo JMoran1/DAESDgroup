@@ -101,4 +101,7 @@ urlpatterns = [
     path('cancel_booking/<int:pk>/', views.cancel_booking, name='cancel_booking'),
     path("change_ticket_price/", views.change_ticket_price, name="change_ticket_price"),
     path("email_confirmation/", views.email_confirmation, name="email_confirmation"),
+    path("view_staff_accounts/", views.view_staff_accounts, name="view_staff_accounts"),
+    path("deactivate_account/<int:pk>/", views.deactivate_account, name="deactivate_account"),
+    path("activate_account/<int:pk>/", views.activate_account, name="activate_account"),
 ]
