@@ -711,8 +711,7 @@ def approve_account(request, pk):
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)
 def reject_account(request, pk):
-    user = User.objects.get(pk=pk)
-    user.delete()
+    User.objects.get(pk=pk).delete()
     return redirect("home")
 
 def register_staff(request):
