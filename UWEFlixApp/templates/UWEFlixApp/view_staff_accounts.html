@@ -1,0 +1,59 @@
+{% extends "UWEFlixApp/base.html" %}
+
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+    crossorigin="anonymous"></script>
+
+<h2 class="text-center">Accounts</h2>
+
+{% if page_obj %}
+<div class="w-75 m-auto">
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>User ID</th>
+                <th>Username</th>
+                <th>Account Active</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in page_obj %}
+            <tr>
+                <td> {{ user.id }}</td>
+                <td> {{ user.username }}</td>
+                <td> {{ user.is_active }}</td>
+                {% if user.is_active %}
+                <td><a href="{% url 'deactivate_account' user.id %}" class="btn btn-danger">Deactivate</a></td>
+                {% else %}
+                <td><a href="{% url 'activate_account' user.id %}" class="btn btn-success">Activate</a></td>
+                {% endif %}
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="row justify-content-center">
+    <div class="col-4 m-auto text-center">
+        <span class="step-links">
+          {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="btn btn-link">Previous</a>
+          {% endif %}
+
+          <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+
+          {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="btn btn-link">Next</a>
+          {% endif %}
+        </span>
+      </div>
+    </div>
+{% else %}
+<p>No Accounts have been created. </p>
+{% endif %}
+{% endblock %}
