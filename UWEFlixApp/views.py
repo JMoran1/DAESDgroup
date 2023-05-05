@@ -835,7 +835,7 @@ def email_confirmation(request):
             number_of_child_tickets * child_ticket_price + \
             number_of_student_tickets * student_ticket_price
 
-        url = 'http://127.0.0.1:8001/my-api/'
+        url = 'http://django-rest-api:8001/my-api/'
         data = {'name': 'UWEFlix', 'email': email, 'movie': movie.name, 'date': str(
             date), 'screen': screen.name, 'total_tickets': total_tickets, 'total_price': str(total_price), 'id': booking}
         headers = {'Content-type': 'application/json'}
