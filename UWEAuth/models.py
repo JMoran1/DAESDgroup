@@ -20,13 +20,13 @@ class User(AbstractUser):
         default=Role.STUDENT
     )
     club = models.ForeignKey(
-        'club',
+        'UWEFlixApp.club',
         blank=True,
         null=True,
         on_delete=models.SET_NULL  # deleting a Club unlinks any Users from it
     )
     requested_club = models.ForeignKey(
-        'club',
+        'UWEFlixApp.club',
         blank=True,
         null=True,
         on_delete=models.SET_NULL,  # deleting a Club unlinks any Users from it,

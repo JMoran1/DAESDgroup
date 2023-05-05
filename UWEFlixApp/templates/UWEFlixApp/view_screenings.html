@@ -14,9 +14,9 @@
         <thead>
             <tr>
               <th> Screening movie  </th>
+              <th> Screen name</th>
               <th> Screening Time</th>
               <th> Seats Remaining</th>
-              <th> </th>
               <th> </th>
               <br>
             </tr>
@@ -25,6 +25,7 @@
             {% for Screening in page_obj %}
             <tr>
                 <td> {{ Screening.movie }} </td> 
+                <td> {{ Screening.screen }} </td>
                 <td> {{ Screening.showing_at }} </td>
                 <td> {{ Screening.seats_remaining }} </td>
                 <td><a href="{% url 'edit_screening' Screening.id %}"><button class="btn btn-outline-success"> Edit </button></a> <td>
@@ -33,6 +34,7 @@
             {% endfor %}
         </tbody>
         </table>
+        <h1 class="text-2xl text-center">{{ error }}</h1>
 </div>
 {% if is_paginated %}
 <div class="row justify-content-center">

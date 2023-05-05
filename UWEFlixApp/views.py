@@ -20,8 +20,9 @@ from .forms import (
     ClubTopUpForm, LoginForm, MovieForm, ScreenForm, ScreeningForm,
     StudentRegistrationForm, JoinClubForm
 , SimplePaymentForm, StaffRegistrationForm, TicketPriceForm)
+from UWEAuth.models import User
 from .models import (
-    Booking, Club, MonthlyStatement, Movie, Screen, Screening, User, Ticket
+    Booking, Club, MonthlyStatement, Movie, Screen, Screening, Ticket
 )
 import hashlib
 
@@ -221,6 +222,16 @@ def create_screening(request):
     # Retrieve all movies and screens from the database
     movies = Movie.objects.all()
     screens = Screen.objects.all()
+    error = ''
+    
+    if len(movies) == 0:
+        print("No movies in database")
+        error = ("No Movies in database, Action can not be completed")
+        return render(request, 'UWEFlixApp/view_screenings.html', {'error': error})
+    elif len(screens) == 0:
+        print("No screens in database")
+        error = ("No Screen in database, Action can not be completed")
+        return render(request, 'UWEFlixApp/view_screenings.html', {'error': error})
     form = ScreeningForm()
 
     if request.method == 'POST':
@@ -237,6 +248,7 @@ def create_screening(request):
         'movies': movies,
         'screens': screens,
         'form': form,
+        'error': error,
     }
     for field in form:
         print(field.errors)
