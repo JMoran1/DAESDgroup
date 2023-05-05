@@ -100,4 +100,5 @@ urlpatterns = [
     path('show_requested_bookings', views.show_requested_bookings, name='show_requested_bookings'),
     path('cancel_booking/<int:pk>/', views.cancel_booking, name='cancel_booking'),
     path("change_ticket_price/", views.change_ticket_price, name="change_ticket_price"),
+    path("email_confirmation/", views.email_confirmation, name="email_confirmation"),
 ]
