@@ -10,7 +10,7 @@ services:
 
   django-rest-api:
     build:
-      context: ./REST API
+      context: ./REST_API
       dockerfile: Dockerfile
     entrypoint: ["./django-rest-api-entrypoint.sh"]
     ports:
