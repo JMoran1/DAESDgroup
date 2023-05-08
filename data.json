@@ -1,0 +1,1163 @@
+[
+    {
+        "model": "auth.permission",
+        "pk": 1,
+        "fields": {
+            "name": "Can add log entry",
+            "content_type": 1,
+            "codename": "add_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 2,
+        "fields": {
+            "name": "Can change log entry",
+            "content_type": 1,
+            "codename": "change_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 3,
+        "fields": {
+            "name": "Can delete log entry",
+            "content_type": 1,
+            "codename": "delete_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 4,
+        "fields": {
+            "name": "Can view log entry",
+            "content_type": 1,
+            "codename": "view_logentry"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 5,
+        "fields": {
+            "name": "Can add permission",
+            "content_type": 2,
+            "codename": "add_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 6,
+        "fields": {
+            "name": "Can change permission",
+            "content_type": 2,
+            "codename": "change_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 7,
+        "fields": {
+            "name": "Can delete permission",
+            "content_type": 2,
+            "codename": "delete_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 8,
+        "fields": {
+            "name": "Can view permission",
+            "content_type": 2,
+            "codename": "view_permission"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 9,
+        "fields": {
+            "name": "Can add group",
+            "content_type": 3,
+            "codename": "add_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 10,
+        "fields": {
+            "name": "Can change group",
+            "content_type": 3,
+            "codename": "change_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 11,
+        "fields": {
+            "name": "Can delete group",
+            "content_type": 3,
+            "codename": "delete_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 12,
+        "fields": {
+            "name": "Can view group",
+            "content_type": 3,
+            "codename": "view_group"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 13,
+        "fields": {
+            "name": "Can add content type",
+            "content_type": 4,
+            "codename": "add_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 14,
+        "fields": {
+            "name": "Can change content type",
+            "content_type": 4,
+            "codename": "change_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 15,
+        "fields": {
+            "name": "Can delete content type",
+            "content_type": 4,
+            "codename": "delete_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 16,
+        "fields": {
+            "name": "Can view content type",
+            "content_type": 4,
+            "codename": "view_contenttype"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 17,
+        "fields": {
+            "name": "Can add session",
+            "content_type": 5,
+            "codename": "add_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 18,
+        "fields": {
+            "name": "Can change session",
+            "content_type": 5,
+            "codename": "change_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 19,
+        "fields": {
+            "name": "Can delete session",
+            "content_type": 5,
+            "codename": "delete_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 20,
+        "fields": {
+            "name": "Can view session",
+            "content_type": 5,
+            "codename": "view_session"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 21,
+        "fields": {
+            "name": "Can add user",
+            "content_type": 6,
+            "codename": "add_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 22,
+        "fields": {
+            "name": "Can change user",
+            "content_type": 6,
+            "codename": "change_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 23,
+        "fields": {
+            "name": "Can delete user",
+            "content_type": 6,
+            "codename": "delete_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 24,
+        "fields": {
+            "name": "Can view user",
+            "content_type": 6,
+            "codename": "view_user"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 25,
+        "fields": {
+            "name": "Can add club",
+            "content_type": 7,
+            "codename": "add_club"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 26,
+        "fields": {
+            "name": "Can change club",
+            "content_type": 7,
+            "codename": "change_club"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 27,
+        "fields": {
+            "name": "Can delete club",
+            "content_type": 7,
+            "codename": "delete_club"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 28,
+        "fields": {
+            "name": "Can view club",
+            "content_type": 7,
+            "codename": "view_club"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 29,
+        "fields": {
+            "name": "Can add movie",
+            "content_type": 8,
+            "codename": "add_movie"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 30,
+        "fields": {
+            "name": "Can change movie",
+            "content_type": 8,
+            "codename": "change_movie"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 31,
+        "fields": {
+            "name": "Can delete movie",
+            "content_type": 8,
+            "codename": "delete_movie"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 32,
+        "fields": {
+            "name": "Can view movie",
+            "content_type": 8,
+            "codename": "view_movie"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 33,
+        "fields": {
+            "name": "Can add screen",
+            "content_type": 9,
+            "codename": "add_screen"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 34,
+        "fields": {
+            "name": "Can change screen",
+            "content_type": 9,
+            "codename": "change_screen"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 35,
+        "fields": {
+            "name": "Can delete screen",
+            "content_type": 9,
+            "codename": "delete_screen"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 36,
+        "fields": {
+            "name": "Can view screen",
+            "content_type": 9,
+            "codename": "view_screen"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 37,
+        "fields": {
+            "name": "Can add ticket",
+            "content_type": 10,
+            "codename": "add_ticket"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 38,
+        "fields": {
+            "name": "Can change ticket",
+            "content_type": 10,
+            "codename": "change_ticket"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 39,
+        "fields": {
+            "name": "Can delete ticket",
+            "content_type": 10,
+            "codename": "delete_ticket"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 40,
+        "fields": {
+            "name": "Can view ticket",
+            "content_type": 10,
+            "codename": "view_ticket"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 41,
+        "fields": {
+            "name": "Can add screening",
+            "content_type": 11,
+            "codename": "add_screening"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 42,
+        "fields": {
+            "name": "Can change screening",
+            "content_type": 11,
+            "codename": "change_screening"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 43,
+        "fields": {
+            "name": "Can delete screening",
+            "content_type": 11,
+            "codename": "delete_screening"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 44,
+        "fields": {
+            "name": "Can view screening",
+            "content_type": 11,
+            "codename": "view_screening"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 45,
+        "fields": {
+            "name": "Can add monthly statement",
+            "content_type": 12,
+            "codename": "add_monthlystatement"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 46,
+        "fields": {
+            "name": "Can change monthly statement",
+            "content_type": 12,
+            "codename": "change_monthlystatement"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 47,
+        "fields": {
+            "name": "Can delete monthly statement",
+            "content_type": 12,
+            "codename": "delete_monthlystatement"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 48,
+        "fields": {
+            "name": "Can view monthly statement",
+            "content_type": 12,
+            "codename": "view_monthlystatement"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 49,
+        "fields": {
+            "name": "Can add booking",
+            "content_type": 13,
+            "codename": "add_booking"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 50,
+        "fields": {
+            "name": "Can change booking",
+            "content_type": 13,
+            "codename": "change_booking"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 51,
+        "fields": {
+            "name": "Can delete booking",
+            "content_type": 13,
+            "codename": "delete_booking"
+        }
+    },
+    {
+        "model": "auth.permission",
+        "pk": 52,
+        "fields": {
+            "name": "Can view booking",
+            "content_type": 13,
+            "codename": "view_booking"
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 1,
+        "fields": {
+            "name": "Cinema Manager",
+            "permissions": []
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 2,
+        "fields": {
+            "name": "Account Manager",
+            "permissions": []
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 3,
+        "fields": {
+            "name": "Club Representative",
+            "permissions": []
+        }
+    },
+    {
+        "model": "auth.group",
+        "pk": 4,
+        "fields": {
+            "name": "Student",
+            "permissions": []
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 1,
+        "fields": {
+            "app_label": "admin",
+            "model": "logentry"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 2,
+        "fields": {
+            "app_label": "auth",
+            "model": "permission"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 3,
+        "fields": {
+            "app_label": "auth",
+            "model": "group"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 4,
+        "fields": {
+            "app_label": "contenttypes",
+            "model": "contenttype"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 5,
+        "fields": {
+            "app_label": "sessions",
+            "model": "session"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 6,
+        "fields": {
+            "app_label": "UWEAuth",
+            "model": "user"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 7,
+        "fields": {
+            "app_label": "UWEFlixApp",
+            "model": "club"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 8,
+        "fields": {
+            "app_label": "UWEFlixApp",
+            "model": "movie"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 9,
+        "fields": {
+            "app_label": "UWEFlixApp",
+            "model": "screen"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 10,
+        "fields": {
+            "app_label": "UWEFlixApp",
+            "model": "ticket"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 11,
+        "fields": {
+            "app_label": "UWEFlixApp",
+            "model": "screening"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 12,
+        "fields": {
+            "app_label": "UWEFlixApp",
+            "model": "monthlystatement"
+        }
+    },
+    {
+        "model": "contenttypes.contenttype",
+        "pk": 13,
+        "fields": {
+            "app_label": "UWEFlixApp",
+            "model": "booking"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "3ljyee2kkrc9vzh4r7e512dgoi2fpal3",
+        "fields": {
+            "session_data": ".eJxVjEEOwiAQRe_C2pBCgTIu3XsGMjOAVA0kpV0Z765NutDtf-_9lwi4rSVsPS1hjuIslDj9boT8SHUH8Y711iS3ui4zyV2RB-3y2mJ6Xg7376BgL9_aabDZKk-jmzhjBM1ajypCHjKDdUQOXB5MZjsigJ8MMoKzZLy30ZB4fwDa6zfF:1ptnUA:NtZI6RJFzj9z_ZjMhOqUyxksTPvTHQW6QQ-Vsvp3lt8",
+            "expire_date": "2023-05-02T11:03:54.834Z"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "7ho15izj7b188n4ttxxih4dm431rf1hp",
+        "fields": {
+            "session_data": ".eJxdzjEOgCAMheG7dHbQiYTLNEirEiokUCbj3TUxJuj6vjf8B1QW9sqE1RfmFNIKdhogtX3mgnlBR00UNfjIWsGCgV79FoQ6HT9atREn_blmdfJu-LzBmgHmnOMdgIHuhvG8AKJtOE0:1puxmX:dijGOVMVDLf6vaP7NkR0B3w3eKeXijp3LTQWNSRxeKI",
+            "expire_date": "2023-05-05T16:15:41.612Z"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "8ih3n5u15f49q00rp1zwup3actc94v27",
+        "fields": {
+            "session_data": ".eJx1yzEOgCAMheG7dHbQhYHLNEirErEktEzGu2tiTFhc3_f-E5QzR2NCjZVZkqzgpwGkHTNXLAsGatnQUtzZFDyM0GvcUqZfVWvE0tfucSsW8rfh-wbvrhtCyzMr:1puxSF:cXFuSXOChEujIwPlABqEDokZ5LRmBK8rKvB8x5Gko6o",
+            "expire_date": "2023-05-05T15:54:43.765Z"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "e0cm4s2ng4dbhtm7ons107a4ys38x6z4",
+        "fields": {
+            "session_data": ".eJxVjEEOwiAQRe_C2pBCgTIu3XsGMjOAVA0kpV0Z765NutDtf-_9lwi4rSVsPS1hjuIslDj9boT8SHUH8Y711iS3ui4zyV2RB-3y2mJ6Xg7376BgL9_aabDZKk-jmzhjBM1ajypCHjKDdUQOXB5MZjsigJ8MMoKzZLy30ZB4fwDa6zfF:1pvzGJ:_4w_yiQb7KF1g3aify2tDoAEibpkUk0ksb2rKLG_8vM",
+            "expire_date": "2023-05-08T12:02:39.080Z"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "kit17xgg5uir9f60ocrns9fie3nx6nz5",
+        "fields": {
+            "session_data": ".eJxVjEEOwiAQRe_C2pBCgTIu3XsGMjOAVA0kpV0Z765NutDtf-_9lwi4rSVsPS1hjuIslDj9boT8SHUH8Y711iS3ui4zyV2RB-3y2mJ6Xg7376BgL9_aabDZKk-jmzhjBM1ajypCHjKDdUQOXB5MZjsigJ8MMoKzZLy30ZB4fwDa6zfF:1puwmn:GZuIlZN-KfokhmoOP6XDncbcIvZg-pf3kEnHsZC_UKg",
+            "expire_date": "2023-05-05T15:11:53.794Z"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "ldhzlk2h5s5y83vmdyrieh1x4w3fg9ln",
+        "fields": {
+            "session_data": ".eJxVjEEOwiAQRe_C2pBCgTIu3XsGMjOAVA0kpV0Z765NutDtf-_9lwi4rSVsPS1hjuIslDj9boT8SHUH8Y711iS3ui4zyV2RB-3y2mJ6Xg7376BgL9_aabDZKk-jmzhjBM1ajypCHjKDdUQOXB5MZjsigJ8MMoKzZLy30ZB4fwDa6zfF:1puu2t:4cIgJeCFr0HtYhdS4JC2LOgeilTX_ggPzasOC7ulKlY",
+            "expire_date": "2023-05-05T12:16:19.405Z"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "v53sx2a1n8l5ydfh4ylkowh60c3w0of7",
+        "fields": {
+            "session_data": ".eJxVjDsOwjAQBe_iGlnY8WdFSc8ZrN31GgeQI8VJFXF3iJQC2jczb1MJ16WmtcucxqwualCn342Qn9J2kB_Y7pPmqS3zSHpX9EG7vk1ZXtfD_Tuo2Ou3hhAjZzJknSPD2VoTjBfHETxGCwMFEohefC5YTEAPtgg7CA4Qz6zeH93xOAc:1pvzmW:JF9zyCCLVfjIUnHFIkz5Je0k6AyklLVbKdjiDm8JCDA",
+            "expire_date": "2023-05-08T12:35:56.376Z"
+        }
+    },
+    {
+        "model": "sessions.session",
+        "pk": "zdmhbut8ivifvm4r0b9e9ia9ozbv0asy",
+        "fields": {
+            "session_data": ".eJxdyzEOgCAMheG7dHbQgYXLNFiqEmtJoEzGuzsYE3R93_tPqCxMxhErFWZNuoKfBtB2zFwwLxhiE0NLtLNV8DBCr7QliZ26j1ZrkfVfW7Yg74bPG7y7bkNNMyk:1pux83:24WSFqqswhp7ST6prRgu9ZmwibcOei-Xawvz6lZhJvo",
+            "expire_date": "2023-05-05T15:33:51.248Z"
+        }
+    },
+    {
+        "model": "UWEAuth.user",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$390000$2Q9DDdCEIF8iHiescT3v5d$ZaFRCIJbmOnDQQmutqnMQ0t2Nxhiw3OCWFXXhDltPSk=",
+            "last_login": "2023-05-08T12:03:00.149Z",
+            "is_superuser": false,
+            "username": "CM",
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-05-02T10:43:32.536Z",
+            "role": "M",
+            "club": null,
+            "requested_club": null,
+            "groups": [
+                1
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "UWEAuth.user",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$390000$z3rh7bda5YBBGWPPDTmGpf$oTHYs3FZ2rhEpvLLNaerQi6tXsbjYOVN2tuBkpSI+/0=",
+            "last_login": "2023-05-08T12:13:05.321Z",
+            "is_superuser": false,
+            "username": "428643",
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-05-08T11:57:08.177Z",
+            "role": "R",
+            "club": 1,
+            "requested_club": null,
+            "groups": [
+                3
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "UWEAuth.user",
+        "pk": 3,
+        "fields": {
+            "password": "pbkdf2_sha256$390000$FaC5GCPEXBAHejEYNJO1Fg$hzFfJImRTh3cUVxpCPT7uU3v60czVDo39TwbgnBTp9U=",
+            "last_login": "2023-05-08T12:15:56.374Z",
+            "is_superuser": false,
+            "username": "Student",
+            "first_name": "",
+            "last_name": "",
+            "email": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2023-05-08T12:15:21.458Z",
+            "role": "S",
+            "club": null,
+            "requested_club": 1,
+            "groups": [
+                4
+            ],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "UWEFlixApp.booking",
+        "pk": 11,
+        "fields": {
+            "user": 2,
+            "screening": 27,
+            "number_of_adult_tickets": 0,
+            "number_of_child_tickets": 0,
+            "number_of_student_tickets": 11,
+            "total_price": "39.51",
+            "club": 1,
+            "date": "2023-05-08T12:13:52.738Z",
+            "status": "Active"
+        }
+    },
+    {
+        "model": "UWEFlixApp.club",
+        "pk": 1,
+        "fields": {
+            "name": "UWE",
+            "card_number": "711af59b6210e139092162401a0f6e16f96f2b95614a2cc6dc6194f6aab61e8cf0a1be6ee5891b832654c9ba459dca62fd124ed24c9422b84e62c333441efb17",
+            "card_expiry": "2023-05-14",
+            "discount_rate": "0.10",
+            "address": "UWE",
+            "balance": "260.49"
+        }
+    },
+    {
+        "model": "UWEFlixApp.club",
+        "pk": 2,
+        "fields": {
+            "name": "Staff",
+            "card_number": "711af59b6210e139092162401a0f6e16f96f2b95614a2cc6dc6194f6aab61e8cf0a1be6ee5891b832654c9ba459dca62fd124ed24c9422b84e62c333441efb17",
+            "card_expiry": "2023-05-14",
+            "discount_rate": "0.30",
+            "address": "UWE",
+            "balance": "0.00"
+        }
+    },
+    {
+        "model": "UWEFlixApp.movie",
+        "pk": 2,
+        "fields": {
+            "name": "The Super Mario Bros. Movie",
+            "running_time": "01:32:00",
+            "description": "",
+            "rating": "PG",
+            "image": "images/20230227-121817308.jpg"
+        }
+    },
+    {
+        "model": "UWEFlixApp.movie",
+        "pk": 3,
+        "fields": {
+            "name": "Guardians Of The Galaxy Vol. 3",
+            "running_time": "02:30:00",
+            "description": "",
+            "rating": "12A",
+            "image": "images/20230228-060110345.jpg"
+        }
+    },
+    {
+        "model": "UWEFlixApp.movie",
+        "pk": 4,
+        "fields": {
+            "name": "Transformers: Rise Of The Beasts",
+            "running_time": "02:00:00",
+            "description": "",
+            "rating": "15",
+            "image": "images/20230503-081240465.jpg"
+        }
+    },
+    {
+        "model": "UWEFlixApp.movie",
+        "pk": 5,
+        "fields": {
+            "name": "John Wick: Chapter 4",
+            "running_time": "02:49:00",
+            "description": "",
+            "rating": "15",
+            "image": "images/20230411-085118778.jpg"
+        }
+    },
+    {
+        "model": "UWEFlixApp.movie",
+        "pk": 6,
+        "fields": {
+            "name": "The Flash",
+            "running_time": "02:20:00",
+            "description": "",
+            "rating": "12A",
+            "image": "images/20220112-065658401.jpg"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screen",
+        "pk": 2,
+        "fields": {
+            "name": "Screen 1",
+            "description": "Screen 1",
+            "capacity": 100
+        }
+    },
+    {
+        "model": "UWEFlixApp.screen",
+        "pk": 3,
+        "fields": {
+            "name": "Screen 2",
+            "description": "Screen 2",
+            "capacity": 40
+        }
+    },
+    {
+        "model": "UWEFlixApp.screen",
+        "pk": 4,
+        "fields": {
+            "name": "Screen 3",
+            "description": "Screen 3",
+            "capacity": 85
+        }
+    },
+    {
+        "model": "UWEFlixApp.screen",
+        "pk": 5,
+        "fields": {
+            "name": "Screen 4",
+            "description": "Screen 4",
+            "capacity": 35
+        }
+    },
+    {
+        "model": "UWEFlixApp.screen",
+        "pk": 6,
+        "fields": {
+            "name": "Screen 5",
+            "description": "Screen 5",
+            "capacity": 100
+        }
+    },
+    {
+        "model": "UWEFlixApp.screen",
+        "pk": 7,
+        "fields": {
+            "name": "Screen 6",
+            "description": "Screen 6",
+            "capacity": 80
+        }
+    },
+    {
+        "model": "UWEFlixApp.screen",
+        "pk": 8,
+        "fields": {
+            "name": "Screen 7",
+            "description": "Screen 7",
+            "capacity": 70
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 2,
+        "fields": {
+            "movie": 2,
+            "screen": 2,
+            "showing_at": "2023-05-09T12:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 3,
+        "fields": {
+            "movie": 2,
+            "screen": 3,
+            "showing_at": "2023-05-09T11:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 4,
+        "fields": {
+            "movie": 2,
+            "screen": 3,
+            "showing_at": "2023-05-09T14:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 5,
+        "fields": {
+            "movie": 2,
+            "screen": 5,
+            "showing_at": "2023-05-09T16:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 6,
+        "fields": {
+            "movie": 3,
+            "screen": 2,
+            "showing_at": "2023-05-09T09:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 7,
+        "fields": {
+            "movie": 3,
+            "screen": 4,
+            "showing_at": "2023-05-09T15:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 8,
+        "fields": {
+            "movie": 3,
+            "screen": 7,
+            "showing_at": "2023-05-09T17:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 9,
+        "fields": {
+            "movie": 2,
+            "screen": 4,
+            "showing_at": "2023-05-09T10:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 10,
+        "fields": {
+            "movie": 4,
+            "screen": 7,
+            "showing_at": "2023-05-09T13:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 11,
+        "fields": {
+            "movie": 4,
+            "screen": 5,
+            "showing_at": "2023-05-09T20:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 12,
+        "fields": {
+            "movie": 4,
+            "screen": 3,
+            "showing_at": "2023-05-09T16:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 13,
+        "fields": {
+            "movie": 4,
+            "screen": 6,
+            "showing_at": "2023-05-09T13:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 14,
+        "fields": {
+            "movie": 5,
+            "screen": 7,
+            "showing_at": "2023-05-09T10:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 15,
+        "fields": {
+            "movie": 2,
+            "screen": 2,
+            "showing_at": "2023-05-10T11:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 16,
+        "fields": {
+            "movie": 2,
+            "screen": 3,
+            "showing_at": "2023-05-10T13:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 17,
+        "fields": {
+            "movie": 2,
+            "screen": 4,
+            "showing_at": "2023-05-10T16:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 18,
+        "fields": {
+            "movie": 2,
+            "screen": 5,
+            "showing_at": "2023-05-10T19:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 19,
+        "fields": {
+            "movie": 3,
+            "screen": 6,
+            "showing_at": "2023-05-10T10:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 20,
+        "fields": {
+            "movie": 3,
+            "screen": 7,
+            "showing_at": "2023-05-10T14:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 21,
+        "fields": {
+            "movie": 3,
+            "screen": 2,
+            "showing_at": "2023-05-10T15:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 22,
+        "fields": {
+            "movie": 3,
+            "screen": 3,
+            "showing_at": "2023-05-10T20:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 23,
+        "fields": {
+            "movie": 4,
+            "screen": 5,
+            "showing_at": "2023-05-10T10:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 24,
+        "fields": {
+            "movie": 4,
+            "screen": 6,
+            "showing_at": "2023-05-10T14:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 25,
+        "fields": {
+            "movie": 4,
+            "screen": 7,
+            "showing_at": "2023-05-10T17:30:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 26,
+        "fields": {
+            "movie": 5,
+            "screen": 7,
+            "showing_at": "2023-05-10T10:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 27,
+        "fields": {
+            "movie": 2,
+            "screen": 5,
+            "showing_at": "2023-05-10T14:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.screening",
+        "pk": 28,
+        "fields": {
+            "movie": 5,
+            "screen": 6,
+            "showing_at": "2023-05-10T19:00:00Z"
+        }
+    },
+    {
+        "model": "UWEFlixApp.ticket",
+        "pk": 1,
+        "fields": {
+            "type": "adult",
+            "price": "4.99"
+        }
+    },
+    {
+        "model": "UWEFlixApp.ticket",
+        "pk": 2,
+        "fields": {
+            "type": "child",
+            "price": "2.99"
+        }
+    },
+    {
+        "model": "UWEFlixApp.ticket",
+        "pk": 3,
+        "fields": {
+            "type": "student",
+            "price": "3.99"
+        }
+    }
+]

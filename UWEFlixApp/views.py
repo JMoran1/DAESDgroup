@@ -25,6 +25,7 @@ from .models import (
     Booking, Club, MonthlyStatement, Movie, Screen, Screening, Ticket
 )
 import hashlib
+import requests
 
 
 def round_up(value, dp):
@@ -478,18 +479,18 @@ def confirm_booking(request):
                     if club.balance < total_price:
                         return render(request, "UWEFlixApp/confirm_booking.html", {"user": user, "Screening": screening, 'number_of_adult_tickets': number_of_adult_tickets, 'number_of_child_tickets': number_of_child_tickets, 'number_of_student_tickets': number_of_student_tickets, 'total_price': total_price, 'subtotal': subtotal, 'discount': discount, 'total_ticket_quantity': total_ticket_quantity, 'button_text': 'Confirm Booking', 'button_texttwo': 'Cancel Booking', 'warning': 'Insufficient funds'})
                     else:
-                        Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                        booking = Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                             number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets, club=club)
                         club.balance = club.balance - total_price
                         club.save()
                 else:
-                    Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                    booking = Booking.objects.create(user=user, screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                     number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
             else:
-                Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
+                booking = Booking.objects.create(screening=screening, number_of_adult_tickets=number_of_adult_tickets, total_price=total_price,
                                     number_of_child_tickets=number_of_child_tickets, number_of_student_tickets=number_of_student_tickets)
-
-            return redirect('home')
+            request.session['booking_id'] = booking.id
+            return redirect('email_confirmation')
     else:
         form = BookingForm()
 
@@ -803,6 +804,45 @@ def change_ticket_price(request):
 
             return redirect('cinema_manager_view')
     return render(request, "UWEFlixApp/change_ticket_price.html", {"form": form})
+
+
+def email_confirmation(request):
+    """Sends an email to the user confirming their booking"""
+    if request.method == "POST":
+        booking = request.session['booking_id']
+        email = request.POST.get('email_address')
+        screening = request.session['selected_screening']
+        screening = Screening.objects.get(pk=screening)
+        movie = Movie.objects.get(pk=screening.movie_id)
+        screen = Screen.objects.get(pk=screening.screen_id)
+
+        date = screening.showing_at
+        date = date.strftime("%d %B %Y - %H:%M")
+
+        number_of_adult_tickets = int(
+            request.session['number_of_adult_tickets'])
+        number_of_child_tickets = int(
+            request.session['number_of_child_tickets'])
+        number_of_student_tickets = int(
+            request.session['number_of_student_tickets'])
+        total_tickets = number_of_adult_tickets + \
+            number_of_child_tickets + number_of_student_tickets
+
+        adult_ticket_price = Ticket.objects.get(id=1).price
+        child_ticket_price = Ticket.objects.get(id=2).price
+        student_ticket_price = Ticket.objects.get(id=3).price
+        total_price = number_of_adult_tickets * adult_ticket_price + \
+            number_of_child_tickets * child_ticket_price + \
+            number_of_student_tickets * student_ticket_price
+
+        url = 'http://django-rest-api:8001/my-api/'
+        data = {'name': 'UWEFlix', 'email': email, 'movie': movie.name, 'date': str(
+            date), 'screen': screen.name, 'total_tickets': total_tickets, 'total_price': str(total_price), 'id': booking}
+        headers = {'Content-type': 'application/json'}
+
+        response = requests.post(url, json=data, headers=headers)
+        return redirect('home')
+    return render(request, "UWEFlixApp/email_confirmation.html")
 
 @login_required()
 @user_passes_test(UserRoleCheck(User.Role.CINEMA_MANAGER), redirect_field_name=None)

@@ -8,6 +8,17 @@ services:
     depends_on:
       - mysql-db
 
+  django-rest-api:
+    build:
+      context: ./REST_API
+      dockerfile: Dockerfile
+    entrypoint: ["./django-rest-api-entrypoint.sh"]
+    ports:
+      - "8001:8001"
+    restart: unless-stopped
+    depends_on:
+      - mysql-db
+
   mysql-db:
     image: mysql
     ports:
